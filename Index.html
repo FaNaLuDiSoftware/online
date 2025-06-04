@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draftosaurus - Parque de Verano (Multijugador AI)</title>
+    <style>
+        /* Estilos CSS (Añadidos y modificados para la visualización de otros parques) */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alineación al inicio para permitir scroll si hay muchos parques */
+            min-height: 100vh;
+            background-color: #e0ffe0;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-wrap: wrap; /* Permitir que los contenedores se envuelvan en pantallas pequeñas */
+        }
+
+        .game-container {
+            background-color: #f0f8f0;
+            border: 5px solid #6b8e23;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            margin-bottom: 20px; /* Espacio debajo del parque principal */
+        }
+
+        /* Contenedor para los parques de otros jugadores */
+        .other-players-parks-container {
+            background-color: #e6ffe6; /* Fondo ligeramente diferente para distinguir */
+            border: 3px solid #4CAF50;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            display: none; /* Oculto por defecto */
+        }
+
+        .other-players-parks-container h2 {
+            color: #2e8b57;
+            margin-bottom: 15px;
+        }
+
+        .player-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .player-navigation button {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #0069d9;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .player-navigation button.active {
+            background-color: #0056b3;
+            border-color: #004085;
+            font-weight: bold;
+        }
+        .player-navigation button:hover:not(:disabled) {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        .player-navigation button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .other-player-park-display {
+            border: 2px dashed #999;
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #f7f7f7;
+            margin-top: 15px;
+            display: none; /* Cada parque individual estará oculto por defecto */
+        }
+
+        .other-player-park-display.active {
+            display: block; /* Mostrar solo el parque activo */
+        }
+
+        .other-player-park-display .park-layout {
+            grid-template-columns: 1fr 120px 1fr; /* Un poco más pequeño para otros parques */
+            gap: 10px;
+            max-width: 750px; /* Más pequeño que el parque del jugador actual */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .other-player-park-display .enclosure {
+            min-height: 60px; /* Recintos más pequeños */
+            padding: 5px;
+        }
+        .other-player-park-display .enclosure-cell {
+            width: 30px;
+            height: 30px;
+        }
+        .other-player-park-display .dinosaur-token-small {
+            width: 25px;
+            height: 25px;
+        }
+        .other-player-park-display .enclosure-score-explanation {
+            font-size: 0.6em;
+            padding: 2px 4px;
+            /* Estos son para la vista de otros jugadores, ocultar las explicaciones detalladas */
+            opacity: 0 !important; 
+            visibility: hidden !important;
+        }
+         /* Y ocultar el div entero de info si se está viendo el parque de otro jugador */
+        .other-player-park-display .enclosure-info {
+            display: none; 
+        }
+
+        .other-player-park-display .zone-title {
+            font-size: 1.1em;
+            padding: 3px 8px;
+        }
+       
+
+
+        h1 {
+            color: #2e8b57;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #4a6a4a;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        /* Información de descripción de los recintos */
+        .enclosure-info {
+            text-align: center;
+            margin-bottom: 5px;
+            margin-top: 15px;
+        }
+        .enclosure-info h3 {
+            margin-bottom: 2px;
+            color: #3cb371;
+            font-size: 1.1em;
+        }
+        .enclosure-info p {
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        /* Estilo para la explicación de puntuación DENTRO del recinto */
+        .enclosure-score-explanation {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            right: 5px;
+            font-size: 0.7em;
+            color: #222;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 3px 6px;
+            line-height: 1.2;
+            text-align: left;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        }
+
+        /* Mostrar al hacer hover sobre el contenedor del recinto */
+        .enclosure:hover .enclosure-score-explanation,
+        #river-area:hover .enclosure-score-explanation {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Estilos para las zonas */
+        .zone-title {
+            color: #2e8b57;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            background-color: #d8f5d8;
+            border-radius: 8px;
+            border: 1px solid #a2d9a2;
+        }
+        
+        .message {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #fff;
+            opacity: 0; /* Oculto por defecto para animaciones */
+            transition: opacity 0.3s ease-in-out;
+        }
+        .message.show {
+            opacity: 1; /* Mostrar al añadir la clase show */
+        }
+
+        .message.info { background-color: #4682b4; }
+        .message.error { background-color: #dc3545; }
+        .message.warning { background-color: #ffc107; color: #333; }
+        .message.success { background-color: #28a745; }
+
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #32cd32;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #228b22;
+            transform: translateY(-2px);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        #restart-game-btn {
+            background-color: #ff7f50;
+            display: none; /* Oculto hasta el final del juego */
+        }
+        #restart-game-btn:hover:not(:disabled) {
+             background-color: #e66a3d;
+        }
+
+
+        #die-result {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4a6a4a;
+            background-color: #d8ead8;
+            padding: 10px 15px;
+            border-radius: 8px;
+            min-width: 150px;
+            transition: transform 0.2s ease-out;
+        }
+        
+        #die-result.rolled {
+            animation: diePop 0.3s ease-out;
+        }
+
+        @keyframes diePop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #score-display, #bag-counter, #player-info, #turn-info {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 8px;
+            min-width: 100px;
+        }
+
+        #score-display { color: #007bff; background-color: #e0f0ff; }
+        #bag-counter { color: #8b4513; background-color: #f5deb3; }
+        #player-info { color: #5a5a5a; background-color: #e6e6e6; } /* Nuevo para información del jugador */
+        #turn-info { color: #6a5acd; background-color: #e6e0ff; } /* Nuevo para información de turno */
+
+
+        /* Estilos del layout del parque */
+        .park-layout {
+            display: grid;
+            grid-template-columns: 1fr 180px 1fr;
+            grid-template-rows: auto;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .park-side {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #river-area {
+            background-color: #a7d9f7;
+            border: 2px solid #6cb6e7;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            height: 100%;
+            min-height: 200px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 8px;
+            position: relative;
+        }
+
+        .enclosure {
+            background-color: #c8e6c9;
+            border: 2px dashed #8bc34a;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px;
+            text-align: center;
+            transition: all 0.2s ease-in-out, border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* Animación de "negación" o "vibración" */
+        .enclosure.shake, .river-area.shake {
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+            border-color: #dc3545; /* Rojo de error */
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+
+        /* Contenedor para las celdas internas de los recintos */
+        .enclosure-grid-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .enclosure-flex-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .enclosure-cell {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid #a0a0a0;
+            border-radius: 5px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Sobreescribir para recintos específicos */
+        #leafy-trio-enclosure .enclosure-flex-container .enclosure-cell { width: 50px; height: 50px; }
+        #king-of-the-jungle-enclosure .enclosure-flex-container .enclosure-cell { width: 60px; height: 60px; }
+        #lonely-island-enclosure .enclosure-flex-container .enclosure-cell { width: 60px; height: 60px; }
+
+        .enclosure-selectable {
+            cursor: pointer; /* Cursor para indicar que es clickeable/droppable */
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        .enclosure-selectable.drag-over {
+            background-color: #d3eafc; /* Color cuando se arrastra un dino sobre él */
+            border-color: #0056b3;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
+        }
+
+        .enclosure-selectable:hover {
+            background-color: #b3d9b3;
+            transform: translateY(-3px) scale(1.03);
+        }
+
+        .river-area.enclosure-selectable {
+            cursor: grab; /* Cursor para arrastrar */
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        .river-area.enclosure-selectable.drag-over {
+            background-color: #d3eafc; /* Color cuando se arrastra un dino sobre él */
+            border-color: #0056b3;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
+        }
+
+        .river-area.enclosure-selectable:hover {
+            background-color: #92cbe7;
+            transform: translateY(-3px) scale(1.03);
+        }
+
+        .dino-hand {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            min-height: 80px;
+            border: 2px dashed #999;
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #f7f7f7;
+        }
+
+        /* Estilos base para los tokens de dinosaurio (grandes y pequeños) */
+        .dinosaur-token, .dinosaur-token-small {
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Important for circular images */
+            border: 2px solid rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.1s ease, border-color 0.1s ease, opacity 0.3s ease-out; /* Añadida transición de opacidad */
+            background-color: transparent; /* Background color will be the image */
+            color: transparent; /* Hide text */
+            position: relative; /* Para animar la colocación */
+        }
+
+        .dinosaur-token img, .dinosaur-token-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures the image fits within the circle */
+            display: block; /* Remove extra space below image */
+        }
+
+        .dinosaur-token {
+            width: 50px;
+            height: 50px;
+            cursor: grab; /* Cambio de cursor para arrastrar */
+        }
+
+        .dinosaur-token:hover {
+            transform: scale(1.05);
+        }
+
+        .dinosaur-token.dino-selected {
+            border-color: #007bff;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.7);
+            transform: scale(1.1);
+        }
+
+        .dinosaur-token-small {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-out;
+        }
+        /* Animación para cuando el dino se coloca */
+        .dinosaur-token.placing, .dinosaur-token-small.placing {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+
+        /* Estilos específicos de recintos (colores de fondo) */
+        #forest-of-sameness-enclosure { background-color: #d4edda; }
+        #meadow-of-difference-enclosure { background-color: #f8d7da; }
+        #pasture-of-love-enclosure { background-color: #fff3cd; }
+        #leafy-trio-enclosure { background-color: #cfe2ff; }
+        #king-of-the-jungle-enclosure { background-color: #ffe0b2; }
+        #lonely-island-enclosure { background-color: #e2e3e5; }
+
+        /* Modal de configuración de juego */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h2 {
+            color: #2e8b57;
+            margin-bottom: 20px;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+
+        .modal-content button {
+            background-color: #32cd32;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #228b22;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 800px) {
+            .park-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+            .left-side, .right-side, #river-area {
+                width: 95%;
+                margin: 0 auto;
+            }
+            .zone-title {
+                text-align: center;
+            }
+            .other-player-park-display .park-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            .dinosaur-token {
+                width: 40px;
+                height: 40px;
+            }
+            .dinosaur-token-small {
+                width: 25px;
+                height: 25px;
+            }
+            .enclosure-cell {
+                width: 35px;
+                height: 35px;
+            }
+            .enclosure-score-explanation {
+                font-size: 0.6em;
+                padding: 2px 4px;
+            }
+            .modal-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Tu Parque de Dinosaurios</h1>
+        <div id="message-display" class="message info">¡Bienvenido a tu parque! Configura la partida.</div>
+
+        <div class="game-controls">
+            <button id="roll-die-btn" disabled>Lanzar Dado</button>
+            <div id="die-result">Resultado del Dado:</div>
+            <div id="score-display">Puntuación: 0</div>
+            <div id="bag-counter">Bolsa: 0</div>
+            <div id="player-info">Jugador: -</div>
+            <div id="turn-info">Ronda: 0 | Turno: 0/6</div> <button id="restart-game-btn" style="display: none;">Reiniciar Juego</button>
+        </div>
+
+        <div class="park-layout" id="current-player-park-layout">
+            <div class="park-side left-side">
+                <div class="zone-title">Zona de Cafetería</div>
+
+                <div class="enclosure-info">
+                    <h3>Bosque de la Semejanza (Bosque)</h3>
+                    <p>Misma especie, de izq. a der. Máx 6.</p>
+                </div>
+                <div id="forest-of-sameness-enclosure" class="enclosure" data-enclosure-type="forestOfSameness">
+                    <div class="enclosure-grid-container">
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                    </div>
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+
+                <div class="enclosure-info">
+                    <h3>El Trío Frondoso (Bosque)</h3>
+                    <p>Máx 3. 7 pts si hay 3.</p>
+                </div>
+                <div id="leafy-trio-enclosure" class="enclosure" data-enclosure-type="leafyTrio">
+                    <div class="enclosure-flex-container">
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                    </div>
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+
+                <div class="enclosure-info">
+                    <h3>Pradera del Amor (Llanura)</h3>
+                    <p>Cualquier especie. 5 pts por par. Máx 6.</p>
+                </div>
+                <div id="pasture-of-love-enclosure" class="enclosure" data-enclosure-type="pastureOfLove">
+                    <div class="enclosure-grid-container">
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                    </div>
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+            </div>
+
+            <div class="park-side river-wrapper">
+                <div class="enclosure-info">
+                    <h3>El Río</h3>
+                    <p>1 punto por dinosaurio.</p>
+                </div>
+                <div id="river-area" class="river-area" data-enclosure-type="river">
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+            </div>
+
+            <div class="park-side right-side">
+                <div class="zone-title">Zona de Baños</div>
+
+                <div class="enclosure-info">
+                    <h3>El Rey de la Selva (Bosque)</h3>
+                    <p>Solo 1. 7 pts si hay 1.</p>
+                </div>
+                <div id="king-of-the-jungle-enclosure" class="enclosure" data-enclosure-type="kingOfTheJungle">
+                    <div class="enclosure-flex-container">
+                        <div class="enclosure-cell"></div>
+                    </div>
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+
+                <div class="enclosure-info">
+                    <h3>Prado de la Diferencia (Llanura)</h3>
+                    <p>Diferente especie, de izq. a der. Máx 6.</p>
+                </div>
+                <div id="meadow-of-difference-enclosure" class="enclosure" data-enclosure-type="meadowOfDifference">
+                    <div class="enclosure-grid-container">
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                        <div class="enclosure-cell"></div>
+                    </div>
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+
+                <div class="enclosure-info">
+                    <h3>La Isla Solitaria (Llanura)</h3>
+                    <p>Solo 1. 7 pts si es único de su especie en el parque (incluye Río).</p>
+                </div>
+                <div id="lonely-island-enclosure" class="enclosure" data-enclosure-type="lonelyIsland">
+                    <div class="enclosure-flex-container">
+                        <div class="enclosure-cell"></div>
+                    </div>
+                    <div class="enclosure-score-explanation"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Tu Mano</h2>
+        <div id="dino-hand" class="dino-hand">
+            </div>
+    </div>
+
+    <div id="other-players-parks-container" class="other-players-parks-container">
+        <h2>Parques de Otros Jugadores</h2>
+        <div class="player-navigation" id="other-player-navigation">
+            </div>
+        <div id="other-players-parks-display-area">
+            </div>
+    </div>
+
+
+    <div id="setup-modal" class="modal">
+        <div class="modal-content">
+            <h2>Configurar Partida</h2>
+            <label for="num-players-select">Número de jugadores (2-5):</label>
+            <select id="num-players-select">
+                <option value="2">2 Jugadores</option>
+                <option value="3">3 Jugadores</option>
+                <option value="4">4 Jugadores</option>
+                <option value="5">5 Jugadores</option>
+            </select>
+            <button id="start-game-btn">Comenzar Juego</button>
+        </div>
+    </div>
+
+    <script>
+        // Función para obtener la URL del archivo
+        function getFileUrl(filename) {
+            const baseDir = 'images/dinos/'; // Ajusta esta ruta si tus imágenes no están en esta carpeta
+            return `${baseDir}${filename}`; 
+        }
+
+        // Definición de la estructura de un jugador
+        class Player {
+            constructor(id, isAI = false) {
+                this.id = id;
+                this.hand = []; // La mano actual del jugador
+                this.park = {
+                    forestOfSameness: [],
+                    leafyTrio: [],
+                    pastureOfLove: [],
+                    kingOfTheJungle: [],
+                    meadowOfDifference: [],
+                    lonelyIsland: []
+                };
+                this.river = [];
+                this.score = 0;
+                this.isAI = isAI; // Nueva propiedad para identificar si es IA
+                this.hasPlacedDinoThisTurn = false; // Nuevo: rastrea si ya colocó dino en la fase de colocación actual
+                this.currentDieRoll = null; // Nuevo: cada jugador tiene su propio resultado del dado para la fase actual
+            }
+        }
+
+        // Estado global del juego
+        const GAME_STATE = {
+            dinosaurs: ['T-Rex', 'Stego', 'Bronto', 'Tricera', 'Ptera', 'Ankylo'],
+            // Asegúrate de que estos nombres de archivo coincidan EXACTAMENTE con tus archivos de imagen
+            dinoImages: {
+                'T-Rex': getFileUrl('t-rex.PNG'), 
+                'Stego': getFileUrl('stego.PNG'), 
+                'Bronto': getFileUrl('bronto.PNG'), 
+                'Tricera': getFileUrl('tricera.PNG'), 
+                'Ptera': getFileUrl('ptera.PNG'), 
+                'Ankylo': getFileUrl('ankylo.PNG')
+            },
+            bag: [],
+            players: [], // Array de objetos Player
+            currentPlayerIndex: 0, // Índice del jugador cuyo turno es lanzar el dado (jugador activo)
+            draftDirection: 1, // 1 para izquierda a derecha (Ronda 1), -1 para derecha a izquierda (Ronda 2)
+            turnsPerRound: 6, // Número de turnos para jugar los 6 dinos en la mano
+            currentTurnInRound: 0, // Cuenta el número de fases de colocación completadas DENTRO de la ronda actual (0 a 5)
+            currentRound: 0, // De 0 a 2 (ronda 1 y ronda 2)
+            selectedDinoSpecies: null, // Dino seleccionado por el jugador humano
+            isDieRolledForThisTurn: false, // El dado fue lanzado por el jugador activo en esta fase de colocación
+            isDinoSelected: false, // El dino fue seleccionado por el jugador humano
+            placedDinosaursThisTurn: 0, // Cuántos dinos se han colocado en la fase de colocación actual (por todos los jugadores)
+            numPlayers: 0, // Se establecerá en el modal
+            currentOtherPlayerViewIndex: -1 // -1 significa que no se está viendo el parque de otro jugador (o el primero por defecto)
+        };
+
+        // Referencias a elementos del DOM
+        const elements = {
+            dinoHand: document.getElementById('dino-hand'),
+            dieResult: document.getElementById('die-result'),
+            rollDieBtn: document.getElementById('roll-die-btn'),
+            scoreDisplay: document.getElementById('score-display'),
+            messageDisplay: document.getElementById('message-display'),
+            bagCounter: document.getElementById('bag-counter'),
+            playerInfo: document.getElementById('player-info'),
+            turnInfo: document.getElementById('turn-info'), // Nuevo
+            restartGameBtn: document.getElementById('restart-game-btn'), // Nuevo
+            setupModal: document.getElementById('setup-modal'),
+            numPlayersSelect: document.getElementById('num-players-select'),
+            startGameBtn: document.getElementById('start-game-btn'),
+            parkLayout: document.getElementById('current-player-park-layout'),
+            otherPlayersParksContainer: document.getElementById('other-players-parks-container'),
+            otherPlayerNavigation: document.getElementById('other-player-navigation'),
+            otherPlayersParksDisplayArea: document.getElementById('other-players-parks-display-area')
+        };
+
+        // Capacidades máximas de los recintos
+        const ENCLOSURE_CAPACITIES = {
+            forestOfSameness: 6,
+            meadowOfDifference: 6,
+            pastureOfLove: 6,
+            leafyTrio: 3,
+            kingOfTheJungle: 1,
+            lonelyIsland: 1,
+            river: Infinity // El río no tiene límite de capacidad
+        };
+
+        // Mapeo de las caras del dado a los tipos de recintos permitidos
+        // Modificada para no incluir "¡Cuidado con el T-Rex!"
+        const ENCLOSURE_TYPES_BY_DIE_FACE = {
+            'Bosque': ['forestOfSameness', 'leafyTrio', 'kingOfTheJungle'],
+            'Llanura': ['meadowOfDifference', 'pastureOfLove', 'lonelyIsland'],
+            'Baños': ['kingOfTheJungle', 'meadowOfDifference', 'lonelyIsland'],
+            'Cafetería': ['forestOfSameness', 'leafyTrio', 'pastureOfLove'],
+            'Recinto Vacío': ['forestOfSameness', 'leafyTrio', 'kingOfTheJungle', 'meadowOfDifference', 'pastureOfLove', 'lonelyIsland'] // Vacío ahora permite todos los recintos de parque
+        };
+
+        // --- Gestión del Modal de Inicio ---
+        function showSetupModal() {
+            elements.setupModal.style.display = 'flex';
+        }
+
+        function hideSetupModal() {
+            elements.setupModal.style.display = 'none';
+        }
+
+        elements.startGameBtn.addEventListener('click', () => {
+            GAME_STATE.numPlayers = parseInt(elements.numPlayersSelect.value, 10);
+            if (isNaN(GAME_STATE.numPlayers) || GAME_STATE.numPlayers < 2 || GAME_STATE.numPlayers > 5) {
+                displayMessage('Por favor, selecciona un número de jugadores válido (2-5).', 'error');
+                return;
+            }
+            hideSetupModal();
+            initGame();
+        });
+
+        elements.restartGameBtn.addEventListener('click', () => {
+            resetGame();
+            showSetupModal();
+        });
+
+
+        // --- Lógica Principal del Juego ---
+        function initGame() {
+            console.log('initGame: Inicializando juego...');
+            // Inicializar la bolsa de dinosaurios
+            let initialDinosaurs = [];
+            GAME_STATE.dinosaurs.forEach(species => {
+                for (let i = 0; i < 8; i++) { // 8 dinosaurios de cada especie * 6 especies = 48 dinos
+                    initialDinosaurs.push(species);
+                }
+            });
+            GAME_STATE.bag = shuffleArray(initialDinosaurs);
+
+            // Crear jugadores: Jugador 1 es Humano, los demás son IA
+            GAME_STATE.players = [];
+            for (let i = 0; i < GAME_STATE.numPlayers; i++) {
+                GAME_STATE.players.push(new Player(i + 1, i !== 0)); // Jugador 1 (índice 0) no es IA
+            }
+            GAME_STATE.currentPlayerIndex = 0; // El Jugador 1 siempre comienza lanzando el dado
+
+            // Configurar los botones de navegación de otros jugadores
+            setupOtherPlayerNavigation();
+            elements.otherPlayersParksContainer.style.display = 'block'; // Mostrar el contenedor de otros parques
+
+            // Añadir el listener delegado al contenedor del parque actual para clics
+            elements.parkLayout.addEventListener('click', handleEnclosureClick);
+            // Añadir listeners para Drag and Drop a todos los recintos y el río
+            // Se añaden en initGame para que estén presentes desde el inicio
+            // y se actualiza su estado de "selectable" en updateUI/toggleEnclosureSelection
+            document.querySelectorAll('.enclosure, .river-area').forEach(el => {
+                el.addEventListener('dragover', handleDragOver);
+                el.addEventListener('dragleave', handleDragLeave);
+                el.addEventListener('drop', handleDrop);
+            });
+            
+            // Ocultar botón de reinicio al inicio de una nueva partida
+            elements.restartGameBtn.style.display = 'none'; 
+
+            startRound();
+        }
+
+        // Reinicia el estado del juego para comenzar una nueva partida
+        function resetGame() {
+            console.log('resetGame: Reiniciando el estado del juego...');
+            GAME_STATE.bag = [];
+            GAME_STATE.players = [];
+            GAME_STATE.currentPlayerIndex = 0;
+            GAME_STATE.draftDirection = 1;
+            GAME_STATE.currentTurnInRound = 0;
+            GAME_STATE.currentRound = 0;
+            GAME_STATE.selectedDinoSpecies = null;
+            GAME_STATE.isDieRolledForThisTurn = false;
+            GAME_STATE.isDinoSelected = false;
+            GAME_STATE.placedDinosaursThisTurn = 0;
+            GAME_STATE.numPlayers = 0;
+            GAME_STATE.currentOtherPlayerViewIndex = -1;
+
+            elements.dieResult.textContent = 'Resultado del Dado:';
+            elements.dieResult.classList.remove('rolled');
+            elements.scoreDisplay.textContent = 'Puntuación: 0';
+            elements.bagCounter.textContent = 'Bolsa: 0';
+            elements.playerInfo.textContent = 'Jugador: -';
+            elements.turnInfo.textContent = 'Ronda: 0 | Turno: 0/6';
+            elements.dinoHand.innerHTML = '';
+            elements.messageDisplay.classList.remove('show'); // Esconder mensaje anterior
+            elements.messageDisplay.className = 'message info'; // Resetear clase
+            elements.messageDisplay.textContent = '¡Bienvenido a tu parque! Configura la partida.';
+
+            // Limpiar visualmente el parque del jugador actual
+            const humanParkLayout = document.getElementById('current-player-park-layout');
+            humanParkLayout.querySelectorAll('.enclosure, .river-area').forEach(enclosureEl => {
+                enclosureEl.classList.remove('enclosure-selectable', 'drag-over', 'shake'); // Limpiar clases
+                const container = enclosureEl.querySelector('.enclosure-grid-container') || enclosureEl.querySelector('.enclosure-flex-container') || enclosureEl; // El río es el propio elemento
+                if(container) {
+                    container.innerHTML = ''; // Limpiar dinos
+                    if(enclosureEl.dataset.enclosureType === 'river') {
+                        container.innerHTML = '<div class="enclosure-score-explanation"></div>'; // Mantener la explicación del río
+                    } else {
+                        // Rellenar con celdas vacías si es un recinto de parque
+                        const enclosureType = enclosureEl.dataset.enclosureType;
+                        const capacity = ENCLOSURE_CAPACITIES[enclosureType];
+                        if (capacity && capacity !== Infinity) {
+                            for (let i = 0; i < capacity; i++) {
+                                const cell = document.createElement('div');
+                                cell.classList.add('enclosure-cell');
+                                container.appendChild(cell);
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // Ocultar y limpiar parques de otros jugadores
+            elements.otherPlayersParksContainer.style.display = 'none';
+            elements.otherPlayerNavigation.innerHTML = '';
+            elements.otherPlayersParksDisplayArea.innerHTML = '';
+            
+            elements.rollDieBtn.disabled = true;
+            elements.restartGameBtn.style.display = 'none';
+        }
+
+
+        async function startRound() {
+            console.log(`startRound: Iniciando Ronda ${GAME_STATE.currentRound + 1}...`);
+            GAME_STATE.currentRound++;
+            if (GAME_STATE.currentRound > 2) { // El juego tiene 2 rondas
+                endGame();
+                return;
+            }
+
+            // Establecer la dirección del draft para la ronda
+            GAME_STATE.draftDirection = (GAME_STATE.currentRound === 1) ? 1 : -1; // R1: izq a der, R2: der a izq
+
+            // Al inicio de cada ronda, cada jugador roba 6 dinosaurios de la bolsa
+            GAME_STATE.players.forEach(player => {
+                player.hand = drawDinosaurs(6); // ¡6 dinos al inicio de la ronda!
+            });
+
+            GAME_STATE.currentTurnInRound = 0; // Reiniciar el contador de fases de colocación dentro de la ronda (0 a 5)
+            
+            // Resetear el estado para la primera fase de colocación de la ronda
+            GAME_STATE.placedDinosaursThisTurn = 0; // Resetear el contador de dinos colocados en esta fase
+            GAME_STATE.isDieRolledForThisTurn = false; // Ningún jugador ha lanzado el dado aún
+            GAME_STATE.isDinoSelected = false;
+            GAME_STATE.selectedDinoSpecies = null;
+            elements.dieResult.textContent = 'Resultado del Dado:'; // Limpiar resultado del dado
+            elements.dieResult.classList.remove('rolled');
+            
+            toggleEnclosureSelection(false); // Deshabilitar selección de recintos al inicio de la ronda
+
+            displayMessage(`¡Ronda ${GAME_STATE.currentRound} comienza!`);
+            updateUI();
+            
+            // Iniciar la primera fase de colocación
+            await startTurn();
+        }
+
+        async function startTurn() {
+            console.log(`startTurn: Iniciando fase de colocación ${GAME_STATE.currentTurnInRound + 1}/${GAME_STATE.turnsPerRound} para el jugador ${GAME_STATE.currentPlayerIndex + 1}.`);
+            // El jugador en `GAME_STATE.currentPlayerIndex` es el que lanza el dado (jugador activo)
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex];
+            const humanPlayer = GAME_STATE.players[0];
+            
+            // Reiniciar estado de colocación para *todos* los jugadores al inicio de una nueva fase de colocación
+            GAME_STATE.players.forEach(player => {
+                player.hasPlacedDinoThisTurn = false; // Todos deben colocar un dino en esta fase
+                player.currentDieRoll = null; // Limpiar el dado del turno anterior
+            });
+            GAME_STATE.placedDinosaursThisTurn = 0; // Resetear contador para esta fase de colocación (todos colocan)
+
+            // Preparar el juego para que el jugador activo lance el dado
+            GAME_STATE.isDieRolledForThisTurn = false; // Aún no se ha lanzado el dado en esta fase
+            GAME_STATE.isDinoSelected = false; // Humano no ha seleccionado aún
+            GAME_STATE.selectedDinoSpecies = null; // Humano no ha seleccionado aún
+            elements.dieResult.textContent = 'Resultado del Dado:'; // Limpiar resultado del dado visible
+            elements.dieResult.classList.remove('rolled');
+
+            if (currentPlayerToRoll.isAI) {
+                displayMessage(`Turno de la IA (Jugador ${currentPlayerToRoll.id}) para lanzar el dado.`);
+                elements.rollDieBtn.disabled = true; // Asegurarse de que el botón esté deshabilitado para IA
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Pequeña pausa
+                await aiRollAndPlaceForAll(currentPlayerToRoll); // La IA lanza dado y todos colocan
+            } else { // Es el turno del jugador humano para lanzar el dado
+                displayMessage(`Jugador ${currentPlayerToRoll.id} (Tú): ¡Lanza el dado!`);
+                elements.rollDieBtn.disabled = false; // Habilitar el botón de dado para el jugador humano
+            }
+            updateUI(); 
+        }
+
+        async function rollDie() {
+            console.log('rollDie: Jugador humano lanza el dado...');
+            const humanPlayer = GAME_STATE.players[0]; // El jugador humano siempre es el de índice 0
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex];
+
+            if (currentPlayerToRoll.isAI) {
+                console.log('rollDie: Error - AI player trying to roll die. Button should be disabled.');
+                return; // Esto no debería suceder si el botón está deshabilitado para la IA
+            }
+
+            if (GAME_STATE.isDieRolledForThisTurn) {
+                displayMessage(`Jugador ${currentPlayerToRoll.id}: ¡Ya lanzaste el dado en esta fase de colocación!`, 'warning');
+                console.log('rollDie: Already rolled for this turn.');
+                return;
+            }
+            if (humanPlayer.hand.length === 0 && GAME_STATE.currentTurnInRound < GAME_STATE.turnsPerRound) {
+                 displayMessage(`Jugador ${humanPlayer.id}: Tu mano está vacía prematuramente. Esto es un error de juego.`, 'error');
+                 elements.rollDieBtn.disabled = true;
+                 console.log('rollDie: Human hand is empty prematurely.');
+                 return;
+            }
+
+            // Modificado: Se elimina "¡Cuidado con el T-Rex!"
+            const dieFaces = ['Bosque', 'Llanura', 'Baños', 'Cafetería', 'Recinto Vacío'];
+            currentPlayerToRoll.currentDieRoll = dieFaces[Math.floor(Math.random() * dieFaces.length)]; // El jugador que lanzó tiene su propio dado
+
+            elements.dieResult.textContent = 'Rodando...';
+            elements.dieResult.classList.remove('rolled'); // Resetear para que la animación se repita
+            setTimeout(() => {
+                elements.dieResult.textContent = `Resultado del Dado: ${currentPlayerToRoll.currentDieRoll}`;
+                elements.dieResult.classList.add('rolled');
+            }, 300);
+
+            GAME_STATE.isDieRolledForThisTurn = true; // El dado ya fue lanzado por el jugador activo en esta fase
+            elements.rollDieBtn.disabled = true; // Deshabilitar el botón después de lanzar el dado
+
+            displayMessage(`Jugador ${currentPlayerToRoll.id}: Has lanzado: **${currentPlayerToRoll.currentDieRoll}**. Ahora selecciona un dinosaurio de tu mano (clic o arrastrar) y luego haz clic o suelta en un recinto permitido.`);
+            
+            // IMPORTANTE: Ahora, después de que el humano lanza, las IAs también deben lanzar y colocar sus dinos
+            // Las IAs respetan el dado lanzado por el humano.
+            for (let i = 0; i < GAME_STATE.numPlayers; i++) {
+                const player = GAME_STATE.players[i];
+                if (player.isAI) {
+                    await new Promise(resolve => setTimeout(resolve, 700)); // Pequeña pausa para IA
+                    // Las IAs NO son el jugador que lanzó el dado, por lo tanto, respetan el resultado del dado
+                    await aiChooseAndPlace(player, currentPlayerToRoll.currentDieRoll, false); // false = NO es el jugador que lanzó el dado
+                }
+            }
+            // Después de que todas las IAs hayan actuado, el jugador humano finaliza su colocación manualmente
+            updateUI(); // La UI del humano se habilitará aquí si no ha colocado
+        }
+
+
+        function selectDinosaur(dinoElement, species) {
+            console.log('selectDinosaur: Dino selected:', species);
+            const humanPlayer = GAME_STATE.players[0];
+
+            if (!humanPlayer || humanPlayer.isAI) {
+                console.log('selectDinosaur: Not human player or is AI, cannot select dino.');
+                return; // Solo el jugador humano puede seleccionar dinos manualmente
+            }
+
+            if (!GAME_STATE.isDieRolledForThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: ¡Primero el jugador activo debe lanzar el dado!`, 'warning');
+                console.log('selectDinosaur: Die not rolled yet.');
+                return;
+            }
+            if (humanPlayer.hasPlacedDinoThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: Ya colocaste tu dinosaurio en este turno.`, 'warning');
+                console.log('selectDinosaur: Human player already placed this turn.');
+                return;
+            }
+            if (humanPlayer.hand.length === 0) {
+                 displayMessage(`Jugador ${humanPlayer.id}: Tu mano está vacía.`, 'warning');
+                 console.log('selectDinosaur: Human hand is empty.');
+                 return;
+            }
+
+
+            const previouslySelected = elements.dinoHand.querySelector('.dino-selected');
+            if (previouslySelected) {
+                previouslySelected.classList.remove('dino-selected');
+                console.log('selectDinosaur: Removed previous selection.');
+            }
+            
+            dinoElement.classList.add('dino-selected');
+            GAME_STATE.selectedDinoSpecies = species;
+            GAME_STATE.isDinoSelected = true;
+
+            displayMessage(`Jugador ${humanPlayer.id}: Has seleccionado un **${species}**. Ahora haz clic o arrastra a un recinto o al Río para colocarlo.`);
+            updateUI(); // Llamar a updateUI para que se actualice la selección de recintos
+        }
+
+        async function placeDinosaur(enclosureId, selectedDinoElement = null) {
+            console.log('placeDinosaur: Attempting to place dinosaur in:', enclosureId);
+            const humanPlayer = GAME_STATE.players[0]; // Referencia al jugador humano
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex]; // El jugador que lanzó el dado
+
+            if (!humanPlayer || humanPlayer.isAI) {
+                console.log('placeDinosaur: Not human player or is AI, returning.');
+                return;
+            }
+
+            if (humanPlayer.hasPlacedDinoThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: Ya colocaste tu dinosaurio en este turno.`, 'warning');
+                console.log('placeDinosaur: Human player already placed this turn.');
+                return;
+            }
+            if (!GAME_STATE.isDinoSelected || !GAME_STATE.selectedDinoSpecies) {
+                displayMessage(`Jugador ${humanPlayer.id}: ¡Por favor, selecciona un dinosaurio primero!`, 'error');
+                console.log('placeDinosaur: No dinosaur selected.');
+                return;
+            }
+            if (!GAME_STATE.isDieRolledForThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: ¡Primero el jugador activo debe lanzar el dado!`, 'error');
+                console.log('placeDinosaur: Die not rolled yet.');
+                return;
+            }
+            if (humanPlayer.hand.length === 0) {
+                 displayMessage(`Jugador ${humanPlayer.id}: Tu mano está vacía. No puedes colocar dinos.`, 'warning');
+                 console.log('placeDinosaur: Human hand is empty.');
+                 return;
+            }
+
+
+            const species = GAME_STATE.selectedDinoSpecies;
+            let actualEnclosureName;
+            let isRiver = false;
+            
+            const targetElement = document.getElementById(enclosureId);
+            if (!targetElement) {
+                console.error('placeDinosaur: Target enclosure element not found:', enclosureId);
+                return;
+            }
+
+            // Usar data-enclosure-type para identificar el recinto
+            actualEnclosureName = targetElement.dataset.enclosureType;
+            isRiver = (actualEnclosureName === 'river');
+
+            console.log(`placeDinosaur: Placing ${species} in ${actualEnclosureName}. Is River: ${isRiver}`);
+
+            // Validar las reglas del dado (del jugador activo) y del recinto
+            // Si el humano es el jugador que lanzó el dado, NO se le aplican las restricciones del dado para parques,
+            // pero SÍ la regla de "Recinto Vacío" si aplica.
+            const isHumanWhoRolled = (humanPlayer.id === currentPlayerToRoll.id);
+            let isAllowedByDie = isDieRollPlacementAllowed(actualEnclosureName, humanPlayer, currentPlayerToRoll.currentDieRoll, isHumanWhoRolled);
+            
+            if (!isAllowedByDie) {
+                console.log('placeDinosaur: Placement not allowed by die rules.');
+                // isDieRollPlacementAllowed ya muestra el mensaje de error si es necesario
+                animateEnclosureShake(targetElement); // Feedback visual
+                return; 
+            }
+
+            let isValidEnclosureRule = validateEnclosureRules(actualEnclosureName, species, humanPlayer);
+
+            if (isValidEnclosureRule) {
+                if (isRiver) {
+                    humanPlayer.river.push(species);
+                } else {
+                    humanPlayer.park[actualEnclosureName].push(species);
+                }
+                
+                // Animación de desaparición del dino de la mano
+                if (selectedDinoElement) {
+                    selectedDinoElement.classList.add('placing');
+                    // No eliminar el elemento de la mano inmediatamente, dejar que la animación lo haga desaparecer
+                    // y luego el renderizado de la mano lo quitará del DOM.
+                    await new Promise(resolve => setTimeout(resolve, 300)); // Esperar a que la animación termine
+                }
+                removeDinoFromHand(species, humanPlayer); // Eliminar de la mano del jugador actual
+                humanPlayer.hasPlacedDinoThisTurn = true; // Marcar que ya colocó su dino
+
+                // Obtener el nombre del recinto de forma robusta
+                let enclosureDisplayName = '';
+                if (isRiver) {
+                    enclosureDisplayName = 'Río';
+                } else {
+                    // Intenta obtener el h3 del recinto del jugador humano
+                    const enclosureElement = document.getElementById(enclosureId);
+                    if (enclosureElement) {
+                        const h3 = enclosureElement.querySelector('h3');
+                        if (h3) {
+                            enclosureDisplayName = h3.textContent;
+                        } else {
+                            // Fallback al nombre data-enclosure-type si no se encuentra h3
+                            enclosureDisplayName = camelCaseToKebabCase(actualEnclosureName).replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                        }
+                    } else {
+                        enclosureDisplayName = camelCaseToKebabCase(actualEnclosureName).replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    }
+                }
+
+                displayMessage(`Jugador ${humanPlayer.id}: Has colocado un **${species}** en el recinto ${enclosureDisplayName}.`);
+                console.log(`placeDinosaur: Successfully placed ${species} in ${actualEnclosureName}.`);
+
+                // Deshabilitar la UI de colocación del humano para este turno
+                GAME_STATE.isDinoSelected = false;
+                GAME_STATE.selectedDinoSpecies = null;
+                
+                await endTurn(); // Llama a updateUI internamente y avanza el turno
+            } else {
+                console.log('placeDinosaur: Placement not allowed by enclosure rules.');
+                animateEnclosureShake(targetElement); // Feedback visual si falla por reglas del recinto
+            }
+        }
+
+        // Modificada para que el río siempre esté disponible y eliminar la lógica de "Cuidado con el T-Rex!"
+        function isDieRollPlacementAllowed(targetEnclosureName, playerToPlace, dieRollResult, isPlayerWhoRolled = false) {
+            console.log(`isDieRollPlacementAllowed: target=${targetEnclosureName}, player=${playerToPlace.id}, die=${dieRollResult}, whoRolled=${isPlayerWhoRolled}`);
+
+            // El río siempre está disponible para todos los jugadores, independientemente del dado,
+            // A MENOS que el dado sea "Recinto Vacío" y haya recintos vacíos en el parque.
+            if (targetEnclosureName === 'river') {
+                if (dieRollResult === 'Recinto Vacío') {
+                    // Si el dado es "Recinto Vacío" y hay recintos vacíos en el parque, el río NO es una opción.
+                    let anyParkEnclosureEmpty = false;
+                    for (const key in playerToPlace.park) {
+                        // Asegurarse de que el recinto existe y no es el río (que es Infinity)
+                        if (ENCLOSURE_CAPACITIES[key] !== undefined && ENCLOSURE_CAPACITIES[key] !== Infinity && playerToPlace.park[key].length < ENCLOSURE_CAPACITIES[key]) {
+                            anyParkEnclosureEmpty = true;
+                            break;
+                        }
+                    }
+                    if (anyParkEnclosureEmpty) {
+                        if (!playerToPlace.isAI) displayMessage(`Jugador ${playerToPlace.id}: Con el dado "Recinto Vacío", debes colocar en un recinto vacío del parque, no en el Río, ya que aún hay espacios.`, 'error');
+                        console.log(`isDieRollPlacementAllowed: River blocked by 'Recinto Vacío' rule (empty park enclosures exist).`);
+                        return false;
+                    }
+                }
+                // Si el dado no es "Recinto Vacío", o si es "Recinto Vacío" pero no hay recintos de parque vacíos, el río está permitido.
+                console.log(`isDieRollPlacementAllowed: River allowed.`);
+                return true; 
+            }
+
+            // Si es el jugador que lanzó el dado
+            if (isPlayerWhoRolled) {
+                // El jugador que lanzó el dado siempre puede colocar en CUALQUIER recinto de parque (no río)
+                // excepto si el dado es "Recinto Vacío" y DEBE ir a un recinto vacío.
+                const isParkEnclosure = ENCLOSURE_CAPACITIES[targetEnclosureName] !== undefined && targetEnclosureName !== 'river';
+                if (!isParkEnclosure) {
+                    if (!playerToPlace.isAI) displayMessage(`Jugador ${playerToPlace.id}: Recinto desconocido o inválido: ${targetEnclosureName}.`, 'error');
+                    console.log(`isDieRollPlacementAllowed: Invalid park enclosure type: ${targetEnclosureName}.`);
+                    return false;
+                }
+
+                if (dieRollResult === 'Recinto Vacío') {
+                    let anyParkEnclosureEmpty = false;
+                    for (const key in playerToPlace.park) {
+                         if (ENCLOSURE_CAPACITIES[key] !== undefined && ENCLOSURE_CAPACITIES[key] !== Infinity && playerToPlace.park[key].length < ENCLOSURE_CAPACITIES[key]) {
+                            anyParkEnclosureEmpty = true;
+                            break;
+                        }
+                    }
+                    if (anyParkEnclosureEmpty) {
+                        // Si hay recintos vacíos en el parque, DEBE colocar en uno de ellos.
+                        const targetEnclosureIsFull = playerToPlace.park[targetEnclosureName].length >= ENCLOSURE_CAPACITIES[targetEnclosureName];
+                        if (targetEnclosureIsFull) {
+                             if (!playerToPlace.isAI) displayMessage(`Jugador ${playerToPlace.id}: Con el dado "${dieRollResult}", debes colocar el dinosaurio en un recinto *vacío* del parque. Este recinto ya está lleno.`, 'error');
+                            console.log(`isDieRollPlacementAllowed: 'Recinto Vacío' rule: Target enclosure is full.`);
+                            return false;
+                        }
+                    }
+                    // Si todos los recintos del parque están llenos, DEBE colocar en el río, y esta función ya habría devuelto true para el río.
+                    // Si llega aquí, significa que dieRollResult es 'Recinto Vacío', hay espacios en el parque, y el recinto objetivo no está lleno.
+                }
+                console.log(`isDieRollPlacementAllowed: Player who rolled is allowed in park enclosure.`);
+                return true; // El jugador que lanzó el dado siempre puede colocar en recintos de parque (salvo las reglas de "Recinto Vacío" aplicadas arriba)
+            }
+
+            // Para los jugadores que NO son el que lanzó el dado, se aplican las reglas del dado (excepto para el río, ya manejado arriba)
+            let allowedByDie = false;
+            let feedbackMessage = '';
+
+            if (dieRollResult === 'Recinto Vacío') {
+                // Si el dado es "Recinto Vacío"
+                let anyParkEnclosureEmpty = false;
+                for (const key in playerToPlace.park) {
+                    if (ENCLOSURE_CAPACITIES[key] !== undefined && ENCLOSURE_CAPACITIES[key] !== Infinity && playerToPlace.park[key].length < ENCLOSURE_CAPACITIES[key]) {
+                        anyParkEnclosureEmpty = true;
+                        break;
+                    }
+                }
+                
+                if (anyParkEnclosureEmpty) {
+                    // Si hay recintos vacíos en el parque, DEBE colocar en uno de ellos.
+                    allowedByDie = (targetEnclosureName !== 'river' && 
+                                    playerToPlace.park[targetEnclosureName] && 
+                                    playerToPlace.park[targetEnclosureName].length < ENCLOSURE_CAPACITIES[targetEnclosureName]);
+                    if (!allowedByDie) {
+                        feedbackMessage = `Con el dado "${dieRollResult}", debes colocar el dinosaurio en un recinto vacío del parque, no en el Río, o el recinto seleccionado ya está lleno.`;
+                        console.log(`isDieRollPlacementAllowed: Other player: 'Recinto Vacío' rule, park enclosure full or river selected.`);
+                    }
+                } else {
+                    // Si TODOS los recintos del parque están llenos, ENTONCES DEBE colocar en el río.
+                    // Pero la regla del río ya se manejó al principio, si llega aquí es porque targetEnclosureName no es river
+                    // y todos los recintos del parque están llenos, por lo tanto, no es válido para este targetEnclosureName.
+                    allowedByDie = false; // No hay recintos vacíos de parque, y no es el río.
+                    feedbackMessage = `Con el dado "${dieRollResult}", todos tus recintos del parque están llenos. ¡Debes colocar el dinosaurio en el Río!`;
+                    console.log(`isDieRollPlacementAllowed: Other player: 'Recinto Vacío' rule, no park enclosures empty, not river.`);
+                }
+            } else { // Para 'Bosque', 'Llanura', 'Baños', 'Cafetería'
+                const allowedEnclosures = ENCLOSURE_TYPES_BY_DIE_FACE[dieRollResult];
+                allowedByDie = allowedEnclosures.includes(targetEnclosureName);
+                if (!allowedByDie) {
+                    const readableNames = allowedEnclosures.map(en => {
+                        const el = document.getElementById(`${camelCaseToKebabCase(en)}-enclosure`);
+                        return el ? (el.querySelector('h3')?.textContent || en) : en; // Usar h3 o el nombre camelCase
+                    });
+                    feedbackMessage = `Con el dado "${dieRollResult}", solo puedes colocar en: ${readableNames.join(', ')}.`;
+                    console.log(`isDieRollPlacementAllowed: Other player: Die type '${dieRollResult}' not allowed for ${targetEnclosureName}.`);
+                }
+            }
+
+            if (!allowedByDie && !playerToPlace.isAI) { // Solo mostrar mensaje para jugador humano si no es permitido
+                displayMessage(`Jugador ${playerToPlace.id}: No puedes colocarlo aquí. ${feedbackMessage}`, 'error');
+            }
+            return allowedByDie;
+        }
+
+        // Valida las reglas internas de cada recinto
+        function validateEnclosureRules(enclosureName, speciesToPlace, player) {
+            console.log(`validateEnclosureRules: for ${enclosureName} with ${speciesToPlace}`);
+            if (enclosureName === 'river') {
+                console.log(`validateEnclosureRules: River always valid.`);
+                return true; // El río siempre acepta cualquier dinosaurio si el dado lo permite (o si siempre está disponible).
+            }
+            
+            const enclosure = player.park[enclosureName];
+            const maxCapacity = ENCLOSURE_CAPACITIES[enclosureName];
+
+            if (enclosure.length >= maxCapacity) {
+                // Para el mensaje de error, intentar obtener el nombre del recinto del DOM si es el jugador humano
+                let enclosureDisplayName = camelCaseToKebabCase(enclosureName);
+                if (!player.isAI) {
+                    const enclosureElement = document.getElementById(`${enclosureDisplayName}-enclosure`);
+                    if (enclosureElement) {
+                        const h3 = enclosureElement.querySelector('h3');
+                        if (h3) enclosureDisplayName = h3.textContent;
+                    }
+                }
+                if (!player.isAI) displayMessage(`Jugador ${player.id}: El recinto (${enclosureDisplayName}) está lleno.`, 'error');
+                console.log(`validateEnclosureRules: Enclosure ${enclosureName} is full.`);
+                return false;
+            }
+
+            switch (enclosureName) {
+                case 'forestOfSameness':
+                    if (enclosure.length > 0 && enclosure[0] !== speciesToPlace) {
+                        if (!player.isAI) displayMessage(`Jugador ${player.id}: El **Bosque de la Semejanza** solo puede contener dinosaurios de la misma especie (ya hay ${enclosure[0]}).`, 'error');
+                        console.log('validateEnclosureRules: Forest of Sameness: species mismatch.');
+                        return false;
+                    }
+                    console.log('validateEnclosureRules: Forest of Sameness: valid.');
+                    return true;
+                case 'meadowOfDifference':
+                    if (enclosure.includes(speciesToPlace)) {
+                        if (!player.isAI) displayMessage(`Jugador ${player.id}: El **Prado de la Diferencia** ya contiene un dinosaurio de especie ${speciesToPlace}.`, 'error');
+                        console.log('validateEnclosureRules: Meadow of Difference: species already exists.');
+                        return false;
+                    }
+                    console.log('validateEnclosureRules: Meadow of Difference: valid.');
+                    return true;
+                case 'kingOfTheJungle':
+                case 'lonelyIsland':
+                case 'leafyTrio':
+                case 'pastureOfLove':
+                    // Max capacity already checked. No specific species restrictions for these.
+                    console.log(`validateEnclosureRules: ${enclosureName}: valid.`);
+                    return true;
+                default:
+                    console.warn(`validateEnclosureRules: Unknown enclosure type for validation: ${enclosureName}`);
+                    return true;
+            }
+        }
+
+
+        async function endTurn() {
+            GAME_STATE.placedDinosaursThisTurn++;
+            console.log(`endTurn: Dino placed by one player. Total placed this turn: ${GAME_STATE.placedDinosaursThisTurn}/${GAME_STATE.numPlayers}`);
+            updateUI(); // Asegurarse de que la UI se actualice después de cada colocación
+
+            if (GAME_STATE.placedDinosaursThisTurn === GAME_STATE.numPlayers) {
+                // Todos los jugadores han colocado un dinosaurio en esta fase de colocación.
+                displayMessage(`Todos los jugadores han colocado un dinosaurio. Pasando las manos.`, 'info');
+                console.log('endTurn: All players placed their dino. Proceeding to pass hands.');
+                GAME_STATE.currentTurnInRound++; // Una "fase de colocación" ha terminado
+
+                // Resetear estado del dado global y del humano para la próxima fase
+                GAME_STATE.isDieRolledForThisTurn = false;
+                elements.dieResult.textContent = 'Resultado del Dado:';
+                elements.dieResult.classList.remove('rolled');
+                
+                await passHands();
+                
+                if (GAME_STATE.currentTurnInRound >= GAME_STATE.turnsPerRound) {
+                    displayMessage(`¡Ronda ${GAME_STATE.currentRound} terminada!`, 'success');
+                    console.log(`endTurn: Round ${GAME_STATE.currentRound} finished.`);
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    startRound(); // Iniciar la siguiente ronda o finalizar el juego
+                } else {
+                    displayMessage(`Comienza la fase de colocación ${GAME_STATE.currentTurnInRound + 1} de ${GAME_STATE.turnsPerRound}.`);
+                    console.log(`endTurn: Starting next placement phase: ${GAME_STATE.currentTurnInRound + 1}.`);
+                    // El próximo jugador en el orden será el que lanza el dado
+                    GAME_STATE.currentPlayerIndex = (GAME_STATE.currentPlayerIndex + 1) % GAME_STATE.numPlayers;
+                    await startTurn(); // Iniciar la próxima fase de colocación
+                }
+            } else {
+                // Aún hay jugadores que deben colocar su dinosaurio
+                // Si el jugador humano ya colocó, su UI estará deshabilitada.
+                // Simplemente esperamos las colocaciones de las IAs restantes o la del humano si aún no lo ha hecho.
+                console.log('endTurn: Waiting for other players to place their dino.');
+            }
+        }
+
+
+        async function passHands() {
+            console.log('passHands: Pasando las manos de los jugadores...');
+            const newHands = new Array(GAME_STATE.numPlayers).fill(null).map(() => []);
+            
+            GAME_STATE.players.forEach((player, index) => {
+                const targetIndex = (index + GAME_STATE.draftDirection + GAME_STATE.numPlayers) % GAME_STATE.numPlayers;
+                newHands[targetIndex] = player.hand;
+            });
+
+            GAME_STATE.players.forEach((player, index) => {
+                player.hand = newHands[index];
+            });
+
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Pequeña pausa para que se vea el paso
+            updateUI(); // Asegurarse de que la UI se actualice después de pasar las manos
+        }
+
+        // --- Lógica de IA ---
+        // Esta función se llama cuando una IA es el jugador activo para lanzar el dado
+        async function aiRollAndPlaceForAll(playerToRoll) {
+            console.log(`aiRollAndPlaceForAll: AI Player ${playerToRoll.id} is rolling the die.`);
+            // 1. La IA (jugador activo) lanza el dado
+            // Modificado: Se elimina "¡Cuidado con el T-Rex!"
+            const dieFaces = ['Bosque', 'Llanura', 'Baños', 'Cafetería', 'Recinto Vacío'];
+            const aiDieRoll = dieFaces[Math.floor(Math.random() * dieFaces.length)];
+            playerToRoll.currentDieRoll = aiDieRoll; // La IA activa tiene su propio resultado del dado
+            
+            elements.dieResult.textContent = `Resultado del Dado (IA Jugador ${playerToRoll.id}): ${aiDieRoll}`;
+            elements.dieResult.classList.add('rolled');
+            displayMessage(`IA (Jugador ${playerToRoll.id}) lanza: **${aiDieRoll}**. Como es el lanzador, puede colocar donde quiera (salvo reglas de Recinto Vacío).`);
+            await new Promise(resolve => setTimeout(resolve, 700)); 
+
+            // Se marca el dado como lanzado para esta fase de colocación
+            GAME_STATE.isDieRolledForThisTurn = true; 
+            updateUI(); // Actualizar UI para que el humano pueda colocar su dino
+
+            // 2. Todos los jugadores (incluyendo la IA activa) eligen y colocan un dinosaurio
+            // Importante: No iterar sobre players en un forEach si vas a usar awaits dentro. Un for...of o un bucle for tradicional es mejor.
+            for (let i = 0; i < GAME_STATE.numPlayers; i++) {
+                const player = GAME_STATE.players[i];
+                // Si es la IA que lanzó el dado, `isPlayerWhoRolled` es true.
+                // Si es otra IA, `isPlayerWhoRolled` es false (respetan el dado).
+                const isPlayerWhoRolled = (player.id === playerToRoll.id); 
+                if (player.isAI) { // Solo si es una IA
+                    await new Promise(resolve => setTimeout(resolve, 700)); // Pequeña pausa entre acciones de IA
+                    await aiChooseAndPlace(player, playerToRoll.currentDieRoll, isPlayerWhoRolled); 
+                }
+            }
+            // Después de que todas las IAs hayan actuado, el jugador humano (si existe) debe colocar su dino
+            // Su UI estará activa si no ha colocado aún.
+            updateUI(); // Una última actualización para asegurar el estado de la UI del humano
+        }
+
+        // Esta función se llama para que una IA elija y coloque un dino, usando el dado ya lanzado por el jugador activo
+        // Se añade `isPlayerWhoRolled` para la lógica del dado libre
+        async function aiChooseAndPlace(player, dieRollResult, isPlayerWhoRolled = false) {
+            console.log(`aiChooseAndPlace: AI Player ${player.id} is choosing a dino. Die roll: ${dieRollResult}, isPlayerWhoRolled: ${isPlayerWhoRolled}`);
+            if (player.hasPlacedDinoThisTurn) {
+                console.log(`aiChooseAndPlace: AI Player ${player.id} already placed dino this turn.`);
+                return;
+            }
+
+            // Si la IA no tiene dinos en mano, es un error (o ya los colocó todos)
+            if (player.hand.length === 0) {
+                displayMessage(`IA (Jugador ${player.id}): No hay dinosaurios para jugar en la mano.`, 'warning');
+                player.hasPlacedDinoThisTurn = true; // Marcar como colocado para no bloquear
+                await endTurn(); // Informar que esta IA "terminó" su colocación
+                console.log(`aiChooseAndPlace: AI Player ${player.id} hand is empty.`);
+                return;
+            }
+
+            let bestPlacement = {
+                enclosure: null,
+                dino: null,
+                scoreImprovement: -Infinity // Inicializar con un valor muy bajo para encontrar el mejor
+            };
+            
+            // Iterar sobre todos los dinos en la mano de la IA
+            for (const dinoSpecies of player.hand) {
+                // Crear una lista de todos los recintos, incluyendo el río
+                const allPossibleEnclosures = Object.keys(player.park).concat(['river']);
+
+                // Iterar sobre todos los recintos posibles (incluyendo el río)
+                for (const enclosureType of allPossibleEnclosures) {
+                    // Clonar el jugador para simular la colocación sin afectar el estado real
+                    const tempPlayer = JSON.parse(JSON.stringify(player)); 
+                    let targetArray;
+                    if (enclosureType === 'river') {
+                        targetArray = tempPlayer.river;
+                    } else {
+                        targetArray = tempPlayer.park[enclosureType];
+                    }
+
+                    // Verificar si la colocación es válida según el dado y las reglas del recinto
+                    // `tempPlayer` se usa para `validateEnclosureRules` para verificar el estado simulado del recinto.
+                    if (isDieRollPlacementAllowed(enclosureType, tempPlayer, dieRollResult, isPlayerWhoRolled) &&
+                        validateEnclosureRules(enclosureType, dinoSpecies, tempPlayer)) {
+                        
+                        targetArray.push(dinoSpecies); // Simular la colocación
+
+                        // Calcular la mejora de puntuación si se realizara esta colocación
+                        const currentScoreBefore = calculateScore(player); // Puntuación real actual del jugador
+                        const simulatedScore = calculateScore(tempPlayer); // Puntuación con la colocación simulada
+                        const scoreImprovement = simulatedScore - currentScoreBefore;
+
+                        // Priorizar la colocación que da más puntos. Si hay empate, cualquier otra es válida.
+                        if (scoreImprovement > bestPlacement.scoreImprovement) {
+                            bestPlacement.scoreImprovement = scoreImprovement;
+                            bestPlacement.enclosure = enclosureType;
+                            bestPlacement.dino = dinoSpecies;
+                        }
+                    }
+                }
+            }
+
+            // Fallback si por alguna razón (ej. bug, todos los recintos están llenos y dado no permite río, etc.)
+            // no se encontró un lugar óptimo. En teoría, con el río siempre disponible, esto no debería ocurrir.
+            if (!bestPlacement.enclosure) {
+                // Si la IA no encontró un lugar "mejor" pero tiene dinos, intenta el primer dino en el río.
+                // Esto debería ser siempre una opción debido a la regla del río.
+                bestPlacement.dino = player.hand[0]; 
+                bestPlacement.enclosure = 'river';
+                console.warn(`aiChooseAndPlace: AI Player ${player.id}: No se encontró la mejor colocación. Recurriendo a la colocación en el Río.`);
+            }
+            
+            // Realizar la colocación real en el parque del jugador
+            const chosenEnclosure = bestPlacement.enclosure;
+            const chosenDino = bestPlacement.dino;
+
+            if (chosenEnclosure === 'river') {
+                player.river.push(chosenDino);
+            } else {
+                player.park[chosenEnclosure].push(chosenDino);
+            }
+            removeDinoFromHand(chosenDino, player); 
+            player.hasPlacedDinoThisTurn = true; // Marcar que esta IA ya colocó su dino en esta fase
+
+            // Obtener el nombre del recinto de forma robusta para el mensaje de la IA
+            let enclosureDisplayNameAI = '';
+            if (chosenEnclosure === 'river') {
+                enclosureDisplayNameAI = 'Río';
+            } else {
+                // Para las IA, no necesitamos buscar en el DOM del parque del jugador humano.
+                // Podemos usar el nombre camelCase y convertirlo a un formato legible.
+                enclosureDisplayNameAI = camelCaseToKebabCase(chosenEnclosure).replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            }
+            displayMessage(`IA (Jugador ${player.id}) coloca el **${chosenDino}** en el recinto ${enclosureDisplayNameAI}.`);
+            console.log(`aiChooseAndPlace: AI Player ${player.id} placed ${chosenDino} in ${chosenEnclosure}.`);
+            await new Promise(resolve => setTimeout(resolve, 500)); // Pequeña pausa para ver la acción
+
+            await endTurn(); // Informar que la IA ha colocado su dino
+        }
+
+        // --- Funciones de Utilidad ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Intercambiar elementos
+            }
+            return array;
+        }
+
+        function drawDinosaurs(count) {
+            const drawn = [];
+            for (let i = 0; i < count; i++) {
+                if (GAME_STATE.bag.length > 0) {
+                    drawn.push(GAME_STATE.bag.pop());
+                } else {
+                    displayMessage('¡La bolsa de dinosaurios está vacía! No se pueden robar más.', 'warning');
+                    break;
+                }
+            }
+            return drawn;
+        }
+
+        function removeDinoFromHand(species, player) {
+            console.log(`removeDinoFromHand: Removing ${species} from player ${player.id}'s hand.`);
+            const index = player.hand.indexOf(species);
+            if (index > -1) {
+                player.hand.splice(index, 1);
+            }
+        }
+        
+        // Función para mostrar mensajes con animación
+        let messageTimeout;
+        function displayMessage(message, type = 'info') {
+            clearTimeout(messageTimeout); // Limpiar cualquier timeout anterior
+            elements.messageDisplay.classList.remove('show'); // Esconder el mensaje actual
+            
+            // Permitir un pequeño retraso antes de mostrar el nuevo mensaje para la animación
+            setTimeout(() => {
+                elements.messageDisplay.innerHTML = message;
+                elements.messageDisplay.className = `message ${type}`;
+                elements.messageDisplay.classList.add('show'); // Mostrar el nuevo mensaje
+            }, 50); // Pequeño retraso para permitir que la clase 'show' se aplique y active la transición
+        }
+
+        function calculateScore(player) {
+            let totalScore = 0;
+            const park = player.park;
+            const allDinosInParkAndRiver = [];
+            for (const key in park) {
+                allDinosInParkAndRiver.push(...park[key]);
+            }
+            allDinosInParkAndRiver.push(...player.river);
+
+
+            // Puntuación de El Río
+            totalScore += player.river.length; // 1 punto por dinosaurio en el río
+
+            // Puntuación de Bosque de la Semejanza (Forest of Sameness)
+            // Puntuación triangular: 1, 3, 6, 10, 15, 21
+            const forestLength = park.forestOfSameness.length;
+            if (forestLength > 0 && park.forestOfSameness.every(d => d === park.forestOfSameness[0])) {
+                totalScore += (forestLength * (forestLength + 1)) / 2;
+            }
+
+            // Puntuación de Prado de la Diferencia (Meadow of Difference)
+            // 2 puntos por especie diferente. Máx 6.
+            const meadowSpecies = new Set(park.meadowOfDifference);
+            totalScore += meadowSpecies.size * 2;
+
+            // Puntuación de Pradera del Amor (Pasture of Love)
+            // 5 puntos por cada par de dinosaurios. No importa la especie.
+            totalScore += Math.floor(park.pastureOfLove.length / 2) * 5;
+
+            // Puntuación de El Trío Frondoso (Leafy Trio)
+            // 7 puntos si tiene 3 dinosaurios
+            if (park.leafyTrio.length === 3) {
+                totalScore += 7;
+            }
+
+            // Puntuación de El Rey de la Selva (King of the Jungle)
+            // 7 puntos si tiene 1 dinosaurio
+            if (park.kingOfTheJungle.length === 1) {
+                totalScore += 7;
+            }
+
+            // Puntuación de La Isla Solitaria (Lonely Island)
+            // 7 puntos si tiene 1 dinosaurio y es la única especie de ese tipo en todo el parque (incluye río)
+            if (park.lonelyIsland.length === 1) {
+                const lonelyDinoSpecies = park.lonelyIsland[0];
+                // Contar cuántas instancias de `lonelyDinoSpecies` hay en todo el parque (incluyendo río y el dino en Lonely Island)
+                const totalInstancesOfLonelyDino = allDinosInParkAndRiver.filter(d => d === lonelyDinoSpecies).length; 
+                
+                if (totalInstancesOfLonelyDino === 1) { // Si solo hay una instancia en todo el parque (la de Lonely Island)
+                    totalScore += 7;
+                }
+            }
+
+            player.score = totalScore;
+            return totalScore;
+        }
+
+
+        function updateUI() {
+            console.log('updateUI: Actualizando interfaz de usuario...');
+            const humanPlayer = GAME_STATE.players[0]; // Siempre mostrar la mano y parque del jugador humano
+            if (!humanPlayer) {
+                console.log('updateUI: Human player not found, returning.');
+                return; 
+            }
+
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex];
+            elements.playerInfo.textContent = `Jugador Actual: ${currentPlayerToRoll.id} (${currentPlayerToRoll.isAI ? 'IA' : 'Tú'} - Lanza el dado)`;
+            elements.bagCounter.textContent = `Bolsa: ${GAME_STATE.bag.length}`;
+            elements.scoreDisplay.textContent = `Puntuación (Tú): ${calculateScore(humanPlayer)}`;
+            elements.turnInfo.textContent = `Ronda: ${GAME_STATE.currentRound} | Turno: ${GAME_STATE.currentTurnInRound}/${GAME_STATE.turnsPerRound}`;
+
+            renderDinoHand(humanPlayer);
+            renderPark(humanPlayer, elements.parkLayout, true); // Renderizar el parque del jugador actual (HUMANO)
+            updateOtherPlayersParksUI(); // Actualizar la vista de los parques de otros jugadores
+
+            // Control de botón del dado: solo se habilita si es el turno del jugador humano y no se ha lanzado aún
+            elements.rollDieBtn.disabled = !(currentPlayerToRoll.id === humanPlayer.id && !GAME_STATE.isDieRolledForThisTurn);
+
+            // Habilitar/Deshabilitar la UI de colocación del humano
+            // Solo se habilitan recintos si el humano NO ha colocado su dino y el dado YA fue lanzado por el jugador activo.
+            const enablePlacementUI = !humanPlayer.hasPlacedDinoThisTurn && GAME_STATE.isDieRolledForThisTurn;
+            toggleEnclosureSelection(enablePlacementUI); 
+        }
+
+        function renderDinoHand(player) {
+            elements.dinoHand.innerHTML = '';
+            console.log(`renderDinoHand: Rendering hand for player ${player.id}. Has placed: ${player.hasPlacedDinoThisTurn}`);
+
+            // Si el jugador humano ya colocó su dino, la mano se muestra 'bloqueada'
+            if (player.hasPlacedDinoThisTurn) {
+                elements.dinoHand.textContent = 'Has colocado tu dinosaurio para esta fase. Esperando a que todos los jugadores terminen...';
+                return;
+            }
+
+            player.hand.forEach((species, index) => {
+                const dinoDiv = document.createElement('div');
+                dinoDiv.classList.add('dinosaur-token');
+                if (GAME_STATE.selectedDinoSpecies === species) {
+                    dinoDiv.classList.add('dino-selected');
+                }
+                dinoDiv.dataset.species = species;
+                dinoDiv.innerHTML = `<img src="${GAME_STATE.dinoImages[species]}" alt="${species}">`;
+                
+                // Habilitar Drag and Drop para el jugador humano SOLO si no ha colocado dino y el dado ya fue lanzado
+                // Y si aún no ha seleccionado un dino, o si ya seleccionó este mismo.
+                if (!player.isAI && !player.hasPlacedDinoThisTurn && GAME_STATE.isDieRolledForThisTurn) {
+                    dinoDiv.setAttribute('draggable', 'true');
+                    dinoDiv.id = `dino-hand-${index}-${species}`; // ID único para el drag
+                    dinoDiv.addEventListener('click', () => selectDinosaur(dinoDiv, species));
+                    dinoDiv.addEventListener('dragstart', handleDragStart);
+                    console.log(`renderDinoHand: Dino ${species} is draggable.`);
+                } else {
+                     dinoDiv.removeAttribute('draggable');
+                     dinoDiv.classList.remove('dino-selected'); // Asegurarse de quitar selección si no es interactuable
+                     console.log(`renderDinoHand: Dino ${species} is NOT draggable.`);
+                }
+
+                elements.dinoHand.appendChild(dinoDiv);
+            });
+            // Si la mano está vacía (al final de la ronda o por error)
+            if (player.hand.length === 0 && GAME_STATE.currentTurnInRound < GAME_STATE.turnsPerRound) {
+                if (!player.hasPlacedDinoThisTurn) { 
+                    elements.dinoHand.textContent = 'Tu mano está vacía. Esto no debería pasar.';
+                }
+            } else if (player.hand.length === 0 && GAME_STATE.currentTurnInRound === GAME_STATE.turnsPerRound) {
+                elements.dinoHand.textContent = 'Mano Vacía (Ronda Terminada)';
+            }
+        }
+
+        // Función para renderizar un parque dado un jugador y un contenedor
+        function renderPark(player, containerElement, isCurrentPlayerHuman = false) {
+            console.log(`renderPark: Rendering park for player ${player.id}. Is current human player: ${isCurrentPlayerHuman}`);
+            const park = player.park;
+            
+            // Obtener las referencias correctas a los contenedores internos
+            const forestEnclosure = containerElement.querySelector('[data-enclosure-type="forestOfSameness"] .enclosure-grid-container');
+            const meadowEnclosure = containerElement.querySelector('[data-enclosure-type="meadowOfDifference"] .enclosure-grid-container');
+            const pastureEnclosure = containerElement.querySelector('[data-enclosure-type="pastureOfLove"] .enclosure-grid-container');
+            const leafyTrioEnclosure = containerElement.querySelector('[data-enclosure-type="leafyTrio"] .enclosure-flex-container');
+            const kingOfJungleEnclosure = containerElement.querySelector('[data-enclosure-type="kingOfTheJungle"] .enclosure-flex-container');
+            const lonelyIslandEnclosure = containerElement.querySelector('[data-enclosure-type="lonelyIsland"] .enclosure-flex-container');
+            const riverArea = containerElement.querySelector('[data-enclosure-type="river"]');
+
+            // Renderizar contenido para cada recinto, asegurándose de que el contenedor existe
+            if (forestEnclosure) renderEnclosureContent(forestEnclosure, park.forestOfSameness, ENCLOSURE_CAPACITIES.forestOfSameness, isCurrentPlayerHuman, player);
+            if (meadowEnclosure) renderEnclosureContent(meadowEnclosure, park.meadowOfDifference, ENCLOSURE_CAPACITIES.meadowOfDifference, isCurrentPlayerHuman, player);
+            if (pastureEnclosure) renderEnclosureContent(pastureEnclosure, park.pastureOfLove, ENCLOSURE_CAPACITIES.pastureOfLove, isCurrentPlayerHuman, player);
+            if (leafyTrioEnclosure) renderEnclosureContent(leafyTrioEnclosure, park.leafyTrio, ENCLOSURE_CAPACITIES.leafyTrio, isCurrentPlayerHuman, player);
+            if (kingOfJungleEnclosure) renderEnclosureContent(kingOfJungleEnclosure, park.kingOfTheJungle, ENCLOSURE_CAPACITIES.kingOfTheJungle, isCurrentPlayerHuman, player);
+            if (lonelyIslandEnclosure) renderEnclosureContent(lonelyIslandEnclosure, park.lonelyIsland, ENCLOSURE_CAPACITIES.lonelyIsland, isCurrentPlayerHuman, player);
+            if (riverArea) renderEnclosureContent(riverArea, player.river, ENCLOSURE_CAPACITIES.river, isCurrentPlayerHuman, player);
+
+            // Actualizar explicaciones de puntuación (si es el jugador humano actual)
+            if (isCurrentPlayerHuman) {
+                updateEnclosureScoreExplanations(player);
+            }
+        }
+
+        function renderEnclosureContent(container, dinos, capacity, isCurrentPlayerHuman, player) {
+            if (!container) {
+                console.error('renderEnclosureContent: Container element is null or undefined.');
+                return;
+            }
+            // Importante: No limpiar el river-area completo si es para otros jugadores,
+            // porque contiene el div .enclosure-score-explanation que es parte de su HTML base.
+            // En su lugar, solo limpiar los dinos dentro.
+            const isRiver = container.closest('.river-area'); 
+            
+            // Si es un recinto "contenedor" (grid o flex), limpiar sus hijos. Si es el river-area, limpiar solo los dinos.
+            if (isRiver) {
+                // Eliminar solo los elementos .dinosaur-token dentro del river-area
+                container.querySelectorAll('.dinosaur-token').forEach(dinoToken => dinoToken.remove());
+            } else {
+                container.innerHTML = ''; // Para recintos de parque, limpiar y recrear las celdas
+            }
+            
+            // Renderizar dinosaurios ya colocados
+            dinos.forEach(species => {
+                const dinoDiv = document.createElement('div');
+                // Small dino tokens for park enclosures, larger for river
+                dinoDiv.classList.add(isRiver ? 'dinosaur-token' : 'dinosaur-token-small'); 
+                dinoDiv.innerHTML = `<img src="${GAME_STATE.dinoImages[species]}" alt="${species}">`;
+                if (isRiver) { // River dinos are not in cells
+                    container.appendChild(dinoDiv);
+                } else {
+                    const cell = document.createElement('div');
+                    cell.classList.add('enclosure-cell');
+                    cell.appendChild(dinoDiv);
+                    container.appendChild(cell);
+                }
+            });
+
+            // Renderizar celdas vacías para recintos con capacidad limitada (no río)
+            if (!isRiver && capacity !== Infinity) {
+                for (let i = dinos.length; i < capacity; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('enclosure-cell');
+                    container.appendChild(cell);
+                }
+            }
+
+            // Lógica para aplicar 'enclosure-selectable' basada en el estado actual del juego
+            const parentEnclosure = container.closest('.enclosure, .river-area');
+            if (parentEnclosure) {
+                // Eliminar la clase por defecto
+                parentEnclosure.classList.remove('enclosure-selectable'); 
+                parentEnclosure.classList.remove('shake'); // Asegurarse de quitar la animación de "shake"
+                parentEnclosure.classList.remove('drag-over'); // También quitar drag-over en cada render
+
+                // La lógica de `enclosure-selectable` se controla primariamente por `toggleEnclosureSelection`
+                // para una mayor consistencia, asegurando que se aplica a todos los recintos a la vez
+                // basándose en el estado global.
+                // Esta parte solo asegura que se limpie la clase al re-renderizar.
+            }
+        }
+
+        // Añadida función para animar el "shake" del recinto
+        function animateEnclosureShake(enclosureElement) {
+            console.log('animateEnclosureShake: Shaking enclosure:', enclosureElement.id);
+            if (enclosureElement) {
+                enclosureElement.classList.add('shake');
+                enclosureElement.addEventListener('animationend', () => {
+                    enclosureElement.classList.remove('shake');
+                }, { once: true }); // Eliminar listener después de una vez
+            }
+        }
+
+
+        function toggleEnclosureSelection(enable) {
+            console.log(`toggleEnclosureSelection: Enable placement UI: ${enable}`);
+            // Solo afectar a los recintos del parque del jugador humano
+            const enclosures = elements.parkLayout.querySelectorAll('.enclosure, .river-area');
+            const humanPlayer = GAME_STATE.players[0]; 
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex];
+
+            enclosures.forEach(enclosure => {
+                enclosure.classList.remove('enclosure-selectable'); 
+                enclosure.classList.remove('drag-over'); 
+                enclosure.classList.remove('shake'); 
+
+                // Habilitar solo si es el turno del jugador humano para colocar
+                if (enable && GAME_STATE.selectedDinoSpecies && !humanPlayer.hasPlacedDinoThisTurn) { 
+                    const enclosureType = enclosure.dataset.enclosureType; 
+                    const isHumanWhoRolled = (humanPlayer.id === currentPlayerToRoll.id);
+
+                    if (currentPlayerToRoll.currentDieRoll) { 
+                        if (isDieRollPlacementAllowed(enclosureType, humanPlayer, currentPlayerToRoll.currentDieRoll, isHumanWhoRolled) && 
+                            validateEnclosureRules(enclosureType, GAME_STATE.selectedDinoSpecies, humanPlayer)) {
+                            enclosure.classList.add('enclosure-selectable');
+                            // console.log(`toggleEnclosureSelection: Enclosure ${enclosure.id} is now selectable.`);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Delegar eventos de clic en el parque
+        function handleEnclosureClick(event) {
+            console.log('handleEnclosureClick: Enclosure clicked.');
+            const targetEnclosure = event.target.closest('.enclosure, .river-area');
+            const humanPlayer = GAME_STATE.players[0];
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex];
+
+            if (!targetEnclosure) {
+                console.log('handleEnclosureClick: Click not on an enclosure, returning.');
+                return;
+            }
+            console.log('handleEnclosureClick: Target enclosure ID:', targetEnclosure.id);
+
+            // Solo permitir interacción si es el humano y no ha colocado su dino aún en esta fase
+            if (humanPlayer.hasPlacedDinoThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: Ya colocaste tu dinosaurio en este turno.`, 'warning');
+                console.log('handleEnclosureClick: Human player already placed this turn. Ignoring click.');
+                return;
+            }
+            
+            if (!GAME_STATE.isDieRolledForThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: ¡Primero el jugador activo debe lanzar el dado!`, 'error');
+                console.log('handleEnclosureClick: Die not rolled yet. Ignoring click.');
+                return;
+            }
+            
+            if (!GAME_STATE.isDinoSelected || !GAME_STATE.selectedDinoSpecies) {
+                displayMessage(`Jugador ${humanPlayer.id}: ¡Por favor, selecciona un dinosaurio de tu mano primero!`, 'warning');
+                console.log('handleEnclosureClick: No dinosaur selected. Ignoring click.');
+                return;
+            }
+
+            if (targetEnclosure.classList.contains('enclosure-selectable')) {
+                console.log('handleEnclosureClick: Target enclosure is selectable. Attempting to place dino.');
+                // Necesitamos pasar el elemento del dino seleccionado para la animación.
+                const selectedDinoElement = elements.dinoHand.querySelector('.dino-selected');
+                placeDinosaur(targetEnclosure.id, selectedDinoElement);
+            } else {
+                console.log('handleEnclosureClick: Target enclosure is NOT selectable for click.');
+                // Si no es seleccionable, dar feedback si es el jugador actual e intentó una acción inválida
+                const enclosureType = targetEnclosure.dataset.enclosureType;
+                const isHumanWhoRolled = (humanPlayer.id === currentPlayerToRoll.id);
+
+                if (currentPlayerToRoll.currentDieRoll) {
+                    const isAllowedByDie = isDieRollPlacementAllowed(enclosureType, humanPlayer, currentPlayerToRoll.currentDieRoll, isHumanWhoRolled);
+                    const isValidEnclosure = validateEnclosureRules(enclosureType, GAME_STATE.selectedDinoSpecies, humanPlayer);
+
+                    if (!isAllowedByDie || !isValidEnclosure) {
+                        animateEnclosureShake(targetEnclosure);
+                    }
+                }
+            }
+        }
+
+        // --- Funciones para Drag and Drop ---
+        function handleDragStart(event) {
+            console.log('handleDragStart: Drag started for:', event.target.dataset.species);
+            const humanPlayer = GAME_STATE.players[0]; 
+
+            // Solo permite arrastrar si el jugador es humano, ha lanzado el dado y no ha colocado aún
+            if (humanPlayer.isAI || !GAME_STATE.isDieRolledForThisTurn || humanPlayer.hasPlacedDinoThisTurn) {
+                event.preventDefault(); // No permite arrastrar
+                console.log('handleDragStart: Drag prevented due to game state.');
+                return;
+            }
+
+            const species = event.target.dataset.species;
+            // Almacenar la especie y el ID del dino arrastrado en el objeto DataTransfer
+            event.dataTransfer.setData('text/plain', species); // Esto es para compatibilidad (no estrictamente necesario si usas el ID)
+            event.dataTransfer.setData('dinoId', event.target.id); // Guardar el ID del elemento arrastrado
+            event.dataTransfer.effectAllowed = 'move';
+
+            // Resaltar el dinosaurio como seleccionado para arrastrar
+            const dinoDiv = event.target;
+            selectDinosaur(dinoDiv, species); // Esto ya añade 'dino-selected' y actualiza el estado
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault(); // Necesario para permitir el "drop"
+            const targetEnclosure = event.target.closest('.enclosure, .river-area');
+            if (targetEnclosure && targetEnclosure.classList.contains('enclosure-selectable')) {
+                event.dataTransfer.dropEffect = 'move';
+                targetEnclosure.classList.add('drag-over');
+            } else {
+                event.dataTransfer.dropEffect = 'none'; // No se puede soltar aquí
+            }
+        }
+
+        function handleDragLeave(event) {
+            const targetEnclosure = event.target.closest('.enclosure, .river-area');
+            if (targetEnclosure) {
+                targetEnclosure.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            console.log('handleDrop: Drop event triggered.');
+            const targetEnclosure = event.target.closest('.enclosure, .river-area');
+            const humanPlayer = GAME_STATE.players[0];
+            const currentPlayerToRoll = GAME_STATE.players[GAME_STATE.currentPlayerIndex];
+
+            if (!targetEnclosure) {
+                console.log('handleDrop: Drop not on an enclosure, returning.');
+                return;
+            }
+
+            targetEnclosure.classList.remove('drag-over'); // Quitar estilo de drag-over
+
+            // Solo permitir drop si el humano no ha colocado su dino aún en esta fase
+            if (humanPlayer.hasPlacedDinoThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: Ya colocaste tu dinosaurio en este turno.`, 'warning');
+                console.log('handleDrop: Human player already placed this turn. Ignoring drop.');
+                return;
+            }
+
+            // Validar si el dado ha sido lanzado
+            if (!GAME_STATE.isDieRolledForThisTurn) {
+                displayMessage(`Jugador ${humanPlayer.id}: ¡Primero el jugador activo debe lanzar el dado!`, 'error');
+                console.log('handleDrop: Die not rolled yet. Ignoring drop.');
+                return;
+            }
+            
+            // Validar que se está arrastrando un dino (y no otra cosa)
+            const speciesFromDrag = event.dataTransfer.getData('text/plain');
+            const dinoIdFromDrag = event.dataTransfer.getData('dinoId');
+            if (!speciesFromDrag || !dinoIdFromDrag) {
+                displayMessage('No se pudo identificar el dinosaurio que intentas arrastrar.', 'error');
+                console.error('handleDrop: No species or dinoId found in dataTransfer.');
+                return;
+            }
+
+            // Si el dino seleccionado globalmente no coincide con el arrastrado, o si no hay ninguno seleccionado, usa el del arrastre
+            if (!GAME_STATE.isDinoSelected || GAME_STATE.selectedDinoSpecies !== speciesFromDrag) {
+                // Esto podría pasar si el usuario hace clic en uno y arrastra otro.
+                // Forzamos la selección al arrastrar.
+                const draggedDinoElement = document.getElementById(dinoIdFromDrag);
+                if (draggedDinoElement) {
+                     selectDinosaur(draggedDinoElement, speciesFromDrag);
+                     console.log('handleDrop: Forcing selection of dragged dinosaur.');
+                } else {
+                    displayMessage('Error interno: No se pudo encontrar el dinosaurio arrastrado.', 'error');
+                    console.error('handleDrop: Dragged dino element not found in DOM.');
+                    return;
+                }
+            }
+
+
+            if (targetEnclosure.classList.contains('enclosure-selectable')) {
+                console.log('handleDrop: Target enclosure is selectable. Attempting to place dino via drop.');
+                const selectedDinoElement = document.getElementById(dinoIdFromDrag); // Obtener el elemento arrastrado por su ID
+                if (selectedDinoElement) {
+                    placeDinosaur(targetEnclosure.id, selectedDinoElement);
+                } else {
+                    displayMessage('Error: No se pudo identificar el dinosaurio que intentas arrastrar.', 'error');
+                    console.error('handleDrop: Selected dino element not found in DOM after drag.');
+                }
+            } else {
+                console.log('handleDrop: Target enclosure is NOT selectable for drop.');
+                // Si el recinto no es seleccionable (por reglas del dado o recinto), mostrar mensaje y animar
+                // Solo si un dino fue realmente seleccionado para arrastrar
+                // (GAME_STATE.isDinoSelected ya debería ser true si speciesFromDrag existe)
+                if (!humanPlayer.isAI && !humanPlayer.hasPlacedDinoThisTurn) { // No verificar isDinoSelected aquí, ya se hizo arriba
+                    const enclosureType = targetEnclosure.dataset.enclosureType; // Usar data-enclosure-type
+                    const isHumanWhoRolled = (humanPlayer.id === currentPlayerToRoll.id);
+                    
+                    if (currentPlayerToRoll.currentDieRoll && GAME_STATE.selectedDinoSpecies) { // Asegurarse de que el dado fue lanzado y hay un dino seleccionado
+                        const isAllowedByDie = isDieRollPlacementAllowed(enclosureType, humanPlayer, currentPlayerToRoll.currentDieRoll, isHumanWhoRolled); 
+                        const isValidEnclosure = validateEnclosureRules(enclosureType, GAME_STATE.selectedDinoSpecies, humanPlayer); 
+                        
+                        if (!isAllowedByDie || !isValidEnclosure) {
+                            animateEnclosureShake(targetEnclosure);
+                        }
+                    } else {
+                        console.log('handleDrop: Missing die roll or selected dino for detailed error feedback.');
+                    }
+                }
+            }
+        }
+
+        function updateEnclosureScoreExplanations(player) {
+            const park = player.park;
+            const allDinosInParkAndRiver = [];
+            for (const key in park) {
+                allDinosInParkAndRiver.push(...park[key]);
+            }
+            allDinosInParkAndRiver.push(...player.river);
+
+
+            // Helper para actualizar texto de explicación
+            function updateExplanation(enclosureId, text) {
+                const element = document.getElementById(enclosureId);
+                if (element) {
+                    const explanationDiv = element.querySelector('.enclosure-score-explanation');
+                    if (explanationDiv) {
+                        explanationDiv.textContent = text;
+                    }
+                }
+            }
+
+            // Río
+            updateExplanation('river-area', `Puntos: ${player.river.length} (1 punto por dino)`);
+
+            // Bosque de la Semejanza (Forest of Sameness)
+            const forestLength = park.forestOfSameness.length;
+            const forestSpecies = (forestLength > 0) ? park.forestOfSameness[0] : 'ninguna';
+            const forestScore = (forestLength > 0 && park.forestOfSameness.every(d => d === forestSpecies)) ? (forestLength * (forestLength + 1)) / 2 : 0;
+            const forestValidation = (forestLength > 0 && !park.forestOfSameness.every(d => d === forestSpecies)) ? `(Advertencia: No todas las especies son ${forestSpecies})` : '';
+            updateExplanation('forest-of-sameness-enclosure', `Especie: ${forestSpecies}. Dinos: ${forestLength}/6. Puntos: ${forestScore} ${forestValidation}`);
+
+            // Prado de la Diferencia (Meadow of Difference)
+            const meadowSpeciesCount = new Set(park.meadowOfDifference);
+            const meadowScore = meadowSpeciesCount.size * 2;
+            const meadowValidation = (park.meadowOfDifference.length > meadowSpeciesCount.size) ? `(Advertencia: especies repetidas)` : '';
+            updateExplanation('meadow-of-difference-enclosure', `Especies diferentes: ${meadowSpeciesCount.size}. Dinos: ${park.meadowOfDifference.length}/6. Puntos: ${meadowScore} ${meadowValidation}`);
+
+            // Pradera del Amor (Pasture of Love)
+            const pasturePairs = Math.floor(park.pastureOfLove.length / 2);
+            const pastureScore = pasturePairs * 5;
+            updateExplanation('pasture-of-love-enclosure', `Dinos: ${park.pastureOfLove.length}/6. Pares: ${pasturePairs}. Puntos: ${pastureScore}`);
+
+            // El Trío Frondoso (Leafy Trio)
+            const leafyTrioScore = (park.leafyTrio.length === 3) ? 7 : 0;
+            updateExplanation('leafy-trio-enclosure', `Dinos: ${park.leafyTrio.length}/3. Puntos: ${leafyTrioScore} ${park.leafyTrio.length > 3 ? '(¡Exceso de capacidad!)' : ''}`);
+
+            // El Rey de la Selva (King of the Jungle)
+            const kingScore = (park.kingOfTheJungle.length === 1) ? 7 : 0;
+            updateExplanation('king-of-the-jungle-enclosure', `Dinos: ${park.kingOfTheJungle.length}/1. Puntos: ${kingScore} ${park.kingOfTheJungle.length > 1 ? '(¡Exceso de capacidad!)' : ''}`);
+
+            // La Isla Solitaria (Lonely Island)
+            let lonelyIslandScore = 0;
+            let lonelyIslandStatus = `Dinos: ${park.lonelyIsland.length}/1. `;
+            if (park.lonelyIsland.length === 1) {
+                const lonelyDinoSpecies = park.lonelyIsland[0];
+                const totalInstancesOfLonelyDino = allDinosInParkAndRiver.filter(d => d === lonelyDinoSpecies).length; 
+                
+                if (totalInstancesOfLonelyDino === 1) {
+                    lonelyIslandScore = 7;
+                    lonelyIslandStatus += `Especie **${lonelyDinoSpecies}** es única en el parque.`;
+                } else {
+                    lonelyIslandStatus += `Especie **${lonelyDinoSpecies}** no es única (${totalInstancesOfLonelyDino - 1} más).`;
+                }
+            } else if (park.lonelyIsland.length > 1) {
+                lonelyIslandStatus += '(¡Exceso de capacidad!)';
+            }
+            updateExplanation('lonely-island-enclosure', `${lonelyIslandStatus} Puntos: ${lonelyIslandScore}`);
+        }
+
+        function endGame() {
+            displayMessage('¡Fin del Juego! Calculando puntuaciones finales...', 'info');
+            let finalScores = [];
+            GAME_STATE.players.forEach(player => {
+                const score = calculateScore(player);
+                finalScores.push({ id: player.id, score: score });
+            });
+
+            finalScores.sort((a, b) => b.score - a.score); // Ordenar de mayor a menor
+
+            let winnerMessage = "Resultados Finales:<br>";
+            finalScores.forEach((s, index) => {
+                winnerMessage += `Jugador ${s.id}: ${s.score} puntos${index === 0 ? ' (Ganador)' : ''}<br>`;
+            });
+
+            elements.messageDisplay.innerHTML = winnerMessage;
+            elements.messageDisplay.classList.add('success');
+            elements.rollDieBtn.disabled = true; // Deshabilitar controles al final del juego
+            elements.restartGameBtn.style.display = 'inline-block'; // Mostrar botón de reinicio
+
+            // Ocultar la mano del jugador humano si la partida terminó
+            elements.dinoHand.innerHTML = '';
+            elements.dinoHand.textContent = 'Juego Terminado';
+            toggleEnclosureSelection(false); // Asegurar que no se puedan seleccionar recintos
+        }
+
+        // --- Manejo de la vista de otros jugadores ---
+        function setupOtherPlayerNavigation() {
+            elements.otherPlayerNavigation.innerHTML = '';
+            elements.otherPlayersParksDisplayArea.innerHTML = '';
+
+            // Solo si hay más de 1 jugador
+            if (GAME_STATE.numPlayers > 1) {
+                elements.otherPlayersParksContainer.style.display = 'block'; // Asegurarse de que el contenedor principal sea visible
+
+                GAME_STATE.players.forEach((player, index) => {
+                    if (player.id !== GAME_STATE.players[0].id) { // No mostrar el botón para el jugador humano actual
+                        const button = document.createElement('button');
+                        button.textContent = `Ver Jugador ${player.id} (IA)`;
+                        button.dataset.playerId = player.id;
+                        button.addEventListener('click', () => showOtherPlayerPark(index));
+                        elements.otherPlayerNavigation.appendChild(button);
+
+                        // Crear el contenedor para el parque de este jugador
+                        const parkDiv = document.createElement('div');
+                        parkDiv.id = `other-player-park-${player.id}`;
+                        parkDiv.classList.add('other-player-park-display');
+                        
+                        // NOTA: Se ha simplificado la estructura HTML de los recintos para otros jugadores
+                        // ya que no necesitan las explicaciones de puntuación detalladas ni los h3 internos
+                        // que se encuentran en el parque del jugador humano.
+                        parkDiv.innerHTML = `
+                            <h3>Parque de Jugador ${player.id}</h3>
+                            <p>Puntuación: <span id="other-player-score-${player.id}">0</span></p>
+                            <div class="park-layout">
+                                <div class="park-side left-side">
+                                    <div class="zone-title">Zona de Cafetería</div>
+                                    <div id="other-player-park-${player.id}-forest-of-sameness-enclosure" class="enclosure" data-enclosure-type="forestOfSameness">
+                                        <div class="enclosure-grid-container"></div>
+                                        <div class="enclosure-score-explanation"></div>
+                                    </div>
+                                    <div id="other-player-park-${player.id}-leafy-trio-enclosure" class="enclosure" data-enclosure-type="leafyTrio">
+                                        <div class="enclosure-flex-container"></div>
+                                        <div class="enclosure-score-explanation"></div>
+                                    </div>
+                                    <div id="other-player-park-${player.id}-pasture-of-love-enclosure" class="enclosure" data-enclosure-type="pastureOfLove">
+                                        <div class="enclosure-grid-container"></div>
+                                        <div class="enclosure-score-explanation"></div>
+                                    </div>
+                                </div>
+
+                                <div class="park-side river-wrapper">
+                                    <div id="other-player-park-${player.id}-river-area" class="river-area" data-enclosure-type="river"></div>
+                                    <div class="enclosure-score-explanation"></div>
+                                </div>
+
+                                <div class="park-side right-side">
+                                    <div class="zone-title">Zona de Baños</div>
+                                    <div id="other-player-park-${player.id}-king-of-the-jungle-enclosure" class="enclosure" data-enclosure-type="kingOfTheJungle">
+                                        <div class="enclosure-flex-container"></div>
+                                        <div class="enclosure-score-explanation"></div>
+                                    </div>
+                                    <div id="other-player-park-${player.id}-meadow-of-difference-enclosure" class="enclosure" data-enclosure-type="meadowOfDifference">
+                                        <div class="enclosure-grid-container"></div>
+                                        <div class="enclosure-score-explanation"></div>
+                                    </div>
+                                    <div id="other-player-park-${player.id}-lonely-island-enclosure" class="enclosure" data-enclosure-type="lonelyIsland">
+                                        <div class="enclosure-flex-container"></div>
+                                        <div class="enclosure-score-explanation"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        elements.otherPlayersParksDisplayArea.appendChild(parkDiv);
+                    }
+                });
+
+                // Mostrar el primer parque de IA por defecto si existe
+                let firstAIIndex = -1;
+                for (let i = 0; i < GAME_STATE.players.length; i++) {
+                    if (GAME_STATE.players[i].isAI) {
+                        firstAIIndex = i;
+                        break;
+                    }
+                }
+                if (firstAIIndex !== -1) {
+                     showOtherPlayerPark(firstAIIndex);
+                } else {
+                    // Si no hay IAs (solo 1 jugador), ocultar el contenedor
+                    elements.otherPlayersParksContainer.style.display = 'none';
+                }
+            } else {
+                elements.otherPlayersParksContainer.style.display = 'none'; // Ocultar si solo hay un jugador
+            }
+        }
+
+        function showOtherPlayerPark(playerIndex) {
+            GAME_STATE.currentOtherPlayerViewIndex = playerIndex;
+
+            // Ocultar todos los parques de otros jugadores
+            document.querySelectorAll('.other-player-park-display').forEach(parkDiv => {
+                parkDiv.classList.remove('active');
+            });
+            // Remover 'active' de todos los botones de navegación
+            document.querySelectorAll('.player-navigation button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar el parque seleccionado y activar su botón
+            const selectedPlayer = GAME_STATE.players[playerIndex];
+            const parkToDisplay = document.getElementById(`other-player-park-${selectedPlayer.id}`);
+            if (parkToDisplay) {
+                parkToDisplay.classList.add('active');
+            }
+            const activeButton = elements.otherPlayerNavigation.querySelector(`button[data-player-id="${selectedPlayer.id}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+            updateOtherPlayersParksUI(); // Asegura que el parque se renderice con datos actuales
+        }
+
+        function updateOtherPlayersParksUI() {
+            if (GAME_STATE.numPlayers <= 1) return;
+
+            GAME_STATE.players.forEach((player, index) => {
+                if (player.id !== GAME_STATE.players[0].id) { // Solo para IAs
+                    const parkContainerId = `other-player-park-${player.id}`;
+                    const parkContainer = document.getElementById(parkContainerId);
+                    if (parkContainer) {
+                        renderPark(player, parkContainer, false); // Renderizar sin ser seleccionable
+                        const scoreDisplay = parkContainer.querySelector(`#other-player-score-${player.id}`);
+                        if (scoreDisplay) {
+                            scoreDisplay.textContent = calculateScore(player);
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // --- Ayudantes de String ---
+        function kebabCaseToCamelCase(kebabCaseString) {
+            return kebabCaseString.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+        }
+
+        function camelCaseToKebabCase(camelCaseString) {
+            return camelCaseString.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+        }
+
+        // --- Event Listeners ---
+        elements.rollDieBtn.addEventListener('click', rollDie);
+
+        // --- Inicio ---
+        document.addEventListener('DOMContentLoaded', showSetupModal);
+    </script>
+</body>
+</html>
