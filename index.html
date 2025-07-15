@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio de Sesión - Draftosaurus</title>
+    <link rel="stylesheet" href="index-login-styles.css">
+    </head>
+<body>
+    <div class="login-container" id="login-container">
+        <img src="imagenes/logoDraftosaurus.png" alt="Logo del juego" class="logo" />
+        <h1>¡Bienvenido a Draftosaurus!</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Nombre de usuario" required />
+            <input type="password" id="password" placeholder="Contraseña" required />
+            <button type="submit" id="loginButton">Iniciar sesión</button>
+            <p id="loginMessage" class="message"></p>
+        </form>
+        <p>¿No tenes cuenta? <button type="button" class="link-button" onclick="toggleRegister()">Regístrate</button></p>
+    </div>
+
+    <div class="login-container" id="register-container" style="display:none;">
+        <img src="imagenes/logoDraftosaurus.png" alt="Logo del juego" class="logo" />
+        <h1>Registro de Usuario</h1>
+        <form id="registerForm">
+            <input type="text" id="newUsername" placeholder="Nuevo nombre de usuario" required />
+            <input type="password" id="newPassword" placeholder="Nueva contraseña" required />
+            <input type="password" id="confirmNewPassword" placeholder="Confirmar contraseña" required />
+            <button type="submit" id="registerButton">Registrarse</button>
+            <p id="registerMessage" class="message"></p>
+        </form>
+        <p>¿Ya tenes cuenta? <button type="button" class="link-button" onclick="toggleRegister()">Iniciar sesión</button></p>
+        <button type="button" class="link-button" style="color: rgb(122, 122, 156);"><a href="menu-index.html">Soy Invitado</a></button>
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; <span id="currentYear"></span> FaNaLuDi Software. Todos los derechos reservados.</p>
+    </footer>
+    <script src="index-login-script.js"></script>
+</body>
+</html>
