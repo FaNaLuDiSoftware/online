@@ -1,0 +1,686 @@
+/* Variables CSS */
+:root {
+    --primary-color: #6366f1;
+    --primary-dark-color: #4f46e5;
+    --background-soft: #f0f4f8;
+    --text-main: #334155;
+    --text-secondary: #475569;
+    --text-light: #64748b;
+    --action-green: #10b981;
+    --action-green-dark: #059669;
+    --button-blue: #3b82f6;
+    --button-blue-hover: #2563eb;
+    --base-font-size: 16px;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilos globales y reseteos básicos */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+}
+
+@media (min-width: 480px) { 
+    html {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 768px) { 
+    html {
+        font-size: 16px; 
+    }
+}
+
+@media (min-width: 1200px) { 
+    html {
+        font-size: 17px;
+    }
+}
+
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-soft);
+    color: var(--text-main);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Contenedor principal de la página */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+}
+
+@media (min-width: 640px) { 
+    .page-wrapper {
+        padding: 2.5rem 1.5rem; 
+    }
+}
+
+@media (min-width: 1024px) { 
+    .page-wrapper {
+        padding: 2.5rem 2rem; 
+    }
+}
+.go-back {
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 1000;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 9999px;
+    box-shadow: var(--card-shadow);
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+.go-back:hover {
+    background-color: var(--primary-dark-color);
+    transform: scale(1.05);
+}
+
+@media (min-width: 640px) {
+    .go-back {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .go-back {
+        top: 1.25rem;
+        right: 1.25rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+}
+
+/* Encabezado principal */
+.main-header {
+    width: 100%;
+    max-width: 90vw; 
+    text-align: center;
+    margin-bottom: 2.5rem; 
+}
+
+@media (min-width: 768px) {
+    .main-header {
+        max-width: 80vw;
+        margin-bottom: 3rem;
+    }
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #4338ca;
+    margin-bottom: 0.75rem;
+    border-radius: 0.75rem;
+    padding: 0.75rem; 
+    background-color: #fff;
+    box-shadow: var(--card-shadow);
+}
+
+@media (min-width: 640px) {
+    .main-title {
+        font-size: 3.5rem;
+        padding: 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .main-title {
+        font-size: 4rem; 
+    }
+}
+
+@media (min-width: 1400px) {
+    .main-title {
+        font-size: 5rem;
+    }
+}
+
+
+.main-subtitle {
+    font-size: 1rem; 
+    color: var(--text-secondary);
+}
+
+@media (min-width: 640px) {
+    .main-subtitle {
+        font-size: 1.125rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .main-subtitle {
+        font-size: 1.25rem; 
+    }
+}
+
+
+/* Área de contenido principal */
+.main-content-area {
+    width: 100%;
+    max-width: 64rem;
+}
+
+/* Estilos para las secciones de contenido (tarjetas) */
+.section-card {
+    background-color: #fff;
+    box-shadow: var(--card-shadow);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem; 
+    transition: transform 0.3s ease-in-out;
+}
+
+.section-card:hover {
+    transform: scale(1.01);
+}
+
+@media (min-width: 640px) {
+    .section-card {
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .section-card {
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+    }
+}
+
+/* Títulos de sección */
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1.25rem; 
+}
+
+@media (min-width: 640px) {
+    .section-title {
+        font-size: 2.25rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Título de sección con línea inferior animada */
+.section-title-line {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+.section-title-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50%;
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 9999px;
+}
+
+/* Subtítulos de sección (h3) */
+.subsection-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.75rem; 
+}
+
+@media (min-width: 640px) {
+    .subsection-title {
+        font-size: 1.375rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .subsection-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Párrafos de texto en las secciones */
+.section-text {
+    font-size: 1rem; 
+    color: var(--text-main);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+    .section-text {
+        font-size: 1.05rem; 
+    }
+}
+
+@media (min-width: 1024px) {
+    .section-text {
+        font-size: 1.125rem; 
+    }
+}
+
+.section-text-last {
+    margin-bottom: 1.5rem;
+}
+
+/* Listas de valores */
+.value-list {
+    list-style: disc;
+    list-style-position: inside;
+    font-size: 1rem; 
+    color: var(--text-main);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .value-list {
+        font-size: 1.05rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .value-list {
+        font-size: 1.125rem; 
+    }
+}
+
+.value-list li {
+    margin-bottom: 0.5rem;
+}
+
+.value-highlight {
+    color: var(--primary-dark-color);
+    font-weight: 700;
+}
+
+/* Sección del Equipo - Grid */
+.team-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem; 
+}
+
+@media (min-width: 640px) { 
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 1024px) { 
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+/* Tarjeta de miembro del equipo */
+.team-member-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem; 
+    padding: 0.75rem; 
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 640px) {
+    .team-member-card {
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+}
+
+.team-member-avatar-container {
+    flex-shrink: 0;
+}
+
+.team-member-avatar {
+    height: 4rem; 
+    width: 4rem;
+    border-radius: 9999px;
+    object-fit: cover;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 640px) {
+    .team-member-avatar {
+        height: 5rem;
+        width: 5rem;
+    }
+}
+
+.team-member-name {
+    font-size: 1.125rem; 
+    font-weight: 600;
+    color: #111827;
+}
+
+@media (min-width: 640px) {
+    .team-member-name {
+        font-size: 1.25rem;
+    }
+}
+
+.team-member-role {
+    font-size: 0.875rem;
+    color: var(--primary-dark-color);
+}
+
+@media (min-width: 640px) {
+    .team-member-role {
+        font-size: 1rem;
+    }
+}
+
+
+.team-member-email {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+@media (min-width: 640px) {
+    .team-member-email {
+        font-size: 0.875rem;
+    }
+}
+
+
+/* Listas de características (funcionalidades clave) */
+.feature-list {
+    list-style: disc;
+    list-style-position: inside;
+    font-size: 1rem; 
+    color: var(--text-main);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .feature-list {
+        font-size: 1.05rem; 
+    }
+}
+
+@media (min-width: 1024px) {
+    .feature-list {
+        font-size: 1.125rem; 
+    }
+}
+
+.feature-list li {
+    margin-bottom: 0.5rem;
+}
+
+/* Sección de IA (Pregúntale a FaNaLuDi AI) */
+.ai-section {
+    margin-top: 2rem; 
+    padding-top: 1.5rem; 
+    border-top: 2px solid #e5e7eb;
+}
+
+@media (min-width: 640px) {
+    .ai-section {
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+    }
+}
+
+/* Formularios y elementos de entrada */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    color: var(--text-main);
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-input,
+.form-textarea {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    appearance: none;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    color: var(--text-main);
+    line-height: 1.25;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    font-size: 1rem; 
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
+    border-color: transparent;
+}
+
+/* Botones */
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    padding: 0.75rem 1.25rem; 
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+    transform: translateY(0);
+    cursor: pointer;
+    border: none;
+    font-size: 0.9rem; 
+}
+
+@media (min-width: 640px) {
+    .button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+.button:hover {
+    transform: translateY(-0.125rem);
+}
+
+.button-primary {
+    background-color: var(--button-blue);
+    color: #fff;
+}
+
+.button-primary:hover {
+    background-color: var(--button-blue-hover);
+}
+
+.button-success {
+    background-color: var(--action-green);
+    color: #fff;
+}
+
+.button-success:hover {
+    background-color: var(--action-green-dark);
+}
+
+/* Spinner de carga */
+.loader-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #fff;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Salida de respuesta de la IA */
+.answer-output {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    color: #1f2937;
+}
+
+.answer-title {
+    font-size: 1.125rem; 
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .answer-title {
+        font-size: 1.25rem;
+    }
+}
+
+.answer-content {
+    white-space: pre-wrap;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem; 
+}
+
+@media (min-width: 640px) {
+    .answer-content {
+        font-size: 1rem;
+    }
+}
+
+/* Mensajes de error y éxito del formulario */
+.error-message, .success-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-size: 0.9rem; 
+}
+
+.error-message {
+    background-color: #ef4444;
+}
+
+.success-message {
+    background-color: #22c55e;
+}
+
+/* Grid para el Modelo de Negocio (Canvas) */
+.canvas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem; 
+}
+
+@media (min-width: 640px) { 
+    .canvas-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 1024px) { 
+    .canvas-grid {
+        grid-template-columns: repeat(3, 1fr); 
+    }
+}
+
+@media (min-width: 1280px) { 
+    .canvas-grid {
+        grid-template-columns: repeat(3, 1fr); 
+    }
+}
+
+.canvas-item {
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.canvas-item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .canvas-item-title {
+        font-size: 1.25rem;
+    }
+}
+
+.canvas-list {
+    list-style: disc;
+    list-style-position: inside;
+    color: var(--text-main);
+    line-height: 1.5;
+    font-size: 0.9rem; 
+}
+
+@media (min-width: 640px) {
+    .canvas-list {
+        font-size: 1rem;
+    }
+}
+
+.canvas-list li {
+    margin-bottom: 0.25rem;
+}
+
+/* Pie de página */
+.main-footer {
+    width: 100%;
+    max-width: 56rem;
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+@media (min-width: 640px) {
+    .main-footer {
+        font-size: 1rem;
+    }
+}
