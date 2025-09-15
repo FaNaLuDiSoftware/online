@@ -36,3 +36,39 @@ Beneficios de Live Server:
 Podrá visualizar la interfaz de usuario del juego en tiempo real.
 Cada vez que guarde cambios en los archivos HTML, CSS o JavaScript del frontend, el navegador se recargará automáticamente, lo que agiliza significativamente el proceso de desarrollo y prueba visual.
 Es importante destacar que esta ejecución solo muestra la parte visual y la lógica del frontend; la lógica de backend (PHP y la conexión a la base de datos) no estará operativa a través de Live Server y requerirá la configuración completa del stack de servidor (Apache, PHP, MariaDB) detallada en el documento principal.
+
+-- BASE DE DATOS DE NUESTRO JUEGO
+
+Antes de ingresar a la página se debe de crear la base de datos con el siguiente codigo. Luego de ejecutarlo ya sería posible abrir la página/juego (index.html) sin ningún tipo de problema
+
+-- creamos y usamos la base de datos
+CREATE DATABASE usuarios_registrados_bd;
+USE usuarios_registrados_bd;
+
+-- creamos la tabla de registro de usuarios
+CREATE TABLE register_user (
+    id_user INT AUTO_INCREMENT PRIMARY KEY,
+    user VARCHAR(20) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    score INT NOT NULL,
+    money INT NOT NULL
+);
+
+-- creamos el usuario ADMIN con la contraseña hasheada
+
+INSERT INTO register_user (user, password, score, money)
+VALUES ('ADMIN', '$2b$12$oc5rbYqq..aUtOa6LkWVJ.bzZqyidNJGiswjeBYY0O0OecTqEc2h2', 0, 0);
+
+-- damos todos los privilegios sobre la base al ADMIN
+GRANT ALL PRIVILEGES ON usuarios_registrados_bd.* TO 'ADMIN'@'localhost';
+
+-- creamos tabla de partidas
+CREATE TABLE party_tables (
+    id_table INT AUTO_INCREMENT PRIMARY KEY,
+    table_name VARCHAR(20) NOT NULL,
+    table_code INT NOT NULL
+);
+
+UPDATE register_user
+SET password = '$2b$12$oc5rbYqq..aUtOa6LkWVJ.bzZqyidNJGiswjeBYY0O0OecTqEc2h2'
+WHERE user = 'ADMIN';
