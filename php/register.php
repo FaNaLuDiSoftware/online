@@ -16,6 +16,8 @@ $db = "usuarios_registrados_bd";
 $data = json_decode(file_get_contents("php://input"), true);
 $username = $data["username"] ?? "";
 $password = $data["password"] ?? "";
+$score = $data["score"] ?? 0;
+$money = $data["money"] ?? 0;
 
 // Validación básica
 if (empty($username) || empty($password)) {
@@ -31,7 +33,7 @@ if ($conn->connect_error) {
 }
 
 // Verifica si el usuario ya existe
-$stmt = $conn->prepare("SELECT id FROM register_user WHERE user = ?");
+$stmt = $conn->prepare("SELECT id_user FROM register_user WHERE user = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $stmt->store_result();
@@ -47,9 +49,9 @@ $stmt->close();
 // Encripta la contraseña
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-// Inserta el nuevo usuario
-$stmt = $conn->prepare("INSERT INTO register_user (user, password) VALUES (?, ?)");
-$stmt->bind_param("ss", $username, $hashed_password);
+// Insertarta nombre, contraseña, score y money en la base de datos
+$stmt = $conn->prepare("INSERT INTO register_user (user, password, score, money) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssii", $username, $hashed_password, $score, $money);
 if ($stmt->execute()) {
     echo json_encode(["message" => "Usuario registrado exitosamente"]);
 } else {
