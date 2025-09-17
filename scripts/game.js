@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonesRivales = document.querySelectorAll('.boton-rival');
     const tableroRivales = document.querySelector('.div-tablero-rivales');
     const tablerosBackground = {
-        'rival1-boton': 'url(assets/tablero1.JPG)',
-        'rival2-boton': 'url(assets/tablero2.JPG)', 
-        'rival3-boton': 'url(assets/tablero3.JPG)',
-        'rival4-boton': 'url(assets/tablero4.JPG)'
+        'rival1-boton': 'url(assets/tablero1.jpg)',
+        'rival2-boton': 'url(assets/tablero2.jpg)', 
+        'rival3-boton': 'url(assets/tablero3.jpg)',
+        'rival4-boton': 'url(assets/tablero4.jpg)'
     };
     
     // Seleccionar el primer rival por defecto al cargar la página
@@ -111,4 +111,130 @@ document.addEventListener('DOMContentLoaded', function() {
             modalAyuda.classList.remove('visible');
         }
     });
+    
+    // ==============================
+    // DRAG & DROP PERSONALIZADO LIMPIO
+    // ==============================
+    (function initDragDrop(){
+        const fichas = Array.from(document.querySelectorAll('.selector-fichas .ficha-dinosaurio'));
+        if (!fichas.length) return;
+        const slotSelector = [
+            '.igualesFicha1','.igualesFicha2','.igualesFicha3','.igualesFicha4','.igualesFicha5','.igualesFicha6',
+            '.fichaRey',
+            '.trioFicha1','.trioFicha2','.trioFicha3',
+            '.diferentesFicha1','.diferentesFicha2','.diferentesFicha3','.diferentesFicha4','.diferentesFicha5','.diferentesFicha6',
+            '.parejaFicha1','.parejaFicha2','.parejaFicha3','.parejaFicha4','.parejaFicha5','.parejaFicha6',
+            '.rioFicha1','.rioFicha2','.rioFicha3','.rioFicha4','.rioFicha5','.rioFicha6',
+            '.solitarioFicha'
+        ].join(',');
+        const slots = Array.from(document.querySelectorAll(slotSelector));
+        if (!slots.length) return;
+
+        // Asegurar posicionamiento relativo
+        slots.forEach(s => { if (getComputedStyle(s).position === 'static') s.style.position = 'relative'; });
+
+        let original = null; // ficha en selector
+        let ghost = null;    // clon que sigue el cursor
+        let offsetX = 0, offsetY = 0;
+        let slotActivo = null;
+        let moviendo = false;
+
+        const mapaImagenes = {
+            'ficha-dinosaurio1': "url('assets/fichas/arribaVerde.PNG')",
+            'ficha-dinosaurio2': "url('assets/fichas/arribaRojo.PNG')",
+            'ficha-dinosaurio3': "url('assets/fichas/arribaAmarillo.PNG')",
+            'ficha-dinosaurio4': "url('assets/fichas/arribaCeleste.PNG')",
+            'ficha-dinosaurio5': "url('assets/fichas/arribaRosa.PNG')",
+            'ficha-dinosaurio6': "url('assets/fichas/arribaNaranja.PNG')"
+        };
+
+        function pointerDown(e){
+            if (!(e.target instanceof HTMLElement)) return;
+            const f = e.target.closest('.ficha-dinosaurio');
+            if (!f || f.dataset.colocada === 'true') return;
+            original = f;
+            const r = f.getBoundingClientRect();
+            offsetX = e.clientX - r.left;
+            offsetY = e.clientY - r.top;
+            // ocultar original
+            original.style.visibility = 'hidden';
+            // crear ghost
+            ghost = f.cloneNode(true);
+            ghost.style.visibility = 'visible';
+            Object.assign(ghost.style, {
+                position: 'fixed',
+                left: (e.clientX - offsetX) + 'px',
+                top: (e.clientY - offsetY) + 'px',
+                width: r.width + 'px',
+                height: r.height + 'px',
+                pointerEvents: 'none',
+                zIndex: 10000,
+                transform: 'scale(1.05)'
+            });
+            document.body.appendChild(ghost);
+            moviendo = true;
+            document.addEventListener('pointermove', pointerMove);
+            document.addEventListener('pointerup', pointerUp, { once: true });
+            e.preventDefault();
+        }
+
+        function pointerMove(e){
+            if (!moviendo || !ghost) return;
+            ghost.style.left = (e.clientX - offsetX) + 'px';
+            ghost.style.top = (e.clientY - offsetY) + 'px';
+            slotActivo = null;
+            for (const s of slots){
+                if (s.dataset.occupied === 'true') { s.classList.remove('drop-highlight'); continue; }
+                const r = s.getBoundingClientRect();
+                if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom){
+                    slotActivo = s;
+                    s.classList.add('drop-highlight');
+                } else {
+                    s.classList.remove('drop-highlight');
+                }
+            }
+        }
+
+        function pointerUp(){
+            document.removeEventListener('pointermove', pointerMove);
+            moviendo = false;
+            slots.forEach(s => s.classList.remove('drop-highlight'));
+            if (slotActivo && original){
+                const nueva = original.cloneNode(true);
+                nueva.style.visibility = 'visible';
+                nueva.dataset.colocada = 'true';
+                // ocupar todo el slot
+                Object.assign(nueva.style, {
+                    position: 'absolute',
+                    inset: '0',
+                    width: '100%',
+                    height: '100%',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundSize: 'contain'
+                });
+                // aplicar imagen tablero según clase específica 1..6
+                const claseEspecifica = Array.from(original.classList).find(c => /^ficha-dinosaurio[1-6]$/.test(c));
+                if (claseEspecifica && mapaImagenes[claseEspecifica]) {
+                    nueva.style.backgroundImage = mapaImagenes[claseEspecifica];
+                }
+                // limpiar contenido previo del slot
+                while (slotActivo.firstChild) slotActivo.removeChild(slotActivo.firstChild);
+                slotActivo.appendChild(nueva);
+                slotActivo.dataset.occupied = 'true';
+                original.remove();
+            } else if (original) {
+                // restaurar
+                original.style.visibility = 'visible';
+            }
+            if (ghost) ghost.remove();
+            ghost = null;
+            original = null;
+            slotActivo = null;
+        }
+
+        // Listeners solo en el selector para iniciar arrastre
+        const selector = document.querySelector('.selector-fichas');
+        if (selector) selector.addEventListener('pointerdown', pointerDown);
+    })();
 });
