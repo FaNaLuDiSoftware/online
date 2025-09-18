@@ -51,7 +51,7 @@ USE usuarios_registrados_bd;
 -- creamos la tabla de registro de usuarios
 CREATE TABLE register_user (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
-    user VARCHAR(20) NOT NULL UNIQUE,
+    user_name VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     score INT NOT NULL,
     money INT NOT NULL
@@ -59,7 +59,7 @@ CREATE TABLE register_user (
 
 -- creamos el usuario ADMIN con la contraseña hasheada
 
-INSERT INTO register_user (user, password, score, money)
+INSERT INTO register_user (user_name, password, score, money)
 VALUES ('ADMIN', '$2b$12$oc5rbYqq..aUtOa6LkWVJ.bzZqyidNJGiswjeBYY0O0OecTqEc2h2', 0, 0);
 
 -- damos todos los privilegios sobre la base al ADMIN
@@ -71,10 +71,6 @@ CREATE TABLE party_tables (
     table_name VARCHAR(20) NOT NULL,
     table_code INT NOT NULL
 );
-
-UPDATE register_user
-SET password = '$2b$12$oc5rbYqq..aUtOa6LkWVJ.bzZqyidNJGiswjeBYY0O0OecTqEc2h2'
-WHERE user = 'ADMIN';
 
 ------------------------------
 FIN DE LA BASE DE DATOS

@@ -33,7 +33,7 @@ if ($conn->connect_error) {
 }
 
 // Verifica si el usuario ya existe
-$stmt = $conn->prepare("SELECT id_user FROM register_user WHERE user = ?");
+$stmt = $conn->prepare("SELECT id_user FROM register_user WHERE user_name = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $stmt->store_result();
@@ -49,8 +49,8 @@ $stmt->close();
 // Encripta la contraseña
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-// Insertarta nombre, contraseña, score y money en la base de datos
-$stmt = $conn->prepare("INSERT INTO register_user (user, password, score, money) VALUES (?, ?, ?, ?)");
+// Insertar nombre, contraseña, score y money en la base de datos
+$stmt = $conn->prepare("INSERT INTO register_user (user_name, password, score, money) VALUES (?, ?, ?, ?)");
 $stmt->bind_param("ssii", $username, $hashed_password, $score, $money);
 if ($stmt->execute()) {
     echo json_encode(["message" => "Usuario registrado exitosamente"]);
