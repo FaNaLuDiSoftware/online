@@ -24,7 +24,10 @@ if (!$question) {
 }
 
 // Construye el prompt completo
-$prompt = "Utiliza únicamente la información proporcionada sobre FaNaLuDi Software para responder a la siguiente pregunta. Si la información no es suficiente para responder, indica que no tienes esa información.\n\nInformación de la empresa:\n" . $companyInfo . "\n\nPregunta: \"" . $question . "\"";
+$prompt = "Utiliza únicamente la información proporcionada sobre FaNaLuDi Software para responder a la siguiente pregunta.
+Al menos claro que no haya informacion sobre eso, en ese caso busca en internet,
+no hagas respuestas tan largas, Si la información no es suficiente para responder,
+indica que no tienes esa información.\n\nInformación de la empresa:\n" . $companyInfo . "\n\nPregunta: \"" . $question . "\"";
 
 $payload = [
     'contents' => [
@@ -52,4 +55,5 @@ if ($response === FALSE) {
 
 // Devuelve la respuesta tal cual
 echo $response;
+
 
