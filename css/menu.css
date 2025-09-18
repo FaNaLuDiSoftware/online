@@ -1,9 +1,5 @@
 body {
     margin: 0;
-    font-family: 'Press Start 2P', cursive;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
     overflow-x: hidden;
@@ -14,40 +10,35 @@ body {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    font-size: 16px;
 }
 
 .container {
-    width: clamp(90%, 80vw, 1000px);
-    max-width: 1000px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    min-height: 80vh;
+    max-width: 80%;
+    min-height: 70%;
     padding: clamp(15px, 3vw, 30px);
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.6);
     box-shadow: 0 10px 30px rgba(0,0,0,0.7);
     animation: fadeInSlideUp 1.5s ease-out;
-    position: relative;
+         font-size: 12px;
     border-radius: 15px;
     border: 2px solid rgba(252, 151, 0, 0.986);
 }
 
+.top-icons {
 .top-icons {
     position: absolute;
     top: clamp(10px, 2vw, 20px);
     left: clamp(10px, 2vw, 20px);
     display: flex;
     gap: clamp(10px, 1.5vw, 15px);
+    max-width: 340px;
 }
-
 .icon-button {
     color: #fff;
     font-size: clamp(1.8em, 3vw, 2.5em);
     background-color: transparent;
-    border: none;
+    max-width: clamp(60px, 30vw, 150px);
     padding: 0;
     cursor: pointer;
     transition: color 0.3s ease-in-out, transform 0.2s ease-out;
@@ -56,7 +47,6 @@ body {
     justify-content: center;
     text-decoration: none;
 }
-
 .top-icons .fa-balance-scale-right {
     color: #FF8C00;
 }
@@ -71,12 +61,14 @@ body {
 
 .icon-button:hover .fa-balance-scale-right {
     color: #FF8C00;
+    padding: clamp(6px, 1vw, 10px) clamp(12px, 2vw, 20px);
 }
-
 .icon-button:hover .fa-trophy {
     color: #FFD700; 
 }
-
+.icon-button:hover {
+    font-size: clamp(0.8em, 1.5vw, 1em);
+}
 .logout-icon {
     position: absolute;
     top: clamp(10px, 2vw, 20px);
@@ -84,7 +76,16 @@ body {
     color: #fff;
     font-size: clamp(1.8em, 3vw, 2.5em);
     background-color: transparent;
-    border: none;
+    max-width: 420px;
+    min-height: 40vh;
+    padding: clamp(10px, 2vw, 20px);
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    animation: fadeInSlideUp 1.5s ease-out;
+    position: relative;
+    border-radius: 15px;
+    border: 2px solid rgba(252, 151, 0, 0.986);
     padding: 0;
     cursor: pointer;
     transition: color 0.3s ease-in-out, transform 0.2s ease-out;
@@ -93,9 +94,8 @@ body {
     justify-content: center;
     text-decoration: none;
 }
-
 .logout-icon:hover {
-    color: #FF6347;
+     max-width: clamp(120px, 50vw, 400px);
     transform: scale(1.1);
 }
 
@@ -103,33 +103,39 @@ body {
     animation: wobble 9s ease-in-out infinite alternate;
     box-sizing: border-box;
 }
-
 .logo {
-    max-width: clamp(150px, 70vw, 700px);
-    width: 100%;
-    height: auto;
-    margin-bottom: clamp(0px, 2vw, 0px);
+    max-width: clamp(100px, 40vw, 150px) !important;
+    font-size: clamp(0.7em, 1vw, 0.9em);
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 8px;
+}
 }
 
 .menu {
     display: flex;
-    flex-direction: column;
-    gap: clamp(15px, 3vw, 30px);
-    align-items: center;
+    max-width: 340px;
+    min-width: 260px;
+    width: 100%;
+    min-height: 30vh;
+    padding: clamp(6px, 1vw, 12px);
+    box-sizing: border-box;
     margin-bottom: clamp(30px, 6vw, 60px);
+    width: 100%;
 }
 
 .button {
     display: block;
-    padding: clamp(12px, 2.5vw, 18px) clamp(25px, 5vw, 50px);
+    width: 100%;
+        max-width: 100px;
+        margin: 0 auto;
+        padding: clamp(4px, 0.7vw, 7px) clamp(8px, 1.5vw, 14px);
     text-decoration: none;
     color: #fff;
     border: 3px solid #388E3C;
     border-radius: 12px;
-    font-size: clamp(1em, 2.5vw, 1.8em);
+        font-size: clamp(0.6em, 1vw, 0.8em);
     font-weight: bold;
     text-align: center;
     min-width: clamp(180px, 40vw, 250px);
@@ -197,17 +203,18 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    width: clamp(80%, 90vw, 500px);
-    gap: clamp(10px, 2vw, 20px);
-    animation: fadeInSlideUp 1.5s ease-out 0.6s forwards;
-    opacity: 0;
+    width: 100%;
+    max-width: 60px;
+    margin: 0 auto;
+    padding: clamp(2px, 0.3vw, 3px) clamp(4px, 0.7vw, 7px);
+    font-size: clamp(0.45em, 0.6vw, 0.6em);
 }
 
 .menu-footer .button {
     flex: 1 1 auto;
     margin: 0;
-    padding: clamp(8px, 1.5vw, 12px) clamp(15px, 3vw, 25px);
-    font-size: clamp(0.9em, 1.5vw, 1.2em);
+    padding: clamp(2px, 0.5vw, 4px) clamp(6px, 1vw, 10px);
+    font-size: clamp(0.5em, 0.7vw, 0.7em);
     border-color: #455A64;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     animation: bounceInDelayed 1s ease-out forwards;
@@ -257,40 +264,4 @@ body {
     0% { transform: rotate(-1deg); }
     50% { transform: rotate(1deg); }
     100% { transform: rotate(-1deg); }
-}
-
-@media (max-width: 768px) {
-    .container {
-        min-height: 85vh;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        min-height: 90vh;
-        padding: clamp(10px, 2vw, 20px);
-    }
-    .menu-footer .button {
-        flex: 1 1 100%;
-    }
-    .top-icons {
-        gap: clamp(8px, 1vw, 10px);
-    }
-    .icon-button, .logout-icon {
-        font-size: clamp(1.5em, 2.5vw, 2em);
-    }
-}
-
-@media (max-width: 320px) {
-    body {
-        font-size: 14px;
-    }
-    .container {
-        padding: clamp(5px, 1vw, 10px);
-        min-height: 95vh;
-    }
-    .button {
-        font-size: clamp(0.9em, 1.5vw, 1.2em);
-        padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 30px);
-    }
 }
