@@ -1,18 +1,18 @@
 <?php
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+/*ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-//$host = "localhost";
-//$user = "root";
-//$pass = "";
-//$db = "usuarios_registrados_bd";
-//$conn = new mysqli($host, $user, $pass, $db);
-//if ($conn->connect_error) {
-//    die("Error de conexión a la base de datos");
-//}
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db = "usuarios_registrados_bd";
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("Error de conexión a la base de datos");
+}
 
-<?php
+<?php*/
 $host = "ep-royal-river-ae3q1rxk.c-2.us-east-2.aws.neon.tech";
 $db   = "neondb";
 $user = "neondb_owner";
@@ -37,7 +37,7 @@ try {
 
 
 // --- Lógica para acciones POST ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+/* if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     $action = $input['action'] ?? '';
     $id_user = intval($input['id_user'] ?? 0);
@@ -112,5 +112,6 @@ echo '</div>';
 echo '</div>';
 echo '</body></html>';
 $conn->close();
-
+*/
 ?>
+
