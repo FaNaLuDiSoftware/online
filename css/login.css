@@ -89,11 +89,11 @@ button:disabled {
 }
 
 h1 {
-    color: #333333;
+    color: #333;
 }
 
 a {
-    color: #41bdd8;
+    color: #44b7c2;
     text-decoration: none;
     transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
     font-weight: 500;
