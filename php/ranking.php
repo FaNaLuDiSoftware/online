@@ -1,16 +1,40 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "usuarios_registrados_bd";
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Error de conexión a la base de datos");
+//$host = "localhost";
+//$user = "root";
+//$pass = "";
+//$db = "usuarios_registrados_bd";
+//$conn = new mysqli($host, $user, $pass, $db);
+//if ($conn->connect_error) {
+//    die("Error de conexión a la base de datos");
+//}
+
+<?php
+$host = "ep-royal-river-ae3q1rxk.c-2.us-east-2.aws.neon.tech";
+$db   = "neondb";
+$user = "neondb_owner";
+$pass = "npg_LO9NtzAF4Jbc";
+$port = "5432";
+
+try {
+    // Conexión usando SSL (requerido por Neon)
+    $conn = new PDO("pgsql:host=$host;port=$port;dbname=$db;sslmode=require", $user, $pass);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "✅ Conexión exitosa a Neon<br>";
+
+    // Ejemplo: leer usuarios
+    $sql = "SELECT * FROM register_user";
+    foreach ($conn->query($sql) as $row) {
+        echo "Usuario: " . $row['user_name'] . " | Score: " . $row['score'] . "<br>";
+    }
+
+} catch (PDOException $e) {
+    echo "❌ Error en la conexión: " . $e->getMessage();
 }
+
 
 // --- Lógica para acciones POST ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -88,4 +112,5 @@ echo '</div>';
 echo '</div>';
 echo '</body></html>';
 $conn->close();
+
 ?>
