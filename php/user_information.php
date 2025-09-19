@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$result = $conn->query("SELECT id_user, user, password, score, money FROM register_user ORDER BY id_user ASC");
+$result = $conn->query("SELECT id_user, user_name, password, score, money FROM register_user ORDER BY id_user ASC");
 
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Modificar como Administrador</title>';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
@@ -85,7 +85,7 @@ echo '</tr></thead><tbody>';
 while ($row = $result->fetch_assoc()) {
     echo '<tr>';
     echo '<td class="text-center">' . htmlspecialchars($row['id_user']) . '</td>';
-    echo '<td class="text-center">' . htmlspecialchars($row['user']) . '</td>';
+    echo '<td class="text-center">' . htmlspecialchars($row['user_name']) . '</td>';
     echo '<td class="text-center">Contraseña existente</td>';
     echo '<td class="text-center">' . htmlspecialchars($row['score']) . '</td>';
     echo '<td class="text-center">' . htmlspecialchars($row['money']) . '</td>';

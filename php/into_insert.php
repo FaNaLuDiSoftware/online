@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 
 $mensaje = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$username = $_POST['user'] ?? "";
+	$username = $_POST['user_name'] ?? "";
 	$password = $_POST['password'] ?? "";
 	$score = $_POST['score'] ?? 0;
 	$money = $_POST['money'] ?? 0;
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$mensaje = "Usuario y contraseña requeridos";
 	} else {
 		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
-		$stmt = $conn->prepare("INSERT INTO register_user (user, password, score, money) VALUES (?, ?, ?, ?)");
+		$stmt = $conn->prepare("INSERT INTO register_user (user_name, password, score, money) VALUES (?, ?, ?, ?)");
 		$stmt->bind_param("ssii", $username, $hashed_password, $score, $money);
 		if ($stmt->execute()) {
 			$mensaje = "Usuario insertado correctamente";
@@ -45,7 +45,7 @@ if ($mensaje) {
 	echo '<div class="alert alert-info">' . htmlspecialchars($mensaje) . '</div>';
 }
 echo '<form method="POST" class="row g-3">';
-echo '<div class="col-md-6"><label class="form-label">Usuario</label><input type="text" name="user" class="form-control" required></div>';
+echo '<div class="col-md-6"><label class="form-label">Usuario</label><input type="text" name="user_name" class="form-control" required></div>';
 echo '<div class="col-md-6"><label class="form-label">Contraseña</label><input type="password" name="password" class="form-control" required></div>';
 echo '<div class="col-md-6"><label class="form-label">Puntaje</label><input type="number" name="score" class="form-control" value="0" min="0"></div>';
 echo '<div class="col-md-6"><label class="form-label">Monedas</label><input type="number" name="money" class="form-control" value="0" min="0"></div>';

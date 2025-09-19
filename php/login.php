@@ -31,7 +31,7 @@ if ($conn->connect_error) {
 }
 
 // Busca el usuario en la base de datos
-$stmt = $conn->prepare("SELECT password FROM register_user WHERE user = ?");
+$stmt = $conn->prepare("SELECT password FROM register_user WHERE user_name = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $stmt->store_result();

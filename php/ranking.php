@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$result = $conn->query("SELECT user, score FROM register_user ORDER BY score DESC");
+$result = $conn->query("SELECT user_name, score FROM register_user ORDER BY score DESC");
 
 $puesto = 1;
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Ranking de Jugadores</title>';
@@ -78,7 +78,7 @@ echo '</tr></thead><tbody>';
 while ($row = $result->fetch_assoc()) {
     echo '<tr>';
     echo '<td class="text-center">' . $puesto . '</td>';
-    echo '<td class="text-center">' . htmlspecialchars($row['user']) . '</td>';
+    echo '<td class="text-center">' . htmlspecialchars($row['user_name']) . '</td>';
     echo '<td class="text-center">' . htmlspecialchars($row['score']) . '</td>';
     echo '</tr>';
     $puesto++;
