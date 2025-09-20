@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 $host = "localhost";
 $user = "root";
-$pass = "";
+$pass = "PescadoRabioso96.";
 $db = "usuarios_registrados_bd";
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
@@ -98,4 +98,5 @@ echo '</div>';
 echo '<script src="../scripts/user_information.js"></script>';
 echo '</body></html>';
 $conn->close();
+
 ?>
