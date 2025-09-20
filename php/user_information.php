@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $host = "localhost";
-$user = "root";
+$user = "fanaludi";
 $pass = "PescadoRabioso96.";
 $db = "usuarios_registrados_bd";
 $conn = new mysqli($host, $user, $pass, $db);
@@ -100,3 +100,4 @@ echo '</body></html>';
 $conn->close();
 
 ?>
+
