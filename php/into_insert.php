@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . "/config.php";
+
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -53,4 +57,5 @@ echo '<div class="col-12"><button type="submit" class="btn btn-primary">Insertar
 echo '</form>';
 echo '</div></body></html>';
 $conn->close();
+
 ?>
