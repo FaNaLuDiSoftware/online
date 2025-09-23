@@ -1,6 +1,5 @@
 <?php
 
-<?php
 require_once __DIR__ . "/config.php";
 
 
@@ -66,3 +65,4 @@ $stmt->close();
 $conn->close();
 
 ?>
+
