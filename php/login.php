@@ -22,12 +22,6 @@ if (empty($username) || empty($password)) {
 	exit;
 }
 
-// Conexión a la base de datos
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-	echo json_encode(["error" => "Error de conexión a la base de datos"]);
-	exit;
-}
 
 // Busca el usuario en la base de datos
 $stmt = $conn->prepare("SELECT password FROM register_user WHERE user_name = ?");
@@ -53,6 +47,7 @@ if (password_verify($password, $hashed_password)) {
 	echo json_encode(["error" => "Contraseña incorrecta"]);
 }
 $conn->close();
+
 
 
 
