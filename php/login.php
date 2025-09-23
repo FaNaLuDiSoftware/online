@@ -1,6 +1,5 @@
 <?php
 
-<?php
 require_once __DIR__ . "/config.php";
 
 
@@ -59,4 +58,5 @@ if (password_verify($password, $hashed_password)) {
 	echo json_encode(["error" => "Contraseña incorrecta"]);
 }
 $conn->close();
+
 
