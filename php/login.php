@@ -10,11 +10,6 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST");
 
-// Configuración de la base de datos
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "usuarios_registrados_bd";
 
 // Recibe los datos enviados por POST (JSON)
 $data = json_decode(file_get_contents("php://input"), true);
@@ -58,5 +53,6 @@ if (password_verify($password, $hashed_password)) {
 	echo json_encode(["error" => "Contraseña incorrecta"]);
 }
 $conn->close();
+
 
 
