@@ -10,12 +10,6 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST");
 
-// Configuración de la base de datos
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "usuarios_registrados_bd";
-
 // Recibe los datos enviados por POST (JSON)
 $data = json_decode(file_get_contents("php://input"), true);
 $username = $data["username"] ?? "";
@@ -29,12 +23,6 @@ if (empty($username) || empty($password)) {
     exit;
 }
 
-// Conexión a la base de datos
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    echo json_encode(["error" => "Error de conexión a la base de datos"]);
-    exit;
-}
 
 // Verifica si el usuario ya existe
 $stmt = $conn->prepare("SELECT id_user FROM register_user WHERE user_name = ?");
@@ -65,4 +53,5 @@ $stmt->close();
 $conn->close();
 
 ?>
+
 
