@@ -1,6 +1,5 @@
 <?php
 
-<?php
 require_once __DIR__ . "/config.php";
 
 ini_set('display_errors', 1);
@@ -94,3 +93,4 @@ echo '</body></html>';
 $conn->close();
 
 ?>
+
