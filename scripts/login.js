@@ -34,7 +34,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
 
     try {
         // Realiza la petición POST al backend para login
-    const res = await fetch('http://localhost/ProyectoDraftosaurus/php/login.php', {
+    const res = await fetch('php/login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -93,7 +93,7 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
 
     try { // Inicia un bloque try para manejar posibles errores durante el registro
         // Realiza la petición POST al backend para registro
-        const res = await fetch('http://localhost/ProyectoDraftosaurus/php/register.php', {
+        const res = await fetch('php/register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -136,4 +136,5 @@ function toggleRegister() {
     registerBox.style.display = registerBox.style.display === 'none' ? 'block' : 'none';
     
     clearMessages(); // Limpia los mensajes al cambiar de formulario
+
 }
