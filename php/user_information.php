@@ -7,14 +7,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "usuarios_registrados_bd";
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Error de conexión a la base de datos");
-}
 
 // --- Lógica para acciones POST ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -104,3 +96,4 @@ echo '</body></html>';
 $conn->close();
 
 ?>
+
