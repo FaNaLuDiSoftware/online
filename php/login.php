@@ -1,4 +1,9 @@
 <?php
+
+<?php
+require_once __DIR__ . "/config.php";
+
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -54,3 +59,4 @@ if (password_verify($password, $hashed_password)) {
 	echo json_encode(["error" => "Contraseña incorrecta"]);
 }
 $conn->close();
+
