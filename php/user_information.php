@@ -4,8 +4,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $host = "localhost";
-$user = "fanaludi";
-$pass = "PescadoRabioso96.";
+$user = "root";
+$pass = "";
 $db = "usuarios_registrados_bd";
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
@@ -98,6 +98,4 @@ echo '</div>';
 echo '<script src="../scripts/user_information.js"></script>';
 echo '</body></html>';
 $conn->close();
-
 ?>
-
