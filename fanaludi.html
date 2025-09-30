@@ -99,7 +99,7 @@
                         <div class="team-member-info">
                             <div class="team-member-name">Kevin Alvarez</div>
                             <div class="team-member-role">Integrante 3</div>
-                            <div class="team-member-email">keapiolo13@gmail.com</div>
+                            <div class="team-member-email">keapiolo13@example.com</div>
                         </div>
                     </div>
                 </div>
@@ -249,7 +249,7 @@
                 <p class="section-text section-text-last">
                     ¿Tienes alguna pregunta o quieres colaborar con nosotros? ¡No dudes en contactarnos!
                 </p>
-                <form id="contactForm" class="contact-form" action="php/fanaludi.php" method="POST">
+                <form id="contactForm" class="contact-form">
                     <div class="form-group">
                         <label for="name" class="form-label">Nombre:</label>
                         <input type="text" id="name" name="name" class="form-input" placeholder="Tu nombre" required>
@@ -272,7 +272,7 @@
         </main>
 
         <footer class="main-footer">
-            <p>&copy; 2025 FaNaLuDi Software. Todos los derechos reservados.</p>
+            <p>&copy; <span id="currentYear"></span> FaNaLuDi Software. Todos los derechos reservados.</p>
         </footer>
 
     </div>
