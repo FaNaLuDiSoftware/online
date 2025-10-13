@@ -9,16 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let leftWeight = 0;
     let rightWeight = 0;
 
-    // Mapping for local image paths (assuming your HTML uses these paths directly now)
-    // Removed dinosaurImageMap as it's not strictly necessary if img src is directly in HTML
-    // However, if you prefer to manage paths in JS, keep it and modify the droppedDinosaur creation
-
-    // Add drag event listeners to each dinosaur
     dinosaurs.forEach(dinosaur => {
         dinosaur.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('dinosaurWeight', dinosaur.dataset.weight);
             e.dataTransfer.setData('dinosaurName', dinosaur.dataset.name);
-            // Pass the image source directly
             e.dataTransfer.setData('dinosaurImageSrc', dinosaur.querySelector('img').src); 
             e.target.closest('.dinosaur').classList.add('dragging');
         });
@@ -27,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.closest('.dinosaur').classList.remove('dragging');
         });
     });
-
-    // Add drag-and-drop event listeners to the balance pans
+    
     const balancePans = [leftPan, rightPan];
     balancePans.forEach(pan => {
         pan.addEventListener('dragover', (e) => {
@@ -44,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const weight = parseInt(e.dataTransfer.getData('dinosaurWeight'));
             const name = e.dataTransfer.getData('dinosaurName');
-            const imageSrc = e.dataTransfer.getData('dinosaurImageSrc'); // Get image src
+            const imageSrc = e.dataTransfer.getData('dinosaurImageSrc');
 
             const droppedDinosaur = document.createElement('div');
             droppedDinosaur.classList.add('dropped-dinosaur');
@@ -67,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Function to update the visual state of the balance and show the result message
     function updateBalance() {
         leftPan.classList.remove('heavy', 'light', 'balanced');
         rightPan.classList.remove('heavy', 'light', 'balanced');
@@ -91,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             balanceBar.classList.add('no-tilt'); // No inclinar la barra (o volver al centro)
         }
 
-        // Show the message only if both sides have a dinosaur
         if (leftPan.dataset.dinosaur && rightPan.dataset.dinosaur) {
             if (leftWeight > rightWeight) {
                 resultMessage.innerHTML = 'El lado izquierdo es más pesado.';
@@ -103,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Reset button functionality
     resetButton.addEventListener('click', () => {
         leftWeight = 0;
         rightWeight = 0;
@@ -120,4 +110,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateBalance(); // Llamar para limpiar clases de los platos
     });
+
 });
