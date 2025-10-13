@@ -2,141 +2,155 @@
     RESET DEL game.css
 ================================== */
 .div-perfiles-rivales{
-    background-color: aqua;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 5vw;
-    margin: 0px 0px;
-    padding: 0% 0px 20px;
-    background-color: transparent;
-    width: 20vw;
-    height: 20vh;
-    max-width: none;
-    max-height: none;
-}.perfil-rival, .boton-rival{
-    max-width: none;
-    max-height: none;
-    min-width: none;
-    min-height: none;
-    aspect-ratio: 1/1;
-    width: 20vw;
-    height: 20vw;
-    max-width: 70px;
-    max-height: 70px;
+  display:flex; align-items:center; justify-content:center; gap:5vw;
+  background: transparent; margin:0; padding:0 0 20px;
+  width:20vw; height:20vh;
 }
-.nombre-rival, .puntaje-rival{
-    max-width: none;
-    max-height: none;
+.perfil-rival, .boton-rival{
+  width:20vw; height:20vw; max-width:70px; max-height:70px; aspect-ratio:1/1;
 }
-.nombre-rival{
-    width: 20vw;
+.nombre-rival, .puntaje-rival{ /* quitar límites innecesarios */
+  width:20vw;
 }
 
 /* ============================
-    CALCULADORA DE PUNTUACIÓN
+   Variables y bases
 ================================== */
-h2 {
-    color: white;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+:root{
+  --c-green: #2e7d32;          /* verde base */
+  --c-green-accent: #4caf50;   /* verde acento */
+  --c-white: #fff;
+  --c-panel-bg: rgba(0,0,0,0.35);
+  --shadow: 0 6px 14px rgba(0,0,0,0.35);
+  --radius: 10px;
 }
 
-.div-calculadora {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background-color: rgba(76, 175, 80, 0.9);
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+/* ============================
+   Calculadora y UI común
+================================== */
+h2{
+  color:#fff; text-align:center; margin-bottom:20px; font-size:24px;
+  text-shadow:2px 2px 4px rgba(0,0,0,0.5);
 }
 
-.parcela-item {
-    display: flex;
-    align-items: center;
-    background-color: rgba(46, 125, 50, 0.8);
-    border-radius: 8px;
-    padding: 8px 12px;
-    gap: 10px;
-    transition: background-color 0.3s ease;
+/* Paneles con propiedades compartidas */
+.div-calculadora,
+.resultados{
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-.parcela-item:hover {
-    background-color: rgba(46, 125, 50, 1);
+/* Colores específicos por panel */
+.div-calculadora{ display:flex; flex-direction:column; gap:8px; background: rgba(76,175,80,0.9); }
+.resultados{ background: var(--c-panel-bg); color:#fff; max-width:560px; margin:0 auto; backdrop-filter: blur(2px); }
+
+/* Ítems de parcela */
+.parcela-item{
+  display:flex; align-items:center; gap:10px; padding:8px 12px;
+  background: rgba(46,125,50,0.8); border-radius:8px; transition: background-color .3s ease;
+}
+.parcela-item:hover{ background: rgba(46,125,50,1); }
+.parcela-item.especial{ background: rgba(46,125,50,0.6); }
+
+.icono-parcela{ font-size:20px; width:25px; text-align:center; flex-shrink:0; }
+.nombre-parcela{ color:#fff; font-weight:700; font-size:14px; flex:1; text-shadow:1px 1px 2px rgba(0,0,0,.5); }
+
+/* Controles +/- */
+.btn-decrementar, .btn-incrementar{
+  display:flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:50%;
+  background: rgba(255,255,255,0.9);
+  border:2px solid rgba(46,125,50,0.8);
+  font:700 16px/1 system-ui; color: var(--c-green);
+  cursor:pointer; transition: transform .1s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-decrementar:hover, .btn-incrementar:hover{
+  background:#fff; transform: scale(1.1);
+  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+}
+.btn-decrementar:active, .btn-incrementar:active{ transform: scale(0.95); }
+
+.valor-parcela{
+  min-width:40px; text-align:center;
+  padding:5px 15px; border-radius:15px;
+  background: rgba(255,255,255,0.9);
+  border:2px solid rgba(46,125,50,0.8);
+  color: var(--c-green); font-weight:700; font-size:16px;
 }
 
-.parcela-item.especial {
-    background-color: rgba(46, 125, 50, 0.6);
+/* Checkboxes */
+.checkbox-container{ margin-left:auto; display:flex; align-items:center; justify-content:center; }
+.checkbox-parcela{ width:20px; height:20px; accent-color: var(--c-green-accent); cursor:pointer; transform: scale(1.2); }
+
+/* ============================
+   Setup inicial
+================================== */
+.setup-jugadores{
+  background: rgba(0,0,0,0.3); border-radius: var(--radius);
+  padding:12px; margin:10px auto 16px; max-width:520px;
+}
+.setup-jugadores label{ color:#fff; font-weight:600; display:block; margin-bottom:6px; }
+#cantidad-jugadores{ width:100%; padding:6px 10px; border-radius:8px; margin-bottom:10px; }
+#lista-nombres{ display:grid; gap:8px; grid-template-columns:1fr; }
+#lista-nombres input{ padding:8px 10px; border-radius:8px; border:1px solid #ccc; }
+
+/* ============================
+   Botones (unificados)
+================================== */
+.btn-calcular, .btn-reset, .btn-primary, .btn-iniciar{
+  background: linear-gradient(135deg, rgba(46,125,50,0.8), var(--c-green-accent));
+  color:#fff; border:0; padding:10px 14px; border-radius:10px;
+  cursor:pointer; font-weight:700; box-shadow: var(--shadow);
+  transition: transform .1s ease, box-shadow .2s ease;
+}
+.btn-iniciar{
+    margin-top: 8px;
+}
+.btn-calcular:hover, .btn-reset:hover, .btn-primary:hover, .btn-iniciar:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(1,255,26,0.45);
 }
 
-.icono-parcela {
-    font-size: 20px;
-    width: 25px;
-    text-align: center;
-    flex-shrink: 0;
-}
+/* Contenedor de acciones */
+.acciones-calculo{ display:flex; gap:10px; justify-content:center; margin:14px 0 6px; }
 
-.nombre-parcela {
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-    flex-grow: 1;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+/* ============================
+   Ranking
+================================== */
+.ranking-list{ list-style:none; margin:0; padding:0; }
+.ranking-list li{
+  display:flex; align-items:center; justify-content:space-between;
+  background: rgba(255,255,255,0.12);
+  padding:10px 12px; border-radius:10px; margin:6px 0;
+  border:1px solid rgba(255,255,255,0.2);
+  transform: scale(1); transition: transform .15s ease, background .2s ease;
 }
+.ranking-list li.pop{ transform: scale(1.02); background: rgba(255,255,255,0.18); }
+.rank-left{ display:flex; align-items:center; gap:10px; }
+.medal{
+  width:28px; height:28px; display:grid; place-items:center;
+  border-radius:50%; color:#111; font-weight:800;
+}
+.medal.gold{ background: linear-gradient(135deg,#ffd54f,#ffb300); }
+.medal.silver{ background: linear-gradient(135deg,#eeeeee,#bdbdbd); }
+.medal.bronze{ background: linear-gradient(135deg,#ffcc80,#ff8a65); }
+.medal.normal{ background: rgba(255,255,255,0.8); }
+.rank-name{ font-weight:700; letter-spacing:.2px; }
+.rank-score{ font-weight:800; }
 
-.btn-decrementar, .btn-incrementar {
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(46, 125, 50, 0.8);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #2e7d32;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* ============================
+   Modal ganador
+================================== */
+.modal{ position:fixed; inset:0; display:none; }
+.modal.show{ display:block; }
+.modal-backdrop{ position:absolute; inset:0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+.modal-dialog{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(90vw,420px); text-align:center;
+  background:#1e881c7b; color:#fff; border-radius:14px; padding:18px;
+  box-shadow:0 20px 60px rgba(41,163,51,0.47);
 }
-
-.btn-decrementar:hover, .btn-incrementar:hover {
-    background-color: white;
-    transform: scale(1.1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.btn-decrementar:active, .btn-incrementar:active {
-    transform: scale(0.95);
-}
-
-.valor-parcela {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #2e7d32;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 5px 15px;
-    border-radius: 15px;
-    min-width: 40px;
-    text-align: center;
-    border: 2px solid rgba(46, 125, 50, 0.8);
-}
-
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: auto;
-}
-
-.checkbox-parcela {
-    width: 20px;
-    height: 20px;
-    accent-color: #4caf50;
-    cursor: pointer;
-    transform: scale(1.2);
-}
+.modal-dialog h2{ margin:0 0 8px; font-size:26px; }
+.modal-detalle{ font-size:18px; margin:6px 0 12px; }
+.modal-actions{ display:flex; justify-content:center; }
