@@ -2,155 +2,326 @@
     RESET DEL game.css
 ================================== */
 .div-perfiles-rivales{
-  display:flex; align-items:center; justify-content:center; gap:5vw;
-  background: transparent; margin:0; padding:0 0 20px;
-  width:20vw; height:20vh;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+    margin: 6px 0;
+    padding: 6px 4px 12px;
+    background-color: transparent;
+    flex-wrap: wrap; /* permitir varias filas si hay 5 jugadores */
+    width: 100%;
 }
 .perfil-rival, .boton-rival{
-  width:20vw; height:20vw; max-width:70px; max-height:70px; aspect-ratio:1/1;
+    max-width: 90px;
+    max-height: 90px;
+    min-width: 56px;
+    min-height: 56px;
+    aspect-ratio: 1/1;
+    width: 72px;
+    height: 72px;
+    display: inline-flex; /* permitir columna centrada */
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
-.nombre-rival, .puntaje-rival{ /* quitar límites innecesarios */
-  width:20vw;
+/* pequeña separación inferior para evitar solapamientos en mobile */
+.perfil-rival { margin-bottom: 6px; }
+.nombre-rival{
+    display: block;
+    width: 100%;
+    text-align: center;
 }
+
+/* El contenedor del puntaje debe adaptarse al contenido (ancho automático) */
+.puntaje-rival{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.7);
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    width: auto;
+}
+
+/* Regla más específica para asegurar prioridad en seguimiento.html */
+.div-perfiles-rivales .puntaje-rival {
+    display: inline-flex !important;
+    width: auto !important;
+    padding: 2px 6px !important;
+}
+
+/* Centrar los nombres de los perfiles y truncarlos si son largos */
+.nombre-rival { text-align:center; font-weight:700; color:#fff; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+/* Centrar texto en las celdas de la tabla de resultados */
+.tabla-resultados td.td-nombre, .tabla-resultados td.td-puntos { text-align:center; }
 
 /* ============================
-   Variables y bases
+    CALCULADORA DE PUNTUACIÓN
 ================================== */
-:root{
-  --c-green: #2e7d32;          /* verde base */
-  --c-green-accent: #4caf50;   /* verde acento */
-  --c-white: #fff;
-  --c-panel-bg: rgba(0,0,0,0.35);
-  --shadow: 0 6px 14px rgba(0,0,0,0.35);
-  --radius: 10px;
+h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* ============================
-   Calculadora y UI común
-================================== */
-h2{
-  color:#fff; text-align:center; margin-bottom:20px; font-size:24px;
-  text-shadow:2px 2px 4px rgba(0,0,0,0.5);
+.div-calculadora {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: rgba(76, 175, 80, 0.9);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Paneles con propiedades compartidas */
-.div-calculadora,
-.resultados{
-  border-radius: var(--radius);
-  padding: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+.parcela-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(46, 125, 50, 0.8);
+    border-radius: 8px;
+    padding: 8px 12px;
+    gap: 10px;
+    transition: background-color 0.3s ease;
 }
 
-/* Colores específicos por panel */
-.div-calculadora{ display:flex; flex-direction:column; gap:8px; background: rgba(76,175,80,0.9); }
-.resultados{ background: var(--c-panel-bg); color:#fff; max-width:560px; margin:0 auto; backdrop-filter: blur(2px); }
-
-/* Ítems de parcela */
-.parcela-item{
-  display:flex; align-items:center; gap:10px; padding:8px 12px;
-  background: rgba(46,125,50,0.8); border-radius:8px; transition: background-color .3s ease;
-}
-.parcela-item:hover{ background: rgba(46,125,50,1); }
-.parcela-item.especial{ background: rgba(46,125,50,0.6); }
-
-.icono-parcela{ font-size:20px; width:25px; text-align:center; flex-shrink:0; }
-.nombre-parcela{ color:#fff; font-weight:700; font-size:14px; flex:1; text-shadow:1px 1px 2px rgba(0,0,0,.5); }
-
-/* Controles +/- */
-.btn-decrementar, .btn-incrementar{
-  display:flex; align-items:center; justify-content:center;
-  width:30px; height:30px; border-radius:50%;
-  background: rgba(255,255,255,0.9);
-  border:2px solid rgba(46,125,50,0.8);
-  font:700 16px/1 system-ui; color: var(--c-green);
-  cursor:pointer; transition: transform .1s ease, box-shadow .2s ease, background .2s ease;
-}
-.btn-decrementar:hover, .btn-incrementar:hover{
-  background:#fff; transform: scale(1.1);
-  box-shadow:0 2px 4px rgba(0,0,0,0.3);
-}
-.btn-decrementar:active, .btn-incrementar:active{ transform: scale(0.95); }
-
-.valor-parcela{
-  min-width:40px; text-align:center;
-  padding:5px 15px; border-radius:15px;
-  background: rgba(255,255,255,0.9);
-  border:2px solid rgba(46,125,50,0.8);
-  color: var(--c-green); font-weight:700; font-size:16px;
+.parcela-item:hover {
+    background-color: rgba(46, 125, 50, 1);
 }
 
-/* Checkboxes */
-.checkbox-container{ margin-left:auto; display:flex; align-items:center; justify-content:center; }
-.checkbox-parcela{ width:20px; height:20px; accent-color: var(--c-green-accent); cursor:pointer; transform: scale(1.2); }
-
-/* ============================
-   Setup inicial
-================================== */
-.setup-jugadores{
-  background: rgba(0,0,0,0.3); border-radius: var(--radius);
-  padding:12px; margin:10px auto 16px; max-width:520px;
-}
-.setup-jugadores label{ color:#fff; font-weight:600; display:block; margin-bottom:6px; }
-#cantidad-jugadores{ width:100%; padding:6px 10px; border-radius:8px; margin-bottom:10px; }
-#lista-nombres{ display:grid; gap:8px; grid-template-columns:1fr; }
-#lista-nombres input{ padding:8px 10px; border-radius:8px; border:1px solid #ccc; }
-
-/* ============================
-   Botones (unificados)
-================================== */
-.btn-calcular, .btn-reset, .btn-primary, .btn-iniciar{
-  background: linear-gradient(135deg, rgba(46,125,50,0.8), var(--c-green-accent));
-  color:#fff; border:0; padding:10px 14px; border-radius:10px;
-  cursor:pointer; font-weight:700; box-shadow: var(--shadow);
-  transition: transform .1s ease, box-shadow .2s ease;
-}
-.btn-iniciar{
-    margin-top: 8px;
-}
-.btn-calcular:hover, .btn-reset:hover, .btn-primary:hover, .btn-iniciar:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(1,255,26,0.45);
+.parcela-item.especial {
+    background-color: rgba(46, 125, 50, 0.6);
 }
 
-/* Contenedor de acciones */
-.acciones-calculo{ display:flex; gap:10px; justify-content:center; margin:14px 0 6px; }
+.icono-parcela {
+    font-size: 20px;
+    width: 25px;
+    text-align: center;
+    flex-shrink: 0;
+}
 
-/* ============================
-   Ranking
-================================== */
-.ranking-list{ list-style:none; margin:0; padding:0; }
-.ranking-list li{
-  display:flex; align-items:center; justify-content:space-between;
-  background: rgba(255,255,255,0.12);
-  padding:10px 12px; border-radius:10px; margin:6px 0;
-  border:1px solid rgba(255,255,255,0.2);
-  transform: scale(1); transition: transform .15s ease, background .2s ease;
+.nombre-parcela {
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    flex-grow: 1;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
-.ranking-list li.pop{ transform: scale(1.02); background: rgba(255,255,255,0.18); }
-.rank-left{ display:flex; align-items:center; gap:10px; }
-.medal{
-  width:28px; height:28px; display:grid; place-items:center;
-  border-radius:50%; color:#111; font-weight:800;
-}
-.medal.gold{ background: linear-gradient(135deg,#ffd54f,#ffb300); }
-.medal.silver{ background: linear-gradient(135deg,#eeeeee,#bdbdbd); }
-.medal.bronze{ background: linear-gradient(135deg,#ffcc80,#ff8a65); }
-.medal.normal{ background: rgba(255,255,255,0.8); }
-.rank-name{ font-weight:700; letter-spacing:.2px; }
-.rank-score{ font-weight:800; }
 
-/* ============================
-   Modal ganador
-================================== */
-.modal{ position:fixed; inset:0; display:none; }
-.modal.show{ display:block; }
-.modal-backdrop{ position:absolute; inset:0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-.modal-dialog{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(90vw,420px); text-align:center;
-  background:#1e881c7b; color:#fff; border-radius:14px; padding:18px;
-  box-shadow:0 20px 60px rgba(41,163,51,0.47);
+.btn-decrementar, .btn-incrementar {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(46, 125, 50, 0.8);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2e7d32;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.modal-dialog h2{ margin:0 0 8px; font-size:26px; }
-.modal-detalle{ font-size:18px; margin:6px 0 12px; }
-.modal-actions{ display:flex; justify-content:center; }
+
+.btn-decrementar:hover, .btn-incrementar:hover {
+    background-color: white;
+    transform: scale(1.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-decrementar:active, .btn-incrementar:active {
+    transform: scale(0.95);
+}
+
+.valor-parcela {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #2e7d32;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 5px 15px;
+    border-radius: 15px;
+    min-width: 40px;
+    text-align: center;
+    border: 2px solid rgba(46, 125, 50, 0.8);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.checkbox-parcela {
+    width: 20px;
+    height: 20px;
+    accent-color: #4caf50;
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+.modal-ganador {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+}
+.modal-contenido {
+    background-color: rgba(46,125,50,0.98); /* verde similar al tema */
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    padding: 18px;
+    border: 3px solid rgba(24, 94, 24, 0.9);
+}
+
+/* Mejor contraste para texto y botones dentro del modal */
+.modal-contenido h3, .modal-contenido p {
+    color: #fff;
+}
+.modal-contenido .button {
+    border-color: rgba(255,255,255,0.2);
+}
+
+/* Estilos específicos para el modal de configuración */
+#modal-config .modal-contenido {
+    max-width: 520px;
+}
+#modal-config label { color: #fff; font-weight:600; }
+#modal-config .input-nombre { display:block; }
+#modal-config .input-nombre input { border-radius:6px; border:1px solid rgba(0,0,0,0.2); }
+
+.resultado-container .button {
+    min-width: 140px;
+    padding: 10px 18px;
+}
+
+/* Botones estilo Menu (copiado y simplificado de css/menu.css) */
+.button {
+    display: inline-block;
+    padding: 12px 28px;
+    text-decoration: none;
+    color: #fff;
+    border: 3px solid #388E3C;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 140px;
+    transition: all 0.25s ease-in-out;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    background-color: #4caf50; /* fallback */
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.12);
+    transition: left 0.4s ease-in-out;
+    transform: skewX(-20deg);
+}
+
+.button:hover::before { left: 100%; }
+
+.button-play {
+    background: linear-gradient(90deg, #51b655, #328d35b7);
+    border-color: #19671cbb;
+}
+
+.button-manual {
+    background: linear-gradient(90deg, #2b622d, #123313b7);
+    border-color: #0d340ebb;
+}
+
+.button:active { transform: translateY(1px) scale(0.995); }
+
+/* Estilos para la tabla de resultados similar a la calculadora */
+.tabla-wrapper {
+    max-width: 520px;
+    margin: 8px auto 0;
+    background-color: rgba(76,175,80,0.95);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.tabla-resultados {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+.tabla-resultados thead .th-jugador { text-align: left; padding-left: 12px; color: #fff; font-weight:700; }
+.tabla-resultados thead .th-puntos { text-align: right; padding-right: 12px; color: #fff; font-weight:700; }
+.tabla-resultados tbody tr.fila-resultado { background: transparent; }
+.tabla-resultados tbody tr.fila-ganador { background: transparent; }
+.tabla-resultados tbody td { background: rgba(46,125,50,0.85); }
+.tabla-resultados tbody tr.fila-ganador td { background: rgba(255,223,93,0.25); color: #111; font-weight:700; }
+.tabla-resultados td.td-nombre { padding: 12px; color: #fff; }
+.tabla-resultados td.td-puntos { padding: 12px; text-align: right; color: #fff; }
+.tabla-resultados tbody td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; padding-left: 16px; }
+.tabla-resultados tbody td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; padding-right: 16px; }
+.resultado-header { text-align:center; font-weight:700; margin-bottom:8px; color:#fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
+
+/* Ajustes responsive para móviles: evitar que el 5º jugador pase a otra fila y se solape */
+@media (max-width: 600px) {
+    .div-perfiles-rivales {
+        flex-wrap: nowrap; /* mantener una fila y permitir scroll horizontal */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 10px;
+        padding: 8px 6px 12px;
+        justify-content: flex-start; /* alinear a la izquierda para scroll natural */
+    }
+
+    .div-perfiles-rivales::-webkit-scrollbar { height: 8px; }
+
+    .perfil-rival, .boton-rival {
+        width: 56px;
+        height: 56px;
+        max-width: 56px;
+        max-height: 56px;
+    }
+
+    /* dar espacio extra arriba de la calculadora para evitar solapamientos */
+    .div-calculadora { margin-top: 12px; }
+}
+
+/* Ajustes por número de jugadores: mayor número -> avatares más pequeños */
+.div-perfiles-rivales.players-2 .perfil-rival, .div-perfiles-rivales.players-2 .boton-rival { width: 96px; height: 96px; }
+.div-perfiles-rivales.players-2 { gap: 28px; justify-content: center; }
+
+.div-perfiles-rivales.players-3 .perfil-rival, .div-perfiles-rivales.players-3 .boton-rival { width: 80px; height: 80px; }
+.div-perfiles-rivales.players-3 { gap: 20px; justify-content: center; }
+
+.div-perfiles-rivales.players-4 .perfil-rival, .div-perfiles-rivales.players-4 .boton-rival { width: 72px; height: 72px; }
+.div-perfiles-rivales.players-4 { gap: 14px; justify-content: center; }
+
+.div-perfiles-rivales.players-5 .perfil-rival, .div-perfiles-rivales.players-5 .boton-rival { width: 60px; height: 60px; }
+.div-perfiles-rivales.players-5 { gap: 10px; justify-content: flex-start; overflow-x: auto; }
+
+/* Ajustes responsive combinados: asegurar que la clase players-N se respeta en mobile */
+@media (max-width:600px) {
+    .div-perfiles-rivales.players-2 .perfil-rival, .div-perfiles-rivales.players-2 .boton-rival { width: 84px; height:84px; }
+    .div-perfiles-rivales.players-3 .perfil-rival, .div-perfiles-rivales.players-3 .boton-rival { width: 70px; height:70px; }
+    .div-perfiles-rivales.players-4 .perfil-rival, .div-perfiles-rivales.players-4 .boton-rival { width: 60px; height:60px; }
+    .div-perfiles-rivales.players-5 .perfil-rival, .div-perfiles-rivales.players-5 .boton-rival { width: 50px; height:50px; }
+}
