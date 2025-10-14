@@ -1,335 +1,459 @@
-// ###### CALCULADORA DE PUNTUACIÓN ######
-document.addEventListener('DOMContentLoaded', function() {
+// Calculadora de puntuación - versión consolidada
+// - Persistencia en localStorage
+// - Reglas oficiales (según imagen)
+// - Modal ganador y tabla de resultados
+// - Actualización en vivo de puntajes en la UI
 
-  // Referencias UI
-  const selCantidad   = document.getElementById('cantidad-jugadores');
-  const listaNombres  = document.getElementById('lista-nombres');
-  const btnIniciar    = document.getElementById('btn-iniciar');
-  const zonaJuego     = document.getElementById('zona-juego');
-  const contPerfiles  = document.getElementById('perfiles-rivales');
-  const calcContainer = document.querySelector('.div-calculadora');
+// Variable global para los datos
+let datosJugadores = {};
 
-  // Nuevos elementos
-  const btnCalcular   = document.getElementById('btn-calcular');
-  const btnReset      = document.getElementById('btn-reset');
-  const resultadosSec = document.getElementById('resultados');
-  const rankingOl     = document.getElementById('lista-ranking');
-  const modal         = document.getElementById('modal-ganador');
-  const modalNombre   = document.getElementById('ganador-nombre');
-  const modalPuntos   = document.getElementById('ganador-puntos');
-  const cerrarModal   = document.getElementById('cerrar-modal');
+// Tabla de puntajes oficiales
+const IGUALES_POINTS = [0,2,4,8,12,18,24];
+const DIFERENTES_POINTS = [0,1,3,6,10,15,21];
 
-  // Estado
-  let jugadorActivo = null;        // 'rival1', 'rival2', ...
-  let datosJugadores = {};         // { rival1: { ...estado... }, ... }
+// Máximos por parcela (limitar en UI y en guardado)
+const MAX_IGUALES = 6; // índice máximo válido para IGUALES_POINTS
+const MAX_DIFERENTES = 6; // índice máximo válido para DIFERENTES_POINTS
+const MAX_PAREJAS = 3; // máximo número de parejas (cada pareja 5 pts)
+const MAX_TREX = 10; // máximo número de T-Rex
 
-  // Límites (fallback si no hay data-max en HTML)
-  const LIMITES = { iguales: 6, parejas: 3, rio: Infinity, diferentes: 6, trex: 10 };
+function calcularPuntaje(datos) {
+    let total = 0;
+    const iguales = Math.max(0, Math.min(parseInt(datos.iguales) || 0, IGUALES_POINTS.length - 1));
+    total += IGUALES_POINTS[iguales];
 
-  // Mapas de puntaje
-  const MAP_IGUALES     = [0, 2, 4, 8, 12, 18, 24];     // 0..6
-  const MAP_DIFERENTES  = [0, 1, 3, 6, 10, 15, 21];     // 0..6
+    const diferentes = Math.max(0, Math.min(parseInt(datos.diferentes) || 0, DIFERENTES_POINTS.length - 1));
+    total += DIFERENTES_POINTS[diferentes];
 
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    total += (parseInt(datos.rio) || 0) * 1; // Río: 1 por dino
+    total += (parseInt(datos.trex) || 0) * 1; // T-Rex: 1 por T-Rex
+    total += (datos.trio ? 7 : 0); // Trío: 7 pts
+    total += (parseInt(datos.parejas) || 0) * 5; // Parejas: 5 por pareja
+    total += (datos.unico ? 7 : 0); // Único: 7 pts
+    total += (datos.rey ? 1 : 0); // Rey: 1
+    return total;
+}
 
-  function feedbackLimite(el) {
-    el.style.outline = '2px solid #ff5252';
-    el.style.backgroundColor = 'rgba(255,82,82,0.15)';
-    setTimeout(() => { el.style.outline = ''; el.style.backgroundColor = ''; }, 220);
-  }
-
-  // Render inputs de nombres según cantidad
-  function renderInputs(count) {
-    listaNombres.innerHTML = '';
-    for (let i = 1; i <= count; i++) {
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.id = `nombre-jugador-${i}`;
-      input.placeholder = `Nombre del jugador ${i}`;
-      input.value = `Jugador ${i}`;
-      listaNombres.appendChild(input);
+function guardarEnLocal() {
+    try {
+        localStorage.setItem('datosJugadores', JSON.stringify(datosJugadores));
+    } catch (e) {
+        console.warn('No se pudo guardar en localStorage', e);
     }
-  }
+}
 
-  // Estado por defecto de un jugador
-  function estadoDefault(nombre, orden){
-    return {
-      orden, nombre,
-      iguales: 0, trio: false, parejas: 0, unico: false,
-      rio: 0, diferentes: 0, rey: false, trex: 0, total: 0
+function cargarDesdeLocal() {
+    try {
+        const raw = localStorage.getItem('datosJugadores');
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        for (const k in parsed) {
+            if (datosJugadores[k]) {
+                // merge y clamp de valores para evitar valores fuera de rango
+                const fuente = Object.assign({}, datosJugadores[k], parsed[k]);
+                fuente.iguales = Math.max(0, Math.min(MAX_IGUALES, parseInt(fuente.iguales) || 0));
+                fuente.diferentes = Math.max(0, Math.min(MAX_DIFERENTES, parseInt(fuente.diferentes) || 0));
+                fuente.parejas = Math.max(0, Math.min(MAX_PAREJAS, parseInt(fuente.parejas) || 0));
+                fuente.rio = Math.max(0, parseInt(fuente.rio) || 0);
+                fuente.trex = Math.max(0, Math.min(MAX_TREX, parseInt(fuente.trex) || 0));
+                fuente.trio = !!fuente.trio;
+                fuente.unico = !!fuente.unico;
+                fuente.rey = !!fuente.rey;
+                datosJugadores[k] = fuente;
+            }
+        }
+    } catch (e) {
+        console.warn('Error leyendo localStorage', e);
+    }
+}
+
+function actualizarPuntajesRivales() {
+    // Actualizar todos los spans que terminan en -puntaje-valor (soporta 2..5 jugadores)
+    const spans = document.querySelectorAll('[id$="-puntaje-valor"]');
+    spans.forEach(span => {
+        const id = span.id; // e.g. rival3-puntaje-valor
+        const clave = id.replace('-puntaje-valor','');
+        const datos = datosJugadores[clave];
+        span.textContent = datos ? calcularPuntaje(datos) : '0';
+    });
+}
+
+function actualizarCalculadora(jugadorId) {
+    const calculadoraContainer = document.querySelector('.div-calculadora');
+    const valores = calculadoraContainer.querySelectorAll('.valor-parcela');
+    const checkboxes = calculadoraContainer.querySelectorAll('.checkbox-parcela');
+    const datos = datosJugadores[jugadorId];
+    const titulo = document.querySelector('h2');
+    titulo.textContent = `Puntuación de ${datos.nombre}`;
+
+    if (valores[0]) valores[0].textContent = datos.iguales;
+    if (valores[1]) valores[1].textContent = datos.parejas;
+    if (valores[2]) valores[2].textContent = datos.rio;
+    if (valores[3]) valores[3].textContent = datos.diferentes;
+    if (valores[4]) valores[4].textContent = datos.trex;
+
+    if (checkboxes[0]) checkboxes[0].checked = datos.trio;
+    if (checkboxes[1]) checkboxes[1].checked = datos.unico;
+    if (checkboxes[2]) checkboxes[2].checked = datos.rey;
+}
+
+function guardarDatosJugadorActivo(jugadorActivo) {
+    const calculadoraContainer = document.querySelector('.div-calculadora');
+    const valores = calculadoraContainer.querySelectorAll('.valor-parcela');
+    const checkboxes = calculadoraContainer.querySelectorAll('.checkbox-parcela');
+    const datos = datosJugadores[jugadorActivo];
+
+    if (valores[0]) datos.iguales = Math.max(0, Math.min(MAX_IGUALES, parseInt(valores[0].textContent) || 0));
+    if (valores[1]) datos.parejas = Math.max(0, Math.min(MAX_PAREJAS, parseInt(valores[1].textContent) || 0));
+    if (valores[2]) datos.rio = Math.max(0, parseInt(valores[2].textContent) || 0);
+    if (valores[3]) datos.diferentes = Math.max(0, Math.min(MAX_DIFERENTES, parseInt(valores[3].textContent) || 0));
+    if (valores[4]) datos.trex = Math.max(0, Math.min(MAX_TREX, parseInt(valores[4].textContent) || 0));
+
+    if (checkboxes[0]) datos.trio = checkboxes[0].checked;
+    if (checkboxes[1]) datos.unico = checkboxes[1].checked;
+    if (checkboxes[2]) datos.rey = checkboxes[2].checked;
+
+    guardarEnLocal();
+    actualizarPuntajesRivales();
+}
+
+function mostrarResultadosEnDOM(resultados, ganadores) {
+    const cont = document.getElementById('resultado-ganador');
+    if (!cont) return;
+    cont.innerHTML = '';
+
+    // Contenedor de la tabla con estilo similar a la calculadora
+    const tableWrapper = document.createElement('div');
+    tableWrapper.className = 'tabla-wrapper';
+
+    // Ajustar el ancho de la tabla para que coincida con la calculadora
+    try {
+        const calculadora = document.querySelector('.div-calculadora');
+        if (calculadora) {
+            const w = window.getComputedStyle(calculadora).width;
+            tableWrapper.style.width = w;
+            tableWrapper.style.boxSizing = 'border-box';
+            tableWrapper.style.margin = '8px auto 0';
+        }
+    } catch (e) {
+        // no crítico
+    }
+
+    const tabla = document.createElement('table');
+    tabla.className = 'tabla-resultados';
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th class="th-jugador">Jugador</th><th class="th-puntos">Puntos</th></tr>';
+    tabla.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    resultados.forEach(r => {
+        const tr = document.createElement('tr');
+        const isWinner = ganadores.some(g => g.jugador === r.jugador);
+        if (isWinner) tr.className = 'fila-ganador'; else tr.className = 'fila-resultado';
+
+        const tdName = document.createElement('td');
+        tdName.className = 'td-nombre';
+        tdName.textContent = r.nombre;
+
+        const tdScore = document.createElement('td');
+        tdScore.className = 'td-puntos';
+        tdScore.textContent = r.puntaje;
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdScore);
+        tbody.appendChild(tr);
+    });
+    tabla.appendChild(tbody);
+
+    const header = document.createElement('div');
+    header.className = 'resultado-header';
+    if (ganadores.length === 1) header.textContent = `Ganador: ${ganadores[0].nombre} — ${ganadores[0].puntaje} pts`;
+    else header.textContent = `Empate entre ${ganadores.map(g => g.nombre).join(', ')} — ${ganadores[0] ? ganadores[0].puntaje : 0} pts`;
+
+    tableWrapper.appendChild(tabla);
+    cont.appendChild(header);
+    cont.appendChild(tableWrapper);
+
+    const btnCopiar = document.createElement('button');
+    btnCopiar.textContent = 'Copiar resultados';
+    // usar clases del menú para heredar estilo
+    btnCopiar.className = 'button button-play';
+    btnCopiar.style.display = 'block';
+    btnCopiar.style.margin = '10px auto 0';
+    btnCopiar.addEventListener('click', () => {
+        const text = resultados.map(r => `${r.nombre}: ${r.puntaje}`).join('\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(()=>{
+                // feedback corto
+                btnCopiar.textContent = 'Copiado ✓';
+                setTimeout(()=> btnCopiar.textContent = 'Copiar resultados', 1200);
+            }).catch(()=> alert(text));
+        } else {
+            alert(text);
+        }
+    });
+    cont.appendChild(btnCopiar);
+}
+
+function calcularGanador() {
+    // Guardar datos del jugador activo si hay alguno seleccionado
+    const seleccionado = document.querySelector('.boton-rival.seleccionado');
+    if (seleccionado) {
+        const jugadorActivo = seleccionado.id.replace('-boton','');
+        guardarDatosJugadorActivo(jugadorActivo);
+    }
+
+    const resultados = [];
+    for (const clave in datosJugadores) {
+        if (Object.prototype.hasOwnProperty.call(datosJugadores, clave)) {
+            const datos = datosJugadores[clave];
+            resultados.push({ jugador: clave, nombre: datos.nombre, puntaje: calcularPuntaje(datos) });
+        }
+    }
+    resultados.sort((a,b)=> b.puntaje - a.puntaje);
+    const max = resultados[0] ? resultados[0].puntaje : 0;
+    const ganadores = resultados.filter(r => r.puntaje === max);
+    return { resultados, ganadores };
+}
+
+// Inicialización cuando el DOM está listo
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar datos por defecto
+    datosJugadores = {
+        rival1: { nombre: 'Vothka', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival2: { nombre: 'Diego Zamora', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival3: { nombre: 'Fabrizio Arriola', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival4: { nombre: 'Lukateli', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
     };
-  }
 
-  // Crear perfil visual
-  function crearPerfil(index, nombre) {
-    const i = index;
-    const wrap = document.createElement('span');
-    wrap.className = 'perfil-rival';
-    wrap.id = `rival${i}-perfil`;
-    wrap.innerHTML = `
-      <button class="boton-rival" id="rival${i}-boton">
-        <span class="fondo-rival" id="rival${i}-fondo">
-          <span class="cabeza-rival" id="rival${i}-cabeza"></span>
-          <span class="cuerpo-rival" id="rival${i}-cuerpo"></span>
-        </span>
-      </button>
-      <span class="nombre-rival" id="rival${i}-nombre">${nombre}</span>
-      <span class="puntaje-rival" id="rival${i}-puntaje">
-        <span class="puntaje-rival-texto">Puntaje: </span>
-        <span class="puntaje-rival-valor" id="rival${i}-puntaje-valor">0</span>
-      </span>
-    `;
-    return wrap;
-  }
+    // Cargar persistencia
+    cargarDesdeLocal();
 
-  // Guarda el estado actual de la calculadora en el jugador activo
-  function guardarDatosJugador() {
-    if (!jugadorActivo || !datosJugadores[jugadorActivo] || !calcContainer) return;
-    const d = datosJugadores[jugadorActivo];
+    // --- LÓGICA DEL MODAL DE CONFIGURACIÓN ---
+    const modalConfig = document.getElementById('modal-config');
+    const selectNum = document.getElementById('select-num-jugadores');
+    const nombresContainer = document.getElementById('nombres-jugadores');
+    const btnGuardarConfig = document.getElementById('config-guardar');
+    const btnCancelarConfig = document.getElementById('config-cancelar');
 
-    const items = calcContainer.querySelectorAll('.parcela-item');
-    items.forEach(item => {
-      const field = item.dataset.field;
-      if (!field) return;
-
-      const valNode = item.querySelector('.valor-parcela');
-      const chkNode = item.querySelector('.checkbox-parcela');
-
-      if (valNode) {
-        let v = parseInt(valNode.textContent) || 0;
-        const max = Number(item.dataset.max ?? '') || LIMITES[field] || Infinity;
-        v = clamp(v, 0, max);
-        d[field] = v;
-      } else if (chkNode) {
-        d[field] = !!chkNode.checked;
-      }
-    });
-  }
-
-  // Carga en la calculadora los datos del jugador indicado
-  function actualizarCalculadora(jugadorId) {
-    if (!calcContainer) return;
-    const d = datosJugadores[jugadorId];
-    if (!d) return;
-
-    const titulo = document.querySelector('#zona-juego h2');
-    if (titulo) titulo.textContent = `Puntuación de ${d.nombre}`;
-
-    const items = calcContainer.querySelectorAll('.parcela-item');
-    items.forEach(item => {
-      const field = item.dataset.field;
-      if (!field) return;
-
-      const valNode = item.querySelector('.valor-parcela');
-      const chkNode = item.querySelector('.checkbox-parcela');
-
-      if (valNode) {
-        valNode.textContent = String(Number(d[field] || 0));
-      } else if (chkNode) {
-        chkNode.checked = !!d[field];
-      }
-    });
-  }
-
-  // Selección de jugadores con delegación
-  function prepararSeleccionRivales() {
-    if (!contPerfiles) return;
-
-    contPerfiles.addEventListener('click', function (e) {
-      const btn = e.target.closest('.boton-rival');
-      if (!btn || !contPerfiles.contains(btn)) return;
-
-      guardarDatosJugador(); // Persistir el actual
-
-      contPerfiles.querySelectorAll('.boton-rival').forEach(b => b.classList.remove('seleccionado'));
-      btn.classList.add('seleccionado');
-
-      jugadorActivo = btn.id.replace('-boton', ''); // 'rivalN'
-      actualizarCalculadora(jugadorActivo);
-
-      calcContainer.style.opacity = '0.85';
-      setTimeout(() => calcContainer.style.opacity = '1', 120);
-    });
-
-    const primero = contPerfiles.querySelector('.boton-rival');
-    if (primero) {
-      primero.classList.add('seleccionado');
-      jugadorActivo = primero.id.replace('-boton', '');
-      actualizarCalculadora(jugadorActivo);
-    }
-  }
-
-  // Delegación para + / - en la calculadora
-  if (calcContainer) {
-    calcContainer.addEventListener('click', function (e) {
-      const inc = e.target.closest('.btn-incrementar');
-      const dec = e.target.closest('.btn-decrementar');
-      if (!inc && !dec) return;
-
-      const item = e.target.closest('.parcela-item');
-      const valSpan = item?.querySelector('.valor-parcela');
-      if (!item || !valSpan) return;
-
-      const field = item.dataset.field || '';
-      const max = Number(item.dataset.max ?? '') || LIMITES[field] || Infinity;
-
-      let val = parseInt(valSpan.textContent) || 0;
-      if (inc) {
-        if (val >= max) { feedbackLimite(valSpan); return; }
-        valSpan.textContent = String(++val);
-      } else if (dec) {
-        if (val > 0) valSpan.textContent = String(--val);
-      }
-      guardarDatosJugador();
-    });
-
-    // Checkboxes
-    calcContainer.addEventListener('change', function () {
-      guardarDatosJugador();
-    });
-  }
-
-  // Cálculo de total
-  function calcularTotal(d) {
-    const iguales     = MAP_IGUALES[clamp(Number(d.iguales || 0),     0, 6)];
-    const trio        = d.trio ? 7 : 0;
-    const parejas     = clamp(Number(d.parejas || 0), 0, 3) * 5;
-    const unico       = d.unico ? 7 : 0;
-    const rio         = Number(d.rio || 0); // 1:1
-    const diferentes  = MAP_DIFERENTES[clamp(Number(d.diferentes || 0), 0, 6)];
-    const rey         = d.rey ? 7 : 0;
-    const trex        = Number(d.trex || 0); // 1:1
-    return iguales + trio + parejas + unico + rio + diferentes + rey + trex;
-  }
-
-  function renderRanking(ranking) {
-    if (!resultadosSec || !rankingOl) return;
-    rankingOl.innerHTML = '';
-
-    ranking.forEach((r, i) => {
-      const li = document.createElement('li');
-      const medalClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
-      const label = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : String(i + 1);
-      li.innerHTML = `
-        <div class="rank-left">
-          <span class="medal ${medalClass}">${label}</span>
-          <span class="rank-name">${r.nombre}</span>
-        </div>
-        <span class="rank-score">${r.total} pts</span>
-      `;
-      li.classList.add('pop');
-      setTimeout(()=>li.classList.remove('pop'), 220);
-      rankingOl.appendChild(li);
-    });
-
-    resultadosSec.style.display = '';
-  }
-
-  function abrirModalGanador(nombre, puntos){
-    if (!modal) return;
-    modalNombre.textContent = nombre;
-    modalPuntos.textContent = `${puntos}`;
-    modal.classList.add('show');
-    modal.style.display = 'block';
-    modal.setAttribute('aria-hidden', 'false');
-  }
-  function cerrarModalGanador(){
-    if (!modal) return;
-    modal.classList.remove('show');
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden', 'true');
-  }
-  modal?.addEventListener('click', (e)=>{
-    if (e.target.classList.contains('modal-backdrop')) cerrarModalGanador();
-  });
-  cerrarModal?.addEventListener('click', cerrarModalGanador);
-
-  // Botón Calcular
-  btnCalcular?.addEventListener('click', function () {
-    guardarDatosJugador();
-
-    const salida = [];
-    Object.keys(datosJugadores).forEach(idKey => {
-      const d = datosJugadores[idKey];
-      d.total = calcularTotal(d);
-
-      const spanVal = document.getElementById(`${idKey}-puntaje-valor`);
-      if (spanVal) spanVal.textContent = String(d.total);
-
-      salida.push({ id: idKey, nombre: d.nombre, total: d.total, orden: d.orden || 0 });
-    });
-
-    // Orden: total desc, luego orden inicial
-    salida.sort((a, b) => b.total - a.total || a.orden - b.orden);
-
-    renderRanking(salida);
-
-    // Modal ganador
-    if (salida[0]) abrirModalGanador(salida[0].nombre, salida[0].total);
-
-    // Micro animación del botón
-    this.style.transform = 'translateY(1px) scale(0.99)';
-    setTimeout(()=> this.style.transform = '', 100);
-  });
-
-  // Botón Reiniciar (todo a default, mismos nombres y cantidad)
-  btnReset?.addEventListener('click', function(){
-    // Reset estado
-    Object.keys(datosJugadores).forEach((idKey, idx) => {
-      const nombre = datosJugadores[idKey].nombre;
-      datosJugadores[idKey] = estadoDefault(nombre, idx+1);
-      // Puntaje visual
-      const spanVal = document.getElementById(`${idKey}-puntaje-valor`);
-      if (spanVal) spanVal.textContent = '0';
-    });
-
-    // Reset calculadora para el jugador activo
-    if (jugadorActivo) actualizarCalculadora(jugadorActivo);
-
-    // Ocultar ranking
-    if (resultadosSec && rankingOl){ resultadosSec.style.display = 'none'; rankingOl.innerHTML=''; }
-
-    // Cerrar modal si estaba abierto
-    cerrarModalGanador();
-
-    // Feedback botón
-    this.style.transform = 'translateY(1px) scale(0.99)';
-    setTimeout(()=> this.style.transform = '', 100);
-  });
-
-  // Iniciar partida
-  btnIniciar?.addEventListener('click', function () {
-    const count = parseInt(selCantidad?.value || '0', 10);
-    if (!count || !listaNombres || !contPerfiles || !zonaJuego) {
-      alert('No se pudo iniciar: faltan elementos en la página.');
-      return;
+    function mostrarInputsSegunCantidad(n) {
+        const inputs = nombresContainer.querySelectorAll('.input-nombre');
+        inputs.forEach(div => {
+            const idx = parseInt(div.getAttribute('data-idx'));
+            div.style.display = idx <= n ? 'block' : 'none';
+        });
     }
 
-    // Reset estado/UI
-    datosJugadores = {};
-    contPerfiles.innerHTML = '';
-    if (resultadosSec && rankingOl) { resultadosSec.style.display = 'none'; rankingOl.innerHTML = ''; }
-    cerrarModalGanador();
-
-    for (let i = 1; i <= count; i++) {
-      const nombreInput = document.getElementById(`nombre-jugador-${i}`);
-      const nombre = (nombreInput?.value || `Jugador ${i}`).trim() || `Jugador ${i}`;
-
-      datosJugadores[`rival${i}`] = estadoDefault(nombre, i);
-      contPerfiles.appendChild(crearPerfil(i, nombre));
+    // Mostrar modal si venimos desde menu.html o si no hay datos guardados
+    const ref = document.referrer || '';
+    const tieneDatos = localStorage.getItem('datosJugadores');
+    if (ref.includes('menu.html') || ref.includes('menu-admin.html') || !tieneDatos) {
+        if (modalConfig) modalConfig.style.display = 'flex';
     }
 
-    // Mostrar zona de juego y preparar selección
-    const setup = document.getElementById('setup-jugadores');
-    if (setup) setup.style.display = 'none';
-    zonaJuego.style.display = 'block';
-    prepararSeleccionRivales(); // selecciona el primero y carga calculadora
-  });
+    // Inicializar selector
+    if (selectNum) {
+        selectNum.addEventListener('change', (e) => mostrarInputsSegunCantidad(parseInt(e.target.value)));
+        mostrarInputsSegunCantidad(parseInt(selectNum.value || 4));
+    }
 
-  // Setup inicial por defecto
-  if (selCantidad && listaNombres) {
-    renderInputs(2);
-    selCantidad.value = '2';
-    selCantidad.addEventListener('change', () => renderInputs(parseInt(selCantidad.value, 10)));
-  }
+    if (btnCancelarConfig && modalConfig) {
+        btnCancelarConfig.addEventListener('click', () => { modalConfig.style.display = 'none'; });
+    }
+
+    if (btnGuardarConfig) {
+        btnGuardarConfig.addEventListener('click', () => {
+            const cantidad = parseInt(selectNum.value || 4);
+            // construir datosJugadores según inputs
+            const inputs = nombresContainer.querySelectorAll('.input-nombre-text');
+            const nuevos = {};
+            for (let i=0;i<cantidad;i++) {
+                const idx = i+1;
+                const input = Array.from(inputs).find(inp => parseInt(inp.getAttribute('data-idx'))===idx);
+                let nombre = input ? (input.value.trim() || `Jugador ${idx}`) : `Jugador ${idx}`;
+                if (nombre.length > 12) nombre = nombre.slice(0,12);
+                nuevos[`rival${idx}`] = { nombre, iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 };
+            }
+            // si hay menos de 5, eliminar los visibles extras
+            // guardar en memoria y localStorage
+            datosJugadores = Object.assign({}, nuevos);
+            guardarEnLocal();
+            aplicarClasePlayers(cantidad);
+            // actualizar UI: nombres y visibilidad de rival5
+            for (let i=1;i<=5;i++) {
+                const perfil = document.getElementById(`rival${i}-perfil`);
+                const nombreSpan = document.getElementById(`rival${i}-nombre`);
+                if (datosJugadores[`rival${i}`]) {
+                    if (perfil) perfil.style.display = 'inline-block';
+                    if (nombreSpan) nombreSpan.textContent = datosJugadores[`rival${i}`].nombre;
+                } else {
+                    if (perfil) perfil.style.display = 'none';
+                }
+            }
+            // cerrar modal y actualizar calculadora
+            if (modalConfig) modalConfig.style.display = 'none';
+            // seleccionar primer jugador
+            const primerBoton = document.getElementById('rival1-boton');
+            document.querySelectorAll('.boton-rival.seleccionado').forEach(el=>el.classList.remove('seleccionado'));
+            if (primerBoton) primerBoton.classList.add('seleccionado');
+            actualizarCalculadora('rival1');
+            actualizarPuntajesRivales();
+        });
+    }
+    // --- fin modal configuración ---
+
+    // Selectores
+    const botonesJugadores = document.querySelectorAll('.boton-rival');
+    const calculadoraContainer = document.querySelector('.div-calculadora');
+
+    // Renderizar primer jugador
+    const primer = document.getElementById('rival1-boton');
+    if (primer) primer.classList.add('seleccionado');
+    actualizarCalculadora('rival1');
+    actualizarPuntajesRivales();
+
+    // Aplicar clase players-N según la configuración guardada (si existe)
+    (function aplicarClaseInicial(){
+        try {
+            const raw = localStorage.getItem('datosJugadores');
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            const n = Object.keys(parsed).length;
+            aplicarClasePlayers(n);
+        } catch(e){}
+    })();
+
+    // Helper para aplicar clase players-N
+    function aplicarClasePlayers(n) {
+        const cont = document.querySelector('.div-perfiles-rivales');
+        if (!cont) return;
+        // eliminar clases players-* previas
+        for (let i=2;i<=5;i++) cont.classList.remove(`players-${i}`);
+        if (n >=2 && n <=5) cont.classList.add(`players-${n}`);
+    }
+
+    // Click en jugadores
+    botonesJugadores.forEach(b => b.addEventListener('click', function(){
+        // guardar el actual
+        const actual = document.querySelector('.boton-rival.seleccionado');
+        if (actual) {
+            guardarDatosJugadorActivo(actual.id.replace('-boton',''));
+            actual.classList.remove('seleccionado');
+        }
+        this.classList.add('seleccionado');
+        const id = this.id.replace('-boton','');
+        actualizarCalculadora(id);
+    }));
+
+    // Botones +/-
+    calculadoraContainer.querySelectorAll('.btn-incrementar').forEach(btn => {
+        btn.addEventListener('click', function(){
+            const item = this.closest('.parcela-item');
+            const v = item.querySelector('.valor-parcela');
+            let n = parseInt(v.textContent)||0;
+            // identificar tipo de parcela por texto o por icono/nombre
+            const nombre = (item.querySelector('.nombre-parcela')||{}).textContent || '';
+            if (/Iguales/i.test(nombre)) {
+                if (n < MAX_IGUALES) { n++; v.textContent = n; }
+            } else if (/Diferentes/i.test(nombre)) {
+                if (n < MAX_DIFERENTES) { n++; v.textContent = n; }
+            } else if (/Parejas/i.test(nombre)) {
+                if (n < MAX_PAREJAS) { n++; v.textContent = n; }
+            } else if (/T[- ]?Rex|T ?Rex|T-Rex|T Rex|T?rex/i.test(nombre) || /T[- ]?Rex|T ?Rex/i.test(nombre)) {
+                if (n < MAX_TREX) { n++; v.textContent = n; }
+            } else {
+                // parcelas sin tope conocido (rio u otras)
+                n++; v.textContent = n;
+            }
+            // guardar el jugador activo actual
+            const sel = document.querySelector('.boton-rival.seleccionado');
+            if (sel) guardarDatosJugadorActivo(sel.id.replace('-boton',''));
+        });
+    });
+    calculadoraContainer.querySelectorAll('.btn-decrementar').forEach(btn => {
+        btn.addEventListener('click', function(){
+            const item = this.closest('.parcela-item');
+            const v = item.querySelector('.valor-parcela');
+            let n = parseInt(v.textContent)||0; if (n>0) { n--; v.textContent = n; }
+            // al decrementar no es necesario más validación (ya no baja de 0)
+            const sel = document.querySelector('.boton-rival.seleccionado');
+            if (sel) guardarDatosJugadorActivo(sel.id.replace('-boton',''));
+        });
+    });
+
+    // Cambios en checkboxes - guardar inmediatamente
+    calculadoraContainer.addEventListener('change', (e) => {
+        const t = e.target;
+        if (t.classList && t.classList.contains('checkbox-parcela')) {
+            const sel = document.querySelector('.boton-rival.seleccionado');
+            if (sel) guardarDatosJugadorActivo(sel.id.replace('-boton',''));
+        }
+    });
+
+    // Inicializar botón calcular y modal
+    const botonCalcular = document.getElementById('boton-calcular-ganador');
+    const botonReiniciar = document.getElementById('boton-reiniciar-datos');
+    const contResultado = document.getElementById('resultado-ganador');
+    const modal = document.getElementById('modal-ganador');
+    const modalNombre = document.getElementById('modal-ganador-nombre');
+    const modalTitulo = document.getElementById('modal-ganador-titulo');
+    const modalClose = document.getElementById('modal-ganador-close');
+
+    if (botonCalcular) {
+        botonCalcular.addEventListener('click', () => {
+                const {resultados, ganadores} = calcularGanador();
+                // Si no hay puntajes (todos 0), mostrar mensaje claro en el modal
+                const totalPuntos = resultados.reduce((acc, r) => acc + (r.puntaje || 0), 0);
+                if (totalPuntos === 0) {
+                    modalTitulo.textContent = 'Sin datos';
+                    modalNombre.textContent = 'No hay datos ingresados';
+                    if (modal) modal.style.display = 'flex';
+                    contResultado.textContent = 'No hay datos ingresados.';
+                    return;
+                }
+                if (ganadores.length === 1) {
+                    modalTitulo.textContent = 'Ganador';
+                    modalNombre.textContent = `${ganadores[0].nombre} — ${ganadores[0].puntaje} pts`;
+                } else {
+                    modalTitulo.textContent = 'Empate';
+                    modalNombre.textContent = ganadores.map(g => `${g.nombre} (${g.puntaje})`).join(' y ');
+                }
+                if (modal) modal.style.display = 'flex';
+                mostrarResultadosEnDOM(resultados, ganadores);
+                actualizarPuntajesRivales();
+        });
+    }
+    // Reiniciar datos: limpiar localStorage y volver a valores por defecto
+    function reiniciarDatos() {
+        // restablecer objeto en memoria
+        datosJugadores = {
+            rival1: { nombre: 'Vothka', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival2: { nombre: 'Diego Zamora', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival3: { nombre: 'Fabrizio Arriola', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival4: { nombre: 'Lukateli', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
+        };
+        try { localStorage.removeItem('datosJugadores'); } catch(e){}
+        // actualizar UI
+        actualizarCalculadora('rival1');
+        actualizarPuntajesRivales();
+        const selActual = document.querySelector('.boton-rival.seleccionado');
+        if (selActual) selActual.classList.remove('seleccionado');
+        const primer = document.getElementById('rival1-boton');
+        if (primer) primer.classList.add('seleccionado');
+        // limpiar resultados
+        if (contResultado) contResultado.innerHTML = '';
+    }
+    if (botonReiniciar) {
+        botonReiniciar.addEventListener('click', () => {
+            if (!confirm('¿Seguro que deseas reiniciar los datos de la partida? Se perderán los puntajes guardados.')) return;
+            reiniciarDatos();
+        });
+    }
+    if (modalClose && modal) {
+        modalClose.addEventListener('click', () => modal.style.display = 'none');
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    }
+
+    console.log('Inicialización completa', datosJugadores);
 });
