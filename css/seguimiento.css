@@ -8,7 +8,8 @@
     justify-content: center;
     gap: 12px;
     margin: 6px 0;
-    padding: 6px 4px 12px;
+    /* MODIFICADO: Reducido el padding inferior de 12px a 6px */
+    padding: 6px 4px 6px; 
     background-color: transparent;
     flex-wrap: wrap; /* permitir varias filas si hay 5 jugadores */
     width: 100%;
@@ -67,7 +68,8 @@
 h2 {
     color: white;
     text-align: center;
-    margin-bottom: 20px;
+    /* MODIFICADO: Reducido el margin-bottom de 20px a 8px */
+    margin-bottom: 8px; 
     font-size: 24px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -315,13 +317,53 @@ h2 {
 .div-perfiles-rivales.players-4 .perfil-rival, .div-perfiles-rivales.players-4 .boton-rival { width: 72px; height: 72px; }
 .div-perfiles-rivales.players-4 { gap: 14px; justify-content: center; }
 
-.div-perfiles-rivales.players-5 .perfil-rival, .div-perfiles-rivales.players-5 .boton-rival { width: 60px; height: 60px; }
-.div-perfiles-rivales.players-5 { gap: 10px; justify-content: flex-start; overflow-x: auto; }
+/* Ajustes por número de jugadores: mayor número -> avatares más pequeños */
+.div-perfiles-rivales.players-2 .perfil-rival,
+.div-perfiles-rivales.players-2 .boton-rival {
+    width: 96px;
+    height: 96px;
+}
+.div-perfiles-rivales.players-2 {
+    gap: 28px;
+    justify-content: center;
+}
 
-/* Ajustes responsive combinados: asegurar que la clase players-N se respeta en mobile */
-@media (max-width:600px) {
-    .div-perfiles-rivales.players-2 .perfil-rival, .div-perfiles-rivales.players-2 .boton-rival { width: 84px; height:84px; }
-    .div-perfiles-rivales.players-3 .perfil-rival, .div-perfiles-rivales.players-3 .boton-rival { width: 70px; height:70px; }
-    .div-perfiles-rivales.players-4 .perfil-rival, .div-perfiles-rivales.players-4 .boton-rival { width: 60px; height:60px; }
-    .div-perfiles-rivales.players-5 .perfil-rival, .div-perfiles-rivales.players-5 .boton-rival { width: 50px; height:50px; }
+.div-perfiles-rivales.players-3 .perfil-rival,
+.div-perfiles-rivales.players-3 .boton-rival {
+    width: 80px;
+    height: 80px;
+}
+.div-perfiles-rivales.players-3 {
+    gap: 20px;
+    justify-content: center;
+}
+
+.div-perfiles-rivales.players-4 .perfil-rival,
+.div-perfiles-rivales.players-4 .boton-rival {
+    width: 72px;
+    height: 72px;
+}
+.div-perfiles-rivales.players-4 {
+    gap: 14px;
+    justify-content: center;
+}
+
+.div-perfiles-rivales.players-5 .perfil-rival,
+.div-perfiles-rivales.players-5 .boton-rival {
+    width: 60px;
+    height: 60px;
+}
+.div-perfiles-rivales.players-5 {
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+
+}
+@media (max-width: 600px) {
+    .div-perfiles-rivales.players-5 {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
 }
