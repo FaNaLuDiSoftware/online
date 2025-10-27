@@ -20,6 +20,68 @@ document.addEventListener('DOMContentLoaded', () => {
         dinosaur.addEventListener('dragend', (e) => {
             e.target.closest('.dinosaur').classList.remove('dragging');
         });
+        
+        // --- Soporte táctil para móviles ---
+        dinosaur.addEventListener('touchstart', (e) => {
+            // evitar que el navegador haga scroll al iniciar el arrastre
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            // crear un clon visual que siga el dedo
+            const clone = dinosaur.cloneNode(true);
+            clone.classList.add('touch-clone');
+            clone.style.position = 'fixed';
+            clone.style.left = (touch.clientX - 40) + 'px';
+            clone.style.top = (touch.clientY - 40) + 'px';
+            clone.style.pointerEvents = 'none';
+            clone.dataset.touchDragging = 'true';
+            document.body.appendChild(clone);
+            dinosaur._touchClone = clone;
+        });
+
+        dinosaur.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            const clone = dinosaur._touchClone;
+            if (clone) {
+                clone.style.left = (touch.clientX - 40) + 'px';
+                clone.style.top = (touch.clientY - 40) + 'px';
+            }
+        });
+
+        dinosaur.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            const clone = dinosaur._touchClone;
+            if (clone) {
+                const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+                // buscar el pan más cercano (left-pan o right-pan)
+                const pan = elementAtPoint ? elementAtPoint.closest('.balance-pan') : null;
+                if (pan && !pan.dataset.dinosaur) {
+                    const weight = parseInt(dinosaur.dataset.weight);
+                    const name = dinosaur.dataset.name;
+                    const imageSrc = dinosaur.querySelector('img').src;
+
+                    const droppedDinosaur = document.createElement('div');
+                    droppedDinosaur.classList.add('dropped-dinosaur');
+                    droppedDinosaur.innerHTML = `\n                        <img src="${imageSrc}" alt="${name}">\n                        <p>${name}</p>\n                    `;
+                    pan.innerHTML = '';
+                    pan.appendChild(droppedDinosaur);
+                    pan.dataset.dinosaur = name;
+
+                    if (pan.id === 'left-pan') {
+                        leftWeight += weight;
+                    } else {
+                        rightWeight += weight;
+                    }
+
+                    updateBalance();
+                }
+
+                // limpiar clon
+                clone.remove();
+                delete dinosaur._touchClone;
+            }
+        });
     });
     
     const balancePans = [leftPan, rightPan];

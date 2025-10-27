@@ -48,7 +48,7 @@
             try {
                 const companyInfo = `
 Nombre de la Empresa: FaNaLuDi Software
-Fundamentos del Nombre: Simboliza las primeras dos letras de cada integrante (Fabrizio, Nahuel, Lucas, Diego y Kevin), fácil de recordar y pronunciar.
+Fundamentos del Nombre: Simboliza las primeras dos letras de cada integrante (Fabrizio, Nahuel, Lucas, Diego), fácil de recordar y pronunciar.
 Logo de la Empresa: Compuesto por las iniciales de los integrantes fusionadas, con la palabra "software" debajo. Minimalista, limpio, elegante y adaptable.
 Misión: Poder destacar en el desarrollo de software en Uruguay, con gente joven, dedicada y comprometida, sobresaliendo con visión innovadora y visionaria en el mercado local.
 Visión: Ser reconocidos como líderes en el desarrollo de software, aportando soluciones de vanguardia y manteniendo un compromiso inquebrantable con la calidad y la satisfacción del cliente.
@@ -63,7 +63,6 @@ Equipo:
 - Sub-Coordinador: Nahuel Silva (nahuelsilvavega@gmail.com)
 - Integrante 1: Lucas Recarey (lrecarey@estudiante.ceibal.edu.uy)
 - Integrante 2: Diego Zamora (diegozamora3784@gmail.com)
-- Integrante 3: Kevin Alvarez (keapiolo13@gmail.com)
 
 Proyecto Actual (S.I.G.P.D. - Draftosaurus):
 - Propósito: Aplicación web para mejorar la experiencia del juego de mesa Draftosaurus.
