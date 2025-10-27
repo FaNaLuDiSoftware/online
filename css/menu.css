@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Montserrat', Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -204,15 +204,16 @@ body {
 }
 
 .menu-footer .button {
-    flex: 1 1 auto;
     margin: 0;
-    padding: clamp(8px, 1.5vw, 12px) clamp(15px, 3vw, 25px);
-    font-size: clamp(0.9em, 1.5vw, 1.2em);
+    padding: 12px 32px;
+    font-size: 1em;
     border-color: #455A64;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     animation: bounceInDelayed 1s ease-out forwards;
     opacity: 0;
     min-width: 120px;
+    max-width: 220px;
+    width: 100%;
 }
 
 .button-about {

@@ -192,7 +192,7 @@
 /* COLOCACION DE FICHAS EN EL TABLERO */
 
 /* COLOCACION DE FICHAS EN IGUALES */
-/*.igualesFicha1{
+/* .igualesFicha1{
     background-image: url('../assets/fichas/arribaAmarillo.PNG');
 }
 .igualesFicha2{
@@ -211,13 +211,11 @@
     background-image: url('../assets/fichas/arribaVerde.PNG');
 }
 /* COLOCACION DE FICHAS EN REY */
-/*
-.fichaRey{
+/* .fichaRey{
     background-image: url('../assets/fichas/derechoRojo.PNG');
 } */
 /* COLOCACION DE FICHAS EN TRIO */
-/*
-.trioFicha1{
+/* .trioFicha1{
     background-image: url('../assets/fichas/derechoAmarillo.PNG');
 }
 .trioFicha2{
@@ -227,8 +225,7 @@
     background-image: url('../assets/fichas/derechoVerde.PNG');
 } */
 /* COLOCACION DE FICHAS EN DIFERENTES */
-/*
-.diferentesFicha1{
+/* .diferentesFicha1{
     background-image: url('../assets/fichas/arribaAmarillo.PNG');
 }
 .diferentesFicha2{
@@ -265,8 +262,7 @@
     background-image: url('../assets/fichas/arribaVerde.PNG');
 } */
 /* COLOCACION DE FICHAS EN RIO */
-/*
-.rioFicha1{
+/* .rioFicha1{
     background-image: url('../assets/fichas/derechoAmarillo.PNG');
 }
 .rioFicha2{
@@ -285,15 +281,14 @@
     background-image: url('../assets/fichas/derechoVerde.PNG');
 } */
 /* COLOCACION DE FICHAS EN SOLITARIO */
-/*
-.solitarioFicha{
+/* .solitarioFicha{
     background-image: url('../assets/fichas/derechoAmarillo.PNG');
 } */ 
 
 
 /*--- VISUALIZACIONES ---*/
-/*
-.parcelaIguales, .parcelaRey, .parcelaTrio, .parcelaDiferentes, .parcelaParejas, .parcelaRio, .parcelaSolitario{
+
+/* .parcelaIguales, .parcelaRey, .parcelaTrio, .parcelaDiferentes, .parcelaParejas, .parcelaRio, .parcelaSolitario{
     background: rgba(53, 23, 187, 0.6);
 }
 

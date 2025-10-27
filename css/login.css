@@ -93,7 +93,7 @@ h1 {
 }
 
 a {
-    color: #388e3c;
+    color: #44b7c2;
     text-decoration: none;
     transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
     font-weight: 500;
@@ -101,7 +101,7 @@ a {
 
 a:hover {
     text-decoration: underline;
-    color: #2e7d32;
+    color: #ffffff;
 }
 
 .message {
