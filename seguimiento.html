@@ -12,6 +12,31 @@
 </header>
 
 <body>
+    <!-- Modal de configuración de partida -->
+    <div id="modal-config" class="modal-ganador" style="display:none;">
+        <div class="container modal-contenido" style="max-width:520px; padding:18px; text-align:left;">
+            <h3 style="text-align:center; color:#fff; margin-top:0;">Configuración de la partida</h3>
+            <div style="color:#fff; margin-bottom:10px;">Selecciona la cantidad de jugadores (2-5) y edita sus nombres:</div>
+            <label style="color:#fff; display:block; margin-bottom:6px;">Cantidad de jugadores:</label>
+            <select id="select-num-jugadores" style="width:100%; padding:8px; margin-bottom:12px;">
+                <option value="2">2 jugadores</option>
+                <option value="3">3 jugadores</option>
+                <option value="4" selected>4 jugadores</option>
+                <option value="5">5 jugadores</option>
+            </select>
+            <div id="nombres-jugadores">
+                <div class="input-nombre" data-idx="1" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 1:</label><input maxlength="12" class="input-nombre-text" data-idx="1" value="Vothka" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="2" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 2:</label><input maxlength="12" class="input-nombre-text" data-idx="2" value="Diego Zamora" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="3" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 3:</label><input maxlength="12" class="input-nombre-text" data-idx="3" value="Fabrizio Arriola" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="4" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 4:</label><input maxlength="12" class="input-nombre-text" data-idx="4" value="Lukateli" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="5" style="margin-bottom:6px; display:none;"><label style="color:#fff;">Jugador 5:</label><input maxlength="12" class="input-nombre-text" data-idx="5" value="Jugador 5" style="width:100%; padding:6px; text-align:center;"/></div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+                <button id="config-guardar" class="button button-play">Guardar</button>
+                <button id="config-cancelar" class="button button-manual">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <main>
         <div class="div-rivales">
             <div class="div-perfiles-rivales">
@@ -23,7 +48,7 @@
                             <span class="cuerpo-rival" id="rival1-cuerpo"></span>
                         </span>
                     </button>
-                    <span class="nombre-rival" id="rival1-nombre">Nahuel Silva</span>
+                    <span class="nombre-rival" id="rival1-nombre">Vothka</span>
                     <span class="puntaje-rival" id="rival1-puntaje">
                         <span class="puntaje-rival-texto">Puntaje: </span>
                         <span class="puntaje-rival-valor" id="rival1-puntaje-valor">XX</span>
@@ -65,28 +90,27 @@
                             <span class="cuerpo-rival" id="rival4-cuerpo"></span>
                         </span>
                     </button>
-                    <span class="nombre-rival" id="rival4-nombre">Lucas Recarey</span>
+                    <span class="nombre-rival" id="rival4-nombre">Lukateli</span>
                     <span class="puntaje-rival" id="rival4-puntaje">
                         <span class="puntaje-rival-texto">Puntaje: </span>
                         <span class="puntaje-rival-valor" id="rival4-puntaje-valor">XX</span>
                     </span>
                 </span>
-
-                <span class="perfil-rival" id="rival4-perfil">
-                    <button class="boton-rival" id="rival4-boton">
-                        <span class="fondo-rival" id="rival4-fondo">
-                            <span class="cabeza-rival" id="rival4-cabeza"></span>
-                            <span class="cuerpo-rival" id="rival4-cuerpo"></span>
+                
+                <!-- Rival 5 (opcional, ocultable) -->
+                <span class="perfil-rival" id="rival5-perfil" style="display:none;">
+                    <button class="boton-rival" id="rival5-boton">
+                        <span class="fondo-rival" id="rival5-fondo">
+                            <span class="cabeza-rival" id="rival5-cabeza"></span>
+                            <span class="cuerpo-rival" id="rival5-cuerpo"></span>
                         </span>
                     </button>
-                    <span class="nombre-rival" id="rival4-nombre">Kevin Alvarez</span>
-                    <span class="puntaje-rival" id="rival4-puntaje">
+                    <span class="nombre-rival" id="rival5-nombre">Jugador 5</span>
+                    <span class="puntaje-rival" id="rival5-puntaje">
                         <span class="puntaje-rival-texto">Puntaje: </span>
-                        <span class="puntaje-rival-valor" id="rival4-puntaje-valor">XX</span>
+                        <span class="puntaje-rival-valor" id="rival5-puntaje-valor">XX</span>
                     </span>
                 </span>
-
-
             </div>
                 <h2>Puntuación por Jugador</h2>
                 <div class="div-calculadora" id="calculadora-jugador1">
@@ -166,6 +190,21 @@
             </div>
         </div>
     </main>
+    <div class="resultado-container" style="text-align:center; margin:16px 0;">
+        <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
+            <button id="boton-calcular-ganador" class="button button-play">Calcular</button>
+            <button id="boton-reiniciar-datos" class="button button-manual">Reiniciar partida</button>
+        </div>
+        <div id="resultado-ganador" style="margin-top:12px; font-weight:700;"></div>
+    </div>
+
+    <div id="modal-ganador" class="modal-ganador" style="display:none;">
+        <div class="container modal-contenido" style="max-width:360px; padding:18px; text-align:center;">
+            <h3 id="modal-ganador-titulo" style="margin:0 0 8px 0;">Ganador</h3>
+            <p id="modal-ganador-nombre" style="font-size:20px; font-weight:700; margin:8px 0;"></p>
+            <button id="modal-ganador-close" class="button button-manual" style="margin-top:8px;">Cerrar</button>
+        </div>
+    </div>
     <script src="scripts/seguimiento.js"></script>
 </body>
 </html>
