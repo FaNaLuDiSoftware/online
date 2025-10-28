@@ -144,7 +144,6 @@ main {
 
 /* Estilos comunes de contenedores */
 .div-fichas, .div-jugador, .div-rivales {
-    border: 1px solid #ccc;
     border-radius: 4px;
     padding: 3px;
     margin: 0;
