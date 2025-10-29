@@ -14,6 +14,7 @@ const DIFERENTES_POINTS = [0,1,3,6,10,15,21];
 // Máximos por parcela (limitar en UI y en guardado)
 const MAX_IGUALES = 6; // índice máximo válido para IGUALES_POINTS
 const MAX_DIFERENTES = 6; // índice máximo válido para DIFERENTES_POINTS
+const MAX_RIO = 12;
 const MAX_PAREJAS = 3; // máximo número de parejas (cada pareja 5 pts)
 const MAX_TREX = 10; // máximo número de T-Rex
 
@@ -221,10 +222,10 @@ function calcularGanador() {
 document.addEventListener('DOMContentLoaded', () => {
     // Inicializar datos por defecto
     datosJugadores = {
-        rival1: { nombre: 'Vothka', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-        rival2: { nombre: 'Diego Zamora', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-        rival3: { nombre: 'Fabrizio Arriola', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-        rival4: { nombre: 'Lukateli', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
+        rival1: { nombre: 'Jugador 1', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival2: { nombre: 'Jugador 2', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival3: { nombre: 'Jugador 3', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival4: { nombre: 'Jugador 4', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
     };
 
     // Cargar persistencia
@@ -428,10 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function reiniciarDatos() {
         // restablecer objeto en memoria
         datosJugadores = {
-            rival1: { nombre: 'Vothka', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival2: { nombre: 'Diego Zamora', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival3: { nombre: 'Fabrizio Arriola', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival4: { nombre: 'Lukateli', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
+            rival1: { nombre: 'Jugador 1', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival2: { nombre: 'Jugador 2', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival3: { nombre: 'Jugador 3', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival4: { nombre: 'Jugador 4', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
         };
         try { localStorage.removeItem('datosJugadores'); } catch(e){}
         // actualizar UI
