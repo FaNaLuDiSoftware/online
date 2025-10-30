@@ -17,7 +17,7 @@
             <p id="loginMessage" class="message"></p>
         </form>
         <p>¿No tenes cuenta? <button type="button" class="link-button" onclick="toggleRegister()">Regístrate</button></p>
-        <button type="button" class="link-button" onclick="toggleRegister()"><a href="menu.html">Soy Invitado</a></button>
+        <button type="button" class="link-button" onclick="loginAsGuest()">Soy Invitado</button>
     </div>
 
     <div class="login-container" id="register-container" style="display:none;">
@@ -36,6 +36,21 @@
     <footer class="main-footer">
         <p>&copy; 2025 FaNaLuDi Software. Todos los derechos reservados.</p> <!-- &copy; se utiliza para el simbolo copyright -->
     </footer>
+    <script src="scripts/profile.js"></script>
     <script src="scripts/login.js"></script>
+    <script>
+        // Verificar que todo esté cargado correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🟢 DOM cargado en index.html');
+            console.log('🟢 UserProfile disponible:', !!window.UserProfile);
+            console.log('🟢 Todas las funciones de UserProfile:', window.UserProfile ? Object.keys(window.UserProfile) : 'UserProfile no existe');
+            
+            // Mostrar el estado actual del perfil
+            if (window.UserProfile) {
+                const currentUser = window.UserProfile.getUser();
+                console.log('🟢 Usuario actual en el perfil:', currentUser);
+            }
+        });
+    </script>
 </body>
 </html>
