@@ -18,6 +18,7 @@ $password = $data["password"] ?? "";
 
 // Validación básica
 if (empty($username) || empty($password)) {
+	http_response_code(400); // Bad Request
 	echo json_encode(["error" => "Usuario y contraseña requeridos"]);
 	exit;
 }
@@ -30,6 +31,7 @@ $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows === 0) {
+	http_response_code(404); // Not Found
 	echo json_encode(["error" => "Usuario no encontrado"]);
 	$stmt->close();
 	$conn->close();
@@ -42,8 +44,10 @@ $stmt->close();
 
 // Verifica la contraseña
 if (password_verify($password, $hashed_password)) {
+	http_response_code(200); // OK
 	echo json_encode(["message" => "Inicio de sesión exitoso"]);
 } else {
+	http_response_code(401); // Unauthorized
 	echo json_encode(["error" => "Contraseña incorrecta"]);
 }
 $conn->close();

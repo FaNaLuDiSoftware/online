@@ -63,7 +63,7 @@ echo '<style>.table-primary{background-color:#cce5ff!important;}</style>';
 echo '</head><body>';
 echo '<div class="container-fluid p-3">';
 echo '<div class="d-flex justify-content-between align-items-center mb-3">';
-echo '<span><a href="../menu-admin.html" class="btn btn-secondary">Atrás</a></span>';
+echo '<span><a href="../menu.html" class="btn btn-secondary">Atrás</a></span>';
 echo '<span><a href="../php/into_insert.php" class="btn btn-secondary">Insertar usuario</a></span>';
 echo '</div>';
 echo '<span><h1 class="mb-4 text-center">Modificar como Administrador</h1></span>';

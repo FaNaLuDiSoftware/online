@@ -19,6 +19,7 @@ $money = $data["money"] ?? 0;
 
 // Validación básica
 if (empty($username) || empty($password)) {
+    http_response_code(400); // Bad Request
     echo json_encode(["error" => "Usuario y contraseña requeridos"]);
     exit;
 }
@@ -31,6 +32,7 @@ $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
+    http_response_code(409); // Conflict - Usuario ya existe
     echo json_encode(["error" => "El usuario ya existe"]);
     $stmt->close();
     $conn->close();
@@ -45,8 +47,10 @@ $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 $stmt = $conn->prepare("INSERT INTO register_user (user_name, password, score, money) VALUES (?, ?, ?, ?)");
 $stmt->bind_param("ssii", $username, $hashed_password, $score, $money);
 if ($stmt->execute()) {
+    http_response_code(201); // Created - Usuario creado exitosamente
     echo json_encode(["message" => "Usuario registrado exitosamente"]);
 } else {
+    http_response_code(500); // Internal Server Error
     echo json_encode(["error" => "Error al registrar usuario"]);
 }
 $stmt->close();

@@ -10,6 +10,9 @@
 <header>
     <button class="boton-atras" onclick="window.location.href='menu.html'">Atrás</button>
     <div class="header-center">
+        <div class="user-info" style="color: white; margin-bottom: 5px;">
+            <span>Jugador: </span><span id="logged-username">Usuario</span>
+        </div>
         <span class="span-puntaje">
             <span class="span-puntaje-texto">Puntaje: </span>
             <span class="span-puntaje-valor" id="jugador0-puntaje-valor">XX</span>
@@ -195,6 +198,18 @@
         </div>
     </div>
 
+    <script src="scripts/profile.js"></script>
     <script src="scripts/game.js"></script>
+    <script>
+        // Mostrar el nombre del usuario cuando carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Cargando perfil en game.html');
+            if (window.UserProfile) {
+                UserProfile.displayUserName('logged-username');
+            } else {
+                console.error('UserProfile no está disponible');
+            }
+        });
+    </script>
 </body>
 </html>
