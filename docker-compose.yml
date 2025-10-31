@@ -1,0 +1,15 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: drafto_web
+    ports:
+      - "8080:80"
+    volumes:
+      - drafto_back_front:/var/www/html
+
+volumes:
+  drafto_back_front:
+    external: true
+    name: drafto_back_front
