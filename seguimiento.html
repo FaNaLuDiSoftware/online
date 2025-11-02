@@ -3,33 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seguimiento</title>
+    <title id="tracking-page-title">Seguimiento</title>
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/seguimiento.css">
 </head>
 <header>
-    <button class="boton-atras" onclick="window.location.href='menu.html'">Atrás</button>
+    <button class="boton-atras" onclick="window.location.href='menu.html'" id="tracking-back-button">Atrás</button>
 </header>
 
 <body>
     <!-- Modal de configuración de partida -->
     <div id="modal-config" class="modal-ganador" style="display:none;">
         <div class="container modal-contenido" style="max-width:520px; padding:18px; text-align:left;">
-            <h3 style="text-align:center; color:#fff; margin-top:0;">Configuración de la partida</h3>
-            <div style="color:#fff; margin-bottom:10px;">Selecciona la cantidad de jugadores (2-5) y edita sus nombres:</div>
-            <label style="color:#fff; display:block; margin-bottom:6px;">Cantidad de jugadores:</label>
+            <h3 style="text-align:center; color:#fff; margin-top:0;" id="game-config-title">Configuración de la partida</h3>
+            <div style="color:#fff; margin-bottom:10px;" id="select-players-text">Selecciona la cantidad de jugadores (2-5) y edita sus nombres:</div>
+            <label style="color:#fff; display:block; margin-bottom:6px;" id="player-count-label">Cantidad de jugadores:</label>
             <select id="select-num-jugadores" style="width:100%; padding:8px; margin-bottom:12px;">
-                <option value="2">2 jugadores</option>
-                <option value="3">3 jugadores</option>
-                <option value="4" selected>4 jugadores</option>
-                <option value="5">5 jugadores</option>
+                <option value="2" id="option-2-players">2 jugadores</option>
+                <option value="3" id="option-3-players">3 jugadores</option>
+                <option value="4" selected id="option-4-players">4 jugadores</option>
+                <option value="5" id="option-5-players">5 jugadores</option>
             </select>
             <div id="nombres-jugadores">
-                <div class="input-nombre" data-idx="1" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 1:</label><input maxlength="12" class="input-nombre-text" data-idx="1" value="Jugador 1" style="width:100%; padding:6px; text-align:center;"/></div>
-                <div class="input-nombre" data-idx="2" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 2:</label><input maxlength="12" class="input-nombre-text" data-idx="2" value="Jugador 2" style="width:100%; padding:6px; text-align:center;"/></div>
-                <div class="input-nombre" data-idx="3" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 3:</label><input maxlength="12" class="input-nombre-text" data-idx="3" value="Jugador 3" style="width:100%; padding:6px; text-align:center;"/></div>
-                <div class="input-nombre" data-idx="4" style="margin-bottom:6px;"><label style="color:#fff;">Jugador 4:</label><input maxlength="12" class="input-nombre-text" data-idx="4" value="Jugador 4" style="width:100%; padding:6px; text-align:center;"/></div>
-                <div class="input-nombre" data-idx="5" style="margin-bottom:6px; display:none;"><label style="color:#fff;">Jugador 5:</label><input maxlength="12" class="input-nombre-text" data-idx="5" value="Jugador 5" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="1" style="margin-bottom:6px;"><label style="color:#fff;" id="player-1-label">Jugador 1:</label><input maxlength="12" class="input-nombre-text" data-idx="1" id="player-1-input" value="Jugador 1" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="2" style="margin-bottom:6px;"><label style="color:#fff;" id="player-2-label">Jugador 2:</label><input maxlength="12" class="input-nombre-text" data-idx="2" id="player-2-input" value="Jugador 2" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="3" style="margin-bottom:6px;"><label style="color:#fff;" id="player-3-label">Jugador 3:</label><input maxlength="12" class="input-nombre-text" data-idx="3" id="player-3-input" value="Jugador 3" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="4" style="margin-bottom:6px;"><label style="color:#fff;" id="player-4-label">Jugador 4:</label><input maxlength="12" class="input-nombre-text" data-idx="4" id="player-4-input" value="Jugador 4" style="width:100%; padding:6px; text-align:center;"/></div>
+                <div class="input-nombre" data-idx="5" style="margin-bottom:6px; display:none;"><label style="color:#fff;" id="player-5-label">Jugador 5:</label><input maxlength="12" class="input-nombre-text" data-idx="5" id="player-5-input" value="Jugador 5" style="width:100%; padding:6px; text-align:center;"/></div>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
                 <button id="config-guardar" class="button button-play">Guardar</button>
@@ -112,12 +112,12 @@
                     </span>
                 </span>
             </div>
-                <h2>Puntuación por Jugador</h2>
+                <h2 id="scoring-title">Puntuación por Jugador</h2>
                 <div class="div-calculadora" id="calculadora-jugador1">
                     
                     <div class="parcela-item">
                         <span class="icono-parcela">🟰</span>
-                        <label class="nombre-parcela">Parcela de Iguales</label>
+                        <label class="nombre-parcela" id="equals-plot-label">Parcela de Iguales</label>
                         <button class="btn-decrementar">-</button>
                         <span class="valor-parcela">0</span>
                         <button class="btn-incrementar">+</button>
@@ -125,7 +125,7 @@
 
                     <div class="parcela-item especial">
                         <span class="icono-parcela">3️⃣</span>
-                        <label class="nombre-parcela">Parcela de Trío</label>
+                        <label class="nombre-parcela" id="trio-plot-label">Parcela de Trío</label>
                         <div class="checkbox-container">
                             <input type="checkbox" class="checkbox-parcela">
                         </div>
@@ -135,7 +135,7 @@
                         <span class="icono-parcela">
                             <img src="assets/emojis/parejasEmoji.jpg" alt="emojis parejasEmoji" style="width: 20px;">
                         </span>
-                        <label class="nombre-parcela">Parcela de Parejas</label>
+                        <label class="nombre-parcela" id="pairs-plot-label">Parcela de Parejas</label>
                         <button class="btn-decrementar">-</button>
                         <span class="valor-parcela">0</span>
                         <button class="btn-incrementar">+</button>
@@ -144,7 +144,7 @@
                     <div class="parcela-item especial">
                         <span class="icono-parcela">
                             <img src="assets/emojis/unicoEmoji.jpg" alt="emojis unicoEmoji" style="width: 20px;"></span>
-                        <label class="nombre-parcela">Parcela de Único</label>
+                        <label class="nombre-parcela" id="unique-plot-label">Parcela de Único</label>
                         <div class="checkbox-container">
                             <input type="checkbox" class="checkbox-parcela">
                         </div>
@@ -152,7 +152,7 @@
 
                     <div class="parcela-item">
                         <span class="icono-parcela">🌊</span>
-                        <label class="nombre-parcela">Río</label>
+                        <label class="nombre-parcela" id="river-plot-label">Río</label>
                         <button class="btn-decrementar">-</button>
                         <span class="valor-parcela">0</span>
                         <button class="btn-incrementar">+</button>
@@ -162,7 +162,7 @@
                         <span class="icono-parcela">
                             <img src="assets/emojis/diferentesEmoji.jpg" alt="emojis diferentesEmoji" style="width: 20px;">
                         </span>
-                        <label class="nombre-parcela">Parcela de Diferentes</label>
+                        <label class="nombre-parcela" id="different-plot-label">Parcela de Diferentes</label>
                         <button class="btn-decrementar">-</button>
                         <span class="valor-parcela">0</span>
                         <button class="btn-incrementar">+</button>
@@ -170,7 +170,7 @@
 
                     <div class="parcela-item especial">
                         <span class="icono-parcela">👑</span>
-                        <label class="nombre-parcela">Parcela del Rey</label>
+                        <label class="nombre-parcela" id="king-plot-label">Parcela del Rey</label>
                         <div class="checkbox-container">
                             <input type="checkbox" class="checkbox-parcela">
                         </div>
@@ -180,7 +180,7 @@
                         <span class="icono-parcela">
                             <img src="assets/fichas/lisoRojo.PNG" alt="fichas lisoRojo" style="width: 20px;">
                         </span>
-                        <label class="nombre-parcela">Cantidad de T-Rex</label>
+                        <label class="nombre-parcela" id="trex-count-label">Cantidad de T-Rex</label>
                         <button class="btn-decrementar">-</button>
                         <span class="valor-parcela">0</span>
                         <button class="btn-incrementar">+</button>
@@ -205,6 +205,7 @@
             <button id="modal-ganador-close" class="button button-manual" style="margin-top:8px;">Cerrar</button>
         </div>
     </div>
+    <script src="scripts/language.js"></script>
     <script src="scripts/seguimiento.js"></script>
 </body>
 </html>
