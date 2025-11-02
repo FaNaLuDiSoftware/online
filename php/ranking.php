@@ -63,7 +63,7 @@ echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstra
 echo '<style>.table-primary{background-color:#cce5ff!important;}</style>';
 echo '</head><body>';
 echo '<div class="container-fluid p-3">';
-echo '<span><a href="../menu-admin.html" class="btn btn-secondary mb-3">Atrás</a></span>';
+echo '<span><a href="../menu.html" class="btn btn-secondary mb-3">Atrás</a></span>';
 echo '<div class="container-fluid p-3">';
 echo '<span><h1 class="mb-4 text-center">Ranking de Jugadores</h1></span>';
 echo '<div class="table-responsive">';

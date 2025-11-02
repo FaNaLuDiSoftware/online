@@ -14,6 +14,7 @@ const DIFERENTES_POINTS = [0,1,3,6,10,15,21];
 // Máximos por parcela (limitar en UI y en guardado)
 const MAX_IGUALES = 6; // índice máximo válido para IGUALES_POINTS
 const MAX_DIFERENTES = 6; // índice máximo válido para DIFERENTES_POINTS
+const MAX_RIO = 12;
 const MAX_PAREJAS = 3; // máximo número de parejas (cada pareja 5 pts)
 const MAX_TREX = 10; // máximo número de T-Rex
 
@@ -84,7 +85,8 @@ function actualizarCalculadora(jugadorId) {
     const checkboxes = calculadoraContainer.querySelectorAll('.checkbox-parcela');
     const datos = datosJugadores[jugadorId];
     const titulo = document.querySelector('h2');
-    titulo.textContent = `Puntuación de ${datos.nombre}`;
+    const scoringText = window.LanguageSystem ? window.LanguageSystem.getText('scoring-of') : 'Puntuación de';
+    titulo.textContent = `${scoringText} ${datos.nombre}`;
 
     if (valores[0]) valores[0].textContent = datos.iguales;
     if (valores[1]) valores[1].textContent = datos.parejas;
@@ -143,7 +145,9 @@ function mostrarResultadosEnDOM(resultados, ganadores) {
     tabla.className = 'tabla-resultados';
 
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th class="th-jugador">Jugador</th><th class="th-puntos">Puntos</th></tr>';
+    const playerHeaderText = window.LanguageSystem ? window.LanguageSystem.getText('player-header') : 'Jugador';
+    const pointsHeaderText = window.LanguageSystem ? window.LanguageSystem.getText('points-header') : 'Puntos';
+    thead.innerHTML = `<tr><th id="th-jugador" class="th-jugador">${playerHeaderText}</th><th id="th-puntos" class="th-puntos">${pointsHeaderText}</th></tr>`;
     tabla.appendChild(thead);
 
     const tbody = document.createElement('tbody');
@@ -168,15 +172,25 @@ function mostrarResultadosEnDOM(resultados, ganadores) {
 
     const header = document.createElement('div');
     header.className = 'resultado-header';
-    if (ganadores.length === 1) header.textContent = `Ganador: ${ganadores[0].nombre} — ${ganadores[0].puntaje} pts`;
-    else header.textContent = `Empate entre ${ganadores.map(g => g.nombre).join(', ')} — ${ganadores[0] ? ganadores[0].puntaje : 0} pts`;
+    header.id = 'resultado-header-text'; // Agregamos ID para poder traducir
+    const winnerText = window.LanguageSystem ? window.LanguageSystem.getText('winner-text') : 'Ganador';
+    const tieText = window.LanguageSystem ? window.LanguageSystem.getText('tie-between') : 'Empate entre';
+    const ptsText = window.LanguageSystem ? window.LanguageSystem.getText('pts') : 'pts';
+    
+    if (ganadores.length === 1) {
+        header.textContent = `${winnerText}: ${ganadores[0].nombre} — ${ganadores[0].puntaje} ${ptsText}`;
+    } else {
+        header.textContent = `${tieText} ${ganadores.map(g => g.nombre).join(', ')} — ${ganadores[0] ? ganadores[0].puntaje : 0} ${ptsText}`;
+    }
 
     tableWrapper.appendChild(tabla);
     cont.appendChild(header);
     cont.appendChild(tableWrapper);
 
     const btnCopiar = document.createElement('button');
-    btnCopiar.textContent = 'Copiar resultados';
+    btnCopiar.id = 'button-copy-results'; // Agregamos ID para poder traducir
+    const copyText = window.LanguageSystem ? window.LanguageSystem.getText('copy-results') : 'Copiar resultados';
+    btnCopiar.textContent = copyText;
     // usar clases del menú para heredar estilo
     btnCopiar.className = 'button button-play';
     btnCopiar.style.display = 'block';
@@ -186,8 +200,10 @@ function mostrarResultadosEnDOM(resultados, ganadores) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(()=>{
                 // feedback corto
-                btnCopiar.textContent = 'Copiado ✓';
-                setTimeout(()=> btnCopiar.textContent = 'Copiar resultados', 1200);
+                const copiedText = window.LanguageSystem ? window.LanguageSystem.getText('copied') : 'Copiado ✓';
+                const originalText = window.LanguageSystem ? window.LanguageSystem.getText('copy-results') : 'Copiar resultados';
+                btnCopiar.textContent = copiedText;
+                setTimeout(()=> btnCopiar.textContent = originalText, 1200);
             }).catch(()=> alert(text));
         } else {
             alert(text);
@@ -221,10 +237,10 @@ function calcularGanador() {
 document.addEventListener('DOMContentLoaded', () => {
     // Inicializar datos por defecto
     datosJugadores = {
-        rival1: { nombre: 'Vothka', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-        rival2: { nombre: 'Diego Zamora', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-        rival3: { nombre: 'Fabrizio Arriola', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-        rival4: { nombre: 'Lukateli', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
+        rival1: { nombre: 'Jugador 1', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival2: { nombre: 'Jugador 2', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival3: { nombre: 'Jugador 3', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+        rival4: { nombre: 'Jugador 4', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
     };
 
     // Cargar persistencia
@@ -352,18 +368,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const item = this.closest('.parcela-item');
             const v = item.querySelector('.valor-parcela');
             let n = parseInt(v.textContent)||0;
-            // identificar tipo de parcela por texto o por icono/nombre
-            const nombre = (item.querySelector('.nombre-parcela')||{}).textContent || '';
-            if (/Iguales/i.test(nombre)) {
+            // identificar tipo de parcela por ID del label (más confiable que el texto que cambia con traducciones)
+            const label = item.querySelector('.nombre-parcela');
+            const labelId = label ? label.id : '';
+            
+            if (labelId === 'equals-plot-label') {
                 if (n < MAX_IGUALES) { n++; v.textContent = n; }
-            } else if (/Diferentes/i.test(nombre)) {
+            } else if (labelId === 'different-plot-label') {
                 if (n < MAX_DIFERENTES) { n++; v.textContent = n; }
-            } else if (/Parejas/i.test(nombre)) {
+            } else if (labelId === 'pairs-plot-label') {
                 if (n < MAX_PAREJAS) { n++; v.textContent = n; }
-            } else if (/T[- ]?Rex|T ?Rex|T-Rex|T Rex|T?rex/i.test(nombre) || /T[- ]?Rex|T ?Rex/i.test(nombre)) {
+            } else if (labelId === 'trex-count-label') {
                 if (n < MAX_TREX) { n++; v.textContent = n; }
+            } else if (labelId === 'river-plot-label') {
+                if (n < MAX_RIO) { n++; v.textContent = n; }
             } else {
-                // parcelas sin tope conocido (rio u otras)
+                // parcelas sin límite conocido o checkboxes
                 n++; v.textContent = n;
             }
             // guardar el jugador activo actual
@@ -406,18 +426,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Si no hay puntajes (todos 0), mostrar mensaje claro en el modal
                 const totalPuntos = resultados.reduce((acc, r) => acc + (r.puntaje || 0), 0);
                 if (totalPuntos === 0) {
-                    modalTitulo.textContent = 'Sin datos';
-                    modalNombre.textContent = 'No hay datos ingresados';
+                    const noDataText = window.LanguageSystem ? window.LanguageSystem.getText('no-data') : 'Sin datos';
+                    const noDataIngresadosText = window.LanguageSystem ? window.LanguageSystem.getText('no-data-entered') : 'No hay datos ingresados';
+                    modalTitulo.textContent = noDataText;
+                    modalNombre.textContent = noDataIngresadosText;
                     if (modal) modal.style.display = 'flex';
-                    contResultado.textContent = 'No hay datos ingresados.';
+                    contResultado.textContent = noDataIngresadosText + '.';
                     return;
                 }
+                const winnerText = window.LanguageSystem ? window.LanguageSystem.getText('winner-text') : 'Ganador';
+                const tieText = window.LanguageSystem ? window.LanguageSystem.getText('tie-text') : 'Empate';
+                const ptsText = window.LanguageSystem ? window.LanguageSystem.getText('pts') : 'pts';
+                
                 if (ganadores.length === 1) {
-                    modalTitulo.textContent = 'Ganador';
-                    modalNombre.textContent = `${ganadores[0].nombre} — ${ganadores[0].puntaje} pts`;
+                    modalTitulo.textContent = winnerText;
+                    modalNombre.textContent = `${ganadores[0].nombre} — ${ganadores[0].puntaje} ${ptsText}`;
                 } else {
-                    modalTitulo.textContent = 'Empate';
-                    modalNombre.textContent = ganadores.map(g => `${g.nombre} (${g.puntaje})`).join(' y ');
+                    modalTitulo.textContent = tieText;
+                    const andText = window.LanguageSystem ? window.LanguageSystem.getText('and-text') : 'y';
+                    modalNombre.textContent = ganadores.map(g => `${g.nombre} (${g.puntaje})`).join(` ${andText} `);
                 }
                 if (modal) modal.style.display = 'flex';
                 mostrarResultadosEnDOM(resultados, ganadores);
@@ -428,10 +455,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function reiniciarDatos() {
         // restablecer objeto en memoria
         datosJugadores = {
-            rival1: { nombre: 'Vothka', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival2: { nombre: 'Diego Zamora', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival3: { nombre: 'Fabrizio Arriola', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival4: { nombre: 'Lukateli', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
+            rival1: { nombre: 'Jugador 1', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival2: { nombre: 'Jugador 2', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival3: { nombre: 'Jugador 3', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
+            rival4: { nombre: 'Jugador 4', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
         };
         try { localStorage.removeItem('datosJugadores'); } catch(e){}
         // actualizar UI
@@ -446,7 +473,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (botonReiniciar) {
         botonReiniciar.addEventListener('click', () => {
-            if (!confirm('¿Seguro que deseas reiniciar los datos de la partida? Se perderán los puntajes guardados.')) return;
+            const confirmMessage = window.LanguageSystem ? window.LanguageSystem.getText('confirm-reset-message') : '¿Seguro que deseas reiniciar los datos de la partida? Se perderán los puntajes guardados.';
+            if (!confirm(confirmMessage)) return;
             reiniciarDatos();
         });
     }
@@ -457,3 +485,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Inicialización completa', datosJugadores);
 });
+
+// Función global para recalcular resultados (usada por el sistema de idiomas)
+window.recalcularResultados = function() {
+    const botonCalcular = document.getElementById('boton-calcular-ganador');
+    if (botonCalcular) {
+        // Simular click del botón calcular para actualizar con el idioma correcto
+        botonCalcular.click();
+    }
+};

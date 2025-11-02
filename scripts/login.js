@@ -1,3 +1,6 @@
+console.log('🟡 login.js cargado');
+console.log('🟡 UserProfile en login.js:', typeof window.UserProfile);
+
 // Función para mostrar mensajes en el DOM
 function showMessage(elementId, message, type) {
     // Obtiene el elemento del DOM por su id
@@ -34,7 +37,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
 
     try {
         // Realiza la petición POST al backend para login
-    const res = await fetch('/php/login.php', {
+    const res = await fetch('php/login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -43,24 +46,62 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
         // Convierte la respuesta en JSON
         const data = await res.json();
 
-        if (res.ok && data.message) { // Si la respuesta HTTP es 2xx (éxito) y hay mensaje
+        console.log('🔄 LOGIN - Código de respuesta:', res.status);
+        console.log('🔄 LOGIN - Datos recibidos:', data);
+
+        if (res.ok && res.status >= 200 && res.status < 300) { // Si la respuesta HTTP es 2xx (éxito)
             showMessage('loginMessage', data.message, 'success'); // Muestra mensaje de éxito
-            setTimeout(() => {
-                if (username.toUpperCase() === 'ADMIN') { // Si es admin entonces..
-                    window.location.href = 'menu-admin.html'; // Redirige a menú de admin
-                } else {
-                    window.location.href = 'menu.html'; // Redirige a menú normal
+            
+            // GUARDAR USUARIO EN EL PERFIL
+            console.log('🔄 LOGIN EXITOSO - Usuario:', username);
+            console.log('🔄 window.UserProfile existe:', !!window.UserProfile);
+            console.log('🔄 typeof window.UserProfile:', typeof window.UserProfile);
+            
+            // Intentar múltiples formas de acceder a UserProfile
+            let profileSaved = false;
+            
+            // Método 1: window.UserProfile
+            if (window.UserProfile && typeof window.UserProfile.saveUser === 'function') {
+                try {
+                    window.UserProfile.saveUser(username);
+                    const savedUser = window.UserProfile.getUser();
+                    console.log('✅ Método 1 exitoso - Usuario guardado:', savedUser);
+                    profileSaved = true;
+                } catch (e) {
+                    console.error('❌ Método 1 falló:', e);
                 }
+            }
+            
+            // Método 2: Acceso directo a localStorage como respaldo
+            if (!profileSaved) {
+                try {
+                    localStorage.setItem('loggedUser', username);
+                    const savedUser = localStorage.getItem('loggedUser');
+                    console.log('✅ Método 2 (respaldo) exitoso - Usuario guardado:', savedUser);
+                    profileSaved = true;
+                } catch (e) {
+                    console.error('❌ Método 2 también falló:', e);
+                }
+            }
+            
+            if (!profileSaved) {
+                console.error('❌ CRÍTICO: No se pudo guardar el usuario de ninguna manera');
+            }
+            
+            setTimeout(() => {
+                // Todos los usuarios van al mismo menú, que se adapta automáticamente
+                window.location.href = 'menu.html';
             }, 1000); // Espera 1 segundo antes de redirigir
-        } else if (data.error) {
-            showMessage('loginMessage', data.error, 'error'); // Muestra mensaje de error en rojo
-        } else {
-            showMessage('loginMessage', 'Usuario y contraseña no coinciden.', 'error'); // Mensaje genérico de error
+        } else { // Si hay error HTTP (4xx, 5xx)
+            console.log('❌ Error en el login:', data.error);
+            const loginErrorText = window.LanguageSystem ? window.LanguageSystem.getText('login-error') : 'Error al iniciar sesión';
+            showMessage('loginMessage', data.error || loginErrorText, 'error'); // Muestra mensaje de error en rojo
         }
     } catch (error) {
         // Si hay error de red o servidor
         console.error('Error de red o del servidor:', error);
-        showMessage('loginMessage', 'No se pudo conectar con el servidor. Inténtalo de nuevo más tarde.', 'error');
+        const serverErrorText = window.LanguageSystem ? window.LanguageSystem.getText('server-connection-error') : 'No se pudo conectar con el servidor. Inténtalo de nuevo más tarde.';
+        showMessage('loginMessage', serverErrorText, 'error');
     } finally {
         loginButton.disabled = false; // Vuelve a habilitar el botón
     }
@@ -85,7 +126,8 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
 
     // Verifica si las contraseñas coinciden
     if (password !== confirmPassword) {
-        showMessage('registerMessage', 'Las contraseñas no coinciden.', 'error'); // Muestra error si no coinciden
+        const passwordsNoMatchText = window.LanguageSystem ? window.LanguageSystem.getText('passwords-no-match') : 'Las contraseñas no coinciden.';
+        showMessage('registerMessage', passwordsNoMatchText, 'error'); // Muestra error si no coinciden
         return; // Detiene la función si las contraseñas no coinciden
     }
 
@@ -93,7 +135,7 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
 
     try { // Inicia un bloque try para manejar posibles errores durante el registro
         // Realiza la petición POST al backend para registro
-        const res = await fetch('/php/register.php', {
+        const res = await fetch('php/register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -102,21 +144,29 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
         // Convierte la respuesta en JSON
         const data = await res.json(); // Espera y obtiene la respuesta del servidor en formato JSON
 
-        if (res.ok) { // Si la respuesta HTTP indica éxito
-            showMessage('registerMessage', data.message, 'success'); // Muestra un mensaje de éxito en el registro
+        console.log('🔄 REGISTRO - Código de respuesta:', res.status);
+        console.log('🔄 REGISTRO - Datos recibidos:', data);
+
+        if (res.ok && res.status >= 200 && res.status < 300) { // Si la respuesta HTTP indica éxito real (2xx)
+            const registerSuccessText = window.LanguageSystem ? window.LanguageSystem.getText('register-success') : 'Usuario registrado exitosamente';
+            showMessage('registerMessage', data.message || registerSuccessText, 'success'); // Muestra un mensaje de éxito en el registro
+            console.log('✅ Registro exitoso');
             setTimeout(() => { // Espera 1.5 segundos antes de ejecutar el siguiente bloque
                 toggleRegister(); // Cambia al formulario de login tras el registro exitoso
                 document.getElementById('newUsername').value = ''; // Limpia el campo de usuario
                 document.getElementById('newPassword').value = ''; // Limpia el campo de contraseña
                 document.getElementById('confirmNewPassword').value = ''; // Limpia el campo de confirmación de contraseña
             }, 1500); // Retardo de 1.5 segundos
-        } else { // Si la respuesta HTTP indica error
-            showMessage('registerMessage', data.error || 'Error desconocido al registrarse', 'error'); // Muestra mensaje de error
+        } else { // Si la respuesta HTTP indica error (4xx, 5xx)
+            console.log('❌ Error en el registro:', data.error);
+            const registerErrorText = window.LanguageSystem ? window.LanguageSystem.getText('register-unknown-error') : 'Error desconocido al registrarse';
+            showMessage('registerMessage', data.error || registerErrorText, 'error'); // Muestra mensaje de error
         }
     } catch (error) { // Si ocurre un error de red o servidor
         // Si hay error de red o servidor
         console.error('Error de red o del servidor:', error); // Muestra el error en la consola
-        showMessage('registerMessage', 'No se pudo conectar con el servidor. Intentalo de nuevo más tarde.', 'error'); // Muestra mensaje de error al usuario
+        const serverErrorText = window.LanguageSystem ? window.LanguageSystem.getText('server-connection-error') : 'No se pudo conectar con el servidor. Intentalo de nuevo más tarde.';
+        showMessage('registerMessage', serverErrorText, 'error'); // Muestra mensaje de error al usuario
     } finally { // Este bloque se ejecuta siempre, haya o no error
         registerButton.disabled = false; // Vuelve a habilitar el botón de registro
     }
@@ -136,6 +186,42 @@ function toggleRegister() {
     registerBox.style.display = registerBox.style.display === 'none' ? 'block' : 'none';
     
     clearMessages(); // Limpia los mensajes al cambiar de formulario
+}
 
+// Función para entrar como invitado
+function loginAsGuest() {
+    console.log('🎭 Entrando como invitado');
+    
+    let guestSaved = false;
+    
+    // Método 1: UserProfile
+    if (window.UserProfile && typeof window.UserProfile.saveUser === 'function') {
+        try {
+            window.UserProfile.logout(); // Limpiar sesión anterior
+            window.UserProfile.saveUser('Invitado');
+            console.log('✅ Invitado guardado con UserProfile');
+            guestSaved = true;
+        } catch (e) {
+            console.error('❌ Error con UserProfile para invitado:', e);
+        }
+    }
+    
+    // Método 2: localStorage directo
+    if (!guestSaved) {
+        try {
+            localStorage.setItem('loggedUser', 'Invitado');
+            console.log('✅ Invitado guardado con localStorage directo');
+            guestSaved = true;
+        } catch (e) {
+            console.error('❌ Error con localStorage para invitado:', e);
+        }
+    }
+    
+    if (!guestSaved) {
+        console.error('❌ CRÍTICO: No se pudo guardar el invitado');
+    }
+    
+    // Redirigir al menú normal
+    window.location.href = 'menu.html';
 }
 

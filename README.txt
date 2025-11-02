@@ -72,10 +72,6 @@ CREATE TABLE party_tables (
     table_code INT NOT NULL
 );
 
-UPDATE register_user
-SET password = '$2b$12$oc5rbYqq..aUtOa6LkWVJ.bzZqyidNJGiswjeBYY0O0OecTqEc2h2'
-WHERE user_name = 'ADMIN';
-
 ------------------------------
 FIN DE LA BASE DE DATOS
 ------------------------------

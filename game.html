@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draftosaurus</title>
+    <title id="game-page-title">Draftosaurus</title>
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/tablero.css">
 </head>
 <header>
-    <button class="boton-atras" onclick="window.location.href='menu.html'">Atrás</button>
+    <button class="boton-atras" onclick="window.location.href='menu.html'" id="back-button">Atrás</button>
     <div class="header-center">
+        <div class="user-info" style="color: white; margin-bottom: 5px;">
+            <span id="player-text">Jugador: </span><span id="logged-username">Usuario</span>
+        </div>
         <span class="span-puntaje">
-            <span class="span-puntaje-texto">Puntaje: </span>
+            <span class="span-puntaje-texto" id="score-text">Puntaje: </span>
             <span class="span-puntaje-valor" id="jugador0-puntaje-valor">XX</span>
         </span>
         <span class="span-ronda">
-            <span class="span-ronda-texto">Ronda N°: </span>
+            <span class="span-ronda-texto" id="round-text">Ronda N°: </span>
             <span class="span-ronda-valor" id="ronda-valor">X</span>
         </span>
     </div>
-    <button class="boton-ayuda">Ayuda</button>
+    <button class="boton-ayuda" id="help-button">Ayuda</button>
 </header>
 
 <body>
@@ -113,7 +116,7 @@
                     </button>
                     <span class="nombre-rival" id="rival1-nombre">Vothka</span>
                     <span class="puntaje-rival" id="rival1-puntaje">
-                        <span class="puntaje-rival-texto">Puntaje: </span>
+                        <span class="puntaje-rival-texto" id="rival1-score-text">Puntaje: </span>
                         <span class="puntaje-rival-valor" id="rival1-puntaje-valor">XX</span>
                     </span>
                     <span class="estado-rival" id="rival1-estado"><strong>✓</strong></span>
@@ -128,7 +131,7 @@
                     </button>
                     <span class="nombre-rival" id="rival2-nombre">Diego Zamora</span>
                     <span class="puntaje-rival" id="rival2-puntaje">
-                        <span class="puntaje-rival-texto">Puntaje: </span>
+                        <span class="puntaje-rival-texto" id="rival2-score-text">Puntaje: </span>
                         <span class="puntaje-rival-valor" id="rival2-puntaje-valor">XX</span>
                     </span>
                     <span class="estado-rival" id="rival2-estado"><strong>✓</strong></span>
@@ -143,7 +146,7 @@
                     </button>
                     <span class="nombre-rival" id="rival3-nombre">Fabrizio Arriola</span>
                     <span class="puntaje-rival" id="rival3-puntaje">
-                        <span class="puntaje-rival-texto">Puntaje: </span>
+                        <span class="puntaje-rival-texto" id="rival3-score-text">Puntaje: </span>
                         <span class="puntaje-rival-valor" id="rival3-puntaje-valor">XX</span>
                     </span>
                     <span class="estado-rival" id="rival3-estado"><strong>✓</strong></span>
@@ -158,7 +161,7 @@
                     </button>
                     <span class="nombre-rival" id="rival4-nombre">Lukateli</span>
                     <span class="puntaje-rival" id="rival4-puntaje">
-                        <span class="puntaje-rival-texto">Puntaje: </span>
+                        <span class="puntaje-rival-texto" id="rival4-score-text">Puntaje: </span>
                         <span class="puntaje-rival-valor" id="rival4-puntaje-valor">XX</span>
                     </span>
                     <span class="estado-rival" id="rival4-estado"><strong>✓</strong></span>
@@ -173,28 +176,41 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-icon">📖</div>
-                <h2 class="modal-title">Ayuda</h2>
+                <h2 class="modal-title" id="help-modal-title">Ayuda</h2>
                 <button id="cerrar-modal" class="btn-cerrar">✖</button>
             </div>
             <div class="modal-body">
                 <p>
                     <img src="assets/dado/dadoBosque.PNG" alt="Dado Bosque" style="width: 20px;"></a>
-                    <strong>El Bosque: </strong>Los dinosaurios deben colocarse en cualquier recinto del área de Bosque del parque.<br>
+                    <strong id="forest-rule-title">El Bosque: </strong><span id="forest-rule-text">Los dinosaurios deben colocarse en cualquier recinto del área de Bosque del parque.</span><br>
                     <img src="assets/dado/dadoLlanuras.PNG" alt="Dado Llanura" style="width: 20px;"></a>
-                    <strong>Llanura: </strong>Los dinosaurios deben colocarse en cualquier recinto del área de Llanura del parque.<br>
+                    <strong id="plains-rule-title">Llanura: </strong><span id="plains-rule-text">Los dinosaurios deben colocarse en cualquier recinto del área de Llanura del parque.</span><br>
                     <img src="assets/dado/dadoBanos.PNG" alt="Dado Baños" style="width: 20px;"></a>
-                    <strong>Baños: </strong>Los dinosaurios deben colocarse únicamente en los recintos que se encuentren a la derecha del Río.<br>
+                    <strong id="bathrooms-rule-title">Baños: </strong><span id="bathrooms-rule-text">Los dinosaurios deben colocarse únicamente en los recintos que se encuentren a la derecha del Río.</span><br>
                     <img src="assets/dado/dadoCafeteria.PNG" alt="Dado Cafetería" style="width: 20px;"></a>
-                    <strong>Cafetería: </strong>Los dinosaurios deben colocarse únicamente en los recintos que se encuentren a la izquierda del Río.<br>
+                    <strong id="cafeteria-rule-title">Cafetería: </strong><span id="cafeteria-rule-text">Los dinosaurios deben colocarse únicamente en los recintos que se encuentren a la izquierda del Río.</span><br>
                     <img src="assets/dado/dadoVacio.PNG" alt="Dado Vacío" style="width: 20px;"></a>
-                    <strong>Recinto Vacío: </strong>Los dinosaurios deben colocarse en un recinto vacío del parque.<br>
+                    <strong id="empty-rule-title">Recinto Vacío: </strong><span id="empty-rule-text">Los dinosaurios deben colocarse en un recinto vacío del parque.</span><br>
                     <img src="assets/dado/dadoRex.PNG" alt="Dado T-Rex" style="width: 20px;"></a>
-                    <strong>¡Cuidado con el T-Rex!: </strong>Los dinosaurios deben colocarse en un recinto que no contenga previamente un T-Rex.<br>
-                    Se puede jugar un T-Rex este turno, siempre que el recinto donde vaya a ser colocado no contenga previamente otro T-Rex.</p>
+                    <strong id="trex-rule-title">¡Cuidado con el T-Rex!: </strong><span id="trex-rule-text">Los dinosaurios deben colocarse en un recinto que no contenga previamente un T-Rex.</span><br>
+                    <span id="trex-rule-extra">Se puede jugar un T-Rex este turno, siempre que el recinto donde vaya a ser colocado no contenga previamente otro T-Rex.</span></p>
             </div>
         </div>
     </div>
 
+    <script src="scripts/profile.js"></script>
+    <script src="scripts/language.js"></script>
     <script src="scripts/game.js"></script>
+    <script>
+        // Mostrar el nombre del usuario cuando carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Cargando perfil en game.html');
+            if (window.UserProfile) {
+                UserProfile.displayUserName('logged-username');
+            } else {
+                console.error('UserProfile no está disponible');
+            }
+        });
+    </script>
 </body>
 </html>
