@@ -1,8 +1,8 @@
 <?php
 // Configuración central de la base de datos (MariaDB/MySQL)
-$DB_HOST = "localhost";          // si PHP y MariaDB corren en el mismo server
-$DB_USER = "root";           // usuario MariaDB que creaste
-$DB_PASS = "";  // contraseña de ese usuario
+$DB_HOST = "127.0.0.1";          // si PHP y MariaDB corren en el mismo server
+$DB_USER = "fanaludi";           // usuario MariaDB que creaste
+$DB_PASS = "PescadoRabioso96.";  // contraseña de ese usuario
 $DB_NAME = "usuarios_registrados_bd";
 $DB_PORT = 3306;                 // puerto por defecto
 

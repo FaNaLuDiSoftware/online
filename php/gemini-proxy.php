@@ -8,7 +8,7 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Tu API Key de Gemini
-$apiKey = 'AIzaSyAOhpfcCP-EZCSdUnbvFnDPjxXeT5Gfsqg';
+$apiKey = 'AIzaSyBD7YGXfI3izA44GEgX1yJHDKV2gGWsdOo';
 
 // Endpoint de Gemini
 $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $apiKey;
