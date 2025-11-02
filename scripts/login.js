@@ -94,12 +94,14 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             }, 1000); // Espera 1 segundo antes de redirigir
         } else { // Si hay error HTTP (4xx, 5xx)
             console.log('❌ Error en el login:', data.error);
-            showMessage('loginMessage', data.error || 'Error al iniciar sesión', 'error'); // Muestra mensaje de error en rojo
+            const loginErrorText = window.LanguageSystem ? window.LanguageSystem.getText('login-error') : 'Error al iniciar sesión';
+            showMessage('loginMessage', data.error || loginErrorText, 'error'); // Muestra mensaje de error en rojo
         }
     } catch (error) {
         // Si hay error de red o servidor
         console.error('Error de red o del servidor:', error);
-        showMessage('loginMessage', 'No se pudo conectar con el servidor. Inténtalo de nuevo más tarde.', 'error');
+        const serverErrorText = window.LanguageSystem ? window.LanguageSystem.getText('server-connection-error') : 'No se pudo conectar con el servidor. Inténtalo de nuevo más tarde.';
+        showMessage('loginMessage', serverErrorText, 'error');
     } finally {
         loginButton.disabled = false; // Vuelve a habilitar el botón
     }
@@ -124,7 +126,8 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
 
     // Verifica si las contraseñas coinciden
     if (password !== confirmPassword) {
-        showMessage('registerMessage', 'Las contraseñas no coinciden.', 'error'); // Muestra error si no coinciden
+        const passwordsNoMatchText = window.LanguageSystem ? window.LanguageSystem.getText('passwords-no-match') : 'Las contraseñas no coinciden.';
+        showMessage('registerMessage', passwordsNoMatchText, 'error'); // Muestra error si no coinciden
         return; // Detiene la función si las contraseñas no coinciden
     }
 
@@ -145,7 +148,8 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
         console.log('🔄 REGISTRO - Datos recibidos:', data);
 
         if (res.ok && res.status >= 200 && res.status < 300) { // Si la respuesta HTTP indica éxito real (2xx)
-            showMessage('registerMessage', data.message || 'Usuario registrado exitosamente', 'success'); // Muestra un mensaje de éxito en el registro
+            const registerSuccessText = window.LanguageSystem ? window.LanguageSystem.getText('register-success') : 'Usuario registrado exitosamente';
+            showMessage('registerMessage', data.message || registerSuccessText, 'success'); // Muestra un mensaje de éxito en el registro
             console.log('✅ Registro exitoso');
             setTimeout(() => { // Espera 1.5 segundos antes de ejecutar el siguiente bloque
                 toggleRegister(); // Cambia al formulario de login tras el registro exitoso
@@ -155,12 +159,14 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
             }, 1500); // Retardo de 1.5 segundos
         } else { // Si la respuesta HTTP indica error (4xx, 5xx)
             console.log('❌ Error en el registro:', data.error);
-            showMessage('registerMessage', data.error || 'Error desconocido al registrarse', 'error'); // Muestra mensaje de error
+            const registerErrorText = window.LanguageSystem ? window.LanguageSystem.getText('register-unknown-error') : 'Error desconocido al registrarse';
+            showMessage('registerMessage', data.error || registerErrorText, 'error'); // Muestra mensaje de error
         }
     } catch (error) { // Si ocurre un error de red o servidor
         // Si hay error de red o servidor
         console.error('Error de red o del servidor:', error); // Muestra el error en la consola
-        showMessage('registerMessage', 'No se pudo conectar con el servidor. Intentalo de nuevo más tarde.', 'error'); // Muestra mensaje de error al usuario
+        const serverErrorText = window.LanguageSystem ? window.LanguageSystem.getText('server-connection-error') : 'No se pudo conectar con el servidor. Intentalo de nuevo más tarde.';
+        showMessage('registerMessage', serverErrorText, 'error'); // Muestra mensaje de error al usuario
     } finally { // Este bloque se ejecuta siempre, haya o no error
         registerButton.disabled = false; // Vuelve a habilitar el botón de registro
     }
