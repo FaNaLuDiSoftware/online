@@ -11,6 +11,38 @@ body {
     overflow: hidden;
 }
 
+/* Selector de idioma */
+.language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.language-selector select {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.language-selector select:hover {
+    background-color: #4CAF50;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.language-selector select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
 .login-container {
     background-color: #fff;
     padding: 2.5rem 2rem;
@@ -93,7 +125,7 @@ h1 {
 }
 
 a {
-    color: #388e3c;
+    color: #44b7c2;
     text-decoration: none;
     transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
     font-weight: 500;
@@ -101,7 +133,7 @@ a {
 
 a:hover {
     text-decoration: underline;
-    color: #2e7d32;
+    color: #ffffff;
 }
 
 .message {
