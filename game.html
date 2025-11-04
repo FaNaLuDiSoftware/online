@@ -26,6 +26,13 @@
 </header>
 
 <body>
+
+    <div id="rotate-message-overlay">
+        <div id="rotate-message-content">
+            🔄
+            <p id="rotate-text">Por favor, rota tu dispositivo a modo horizontal para jugar.</p>
+        </div>
+    </div>
     <main>
         <div class="div-fichas">
             <div class="selector-fichas">
@@ -41,7 +48,6 @@
         <div class="div-jugador">
             <div class="div-tablero">
                 <div class="tableroJugador" id="tableroJugador0">
-                    <!-- PARCELA DE LOS IGUALES -->
                     <div class="parcelaIguales">
                         <div class="contenedorIguales">
                             <span class="igualesFicha1"></span>
@@ -52,17 +58,14 @@
                             <span class="igualesFicha6"></span>
                         </div>
                     </div>
-                    <!-- PARCELA DEL REY -->
                     <div class="parcelaRey">
                         <span class="fichaRey"></span>
                     </div>
-                    <!-- PARCELA DEL TRIO -->
                     <div class="parcelaTrio">
                         <span class="trioFicha1"></span>
                         <span class="trioFicha2"></span>
                         <span class="trioFicha3"></span>
                     </div>
-                    <!-- PARCELA DE LOS DIFERENTES -->
                     <div class="parcelaDiferentes">
                         <div class="contenedorDiferentes">
                             <span class="diferentesFicha1"></span>
@@ -73,7 +76,6 @@
                             <span class="diferentesFicha6"></span>
                         </div>
                     </div>
-                    <!-- PARCELA DE LAS PAREJAS -->
                     <div class="parcelaParejas">
                         <div class="contenedorPareja1">
                             <span class="parejaFicha1"></span>
@@ -88,7 +90,6 @@
                             <span class="parejaFicha6"></span>
                         </div>
                     </div>
-                    <!-- PARCELA DEL RIO -->
                     <div class="parcelaRio">
                         <div class="rioFicha1"></div>
                         <div class="rioFicha2"></div>
@@ -97,7 +98,6 @@
                         <div class="rioFicha5"></div>
                         <div class="rioFicha6"></div>
                     </div>
-                    <!-- PARCELA DEL SOLITARIO -->
                     <div class="parcelaSolitario">
                         <div class="solitarioFicha"></div>
                     </div>
@@ -171,7 +171,6 @@
         </div>
     </main>
 
-    <!-- Ventana Modal de Ayuda -->
     <div id="modal-ayuda" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
