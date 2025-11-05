@@ -14,14 +14,18 @@
             <a href="php/ranking.php" class="icon-button"><i class="fas fa-trophy"></i></a>
             <a href="balanza.html" class="icon-button"><i class="fas fa-balance-scale-right"></i></a>
         </div>
+
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <span id="logged-as-text">Logueado como: </span>
+            <span id="logged-username">Usuario</span>
+            <span id="admin-badge" style="display: none;"> (Admin)</span>
+        </div>
         <a href="index.html" class="logout-icon"><i class="fas fa-sign-out-alt"></i></a>
 
         <header class="header">
             <img src="assets/logoDraftosaurus.png" alt="Logo del juego" class="logo" />
-            <div class="user-info" style="color: white; text-align: center; margin-top: 10px;">
-                <span id="logged-as-text">Logueado como: </span><span id="logged-username">Usuario</span><span id="admin-badge" style="display: none; color: #ffd700; font-weight: bold;"> (ADMINISTRADOR)</span>
-            </div>
-        </header>
+            </header>
 
         <main class="menu">
             <a href="game.html" class="button button-play" id="play-button">Jugar</a>
@@ -29,18 +33,17 @@
             <a href="php/user_information.php" class="button button-admin" id="admin-button" style="display: none;">Modo Admin</a>
         </main>
 
-        <div class="menu-footer">
+         <div class="menu-footer">
             <a href="fanaludi.html" target="_blank" class="button button-about" id="about-button">Sobre nosotros</a>
             <a href="https://drive.google.com/file/d/138qY_aZfQ-RXYDA0j6HshSk-_1mmJIrG/view" target="_blank" class="button button-manual" id="manual-button">Manual</a>
         </div>
         
-        <!-- Botón de configuración en la esquina inferior derecha -->
         <div class="settings-button">
             <button id="settings-btn" class="settings-icon" onclick="openLanguageSettings()">
                 <i class="fas fa-cog"></i>
             </button>
         </div>
-        
+
         <!-- Modal de configuración de idioma -->
         <div id="language-modal" class="language-modal" style="display: none;">
             <div class="modal-content">
@@ -57,7 +60,7 @@
         </div>
         
         <br>
-        <footer class="w-full max-w-4xl text-center text-gray-600 mt-8">
+        <footer class="footer">
             <p id="menu-footer-text">&copy; 2025 FaNaLuDi Software. Todos los derechos reservados.</p>
         </footer>
     </div>
@@ -77,11 +80,11 @@
                 const adminBadge = document.getElementById('admin-badge');
                 
                 if (UserProfile.isAdmin()) {
-                    console.log('✅ Usuario es ADMIN - Mostrando elementos de administrador');
+                    console.log('Usuario es ADMIN - Mostrando elementos de administrador');
                     adminButton.style.display = 'block';
                     adminBadge.style.display = 'inline';
                 } else {
-                    console.log('👤 Usuario normal - Ocultando elementos de administrador');
+                    console.log('Usuario normal - Ocultando elementos de administrador');
                     adminButton.style.display = 'none';
                     adminBadge.style.display = 'none';
                 }
