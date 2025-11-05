@@ -255,9 +255,9 @@ body {
 }
 
 @keyframes wobble {
-    0% { transform: rotate(-1deg); }
+    0% { transform: rotate(-2deg); }
     50% { transform: rotate(1deg); }
-    100% { transform: rotate(-1deg); }
+    100% { transform: rotate(-2deg); }
 }
 
 @media (max-width: 768px) {
@@ -421,4 +421,53 @@ body {
         padding: 20px;
         margin: 20% auto;
     }
+}
+
+/* =================================== */
+/* NUEVOS ESTILOS PARA USER-INFO       */
+/* =================================== */
+
+.user-info {
+    position: absolute;
+    /* Alineado verticalmente con el logout-icon */
+    top: clamp(10px, 2vw, 20px); 
+    right: clamp(60px, 8vw, 85px); 
+    
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    background-color: rgba(0, 0, 0, 0.7); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: 20px;
+    color: #f0f0f0;
+    font-size: 14px;
+    font-weight: 500;
+    text-shadow: none; 
+    transition: all 0.3s ease;
+    z-index: 10;
+    text-align: left; 
+    margin-top: 0;
+    white-space: nowrap; 
+}
+
+.user-info:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 8px #FF6F00;
+}
+
+.user-info .fa-user-circle {
+    font-size: 18px;
+    color: #4CAF50;
+}
+
+#admin-badge {
+    background-color: #FFD700;
+    color: #333;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 4px;
+    text-shadow: none;
 }
