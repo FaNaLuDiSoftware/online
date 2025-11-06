@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 console.log('🟡 login.js cargado');
 console.log('🟡 UserProfile en login.js:', typeof window.UserProfile);
 
@@ -226,7 +225,6 @@ function loginAsGuest() {
     window.location.href = 'menu.html';
 }
 
-=======
 console.log('🟡 login.js cargado');
 console.log('🟡 UserProfile en login.js:', typeof window.UserProfile);
 
@@ -454,4 +452,3 @@ function loginAsGuest() {
     window.location.href = 'menu.html';
 }
 
->>>>>>> aa56acf6d8a026e11defd17550024647e8aef855
