@@ -1,0 +1,597 @@
+/* ============================================
+   RESET Y CONFIGURACIÓN GENERAL
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: url(../assets/mesas/madera1.jpg) center/cover;
+    min-height: 90vh;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #222;
+    color: white;
+    padding: 0.1px 2px;
+    box-shadow: 0 0.5px 1px rgba(0,0,0,0.02);
+    border-bottom: 0.5px solid #333;
+    font-size: 13px;
+    min-height: 22px;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 30%;
+    flex: 1;
+    justify-content: center;
+}
+
+/* Botones del header */
+.boton-atras, .boton-ayuda {
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.boton-atras {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.boton-atras:before {
+    content: "←";
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.boton-atras:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.boton-ayuda {
+    background-color: white;
+    color: #2c2c2c;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.boton-ayuda:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+/* Texto del header */
+.span-puntaje, .span-ronda {
+    color: white;
+    font-weight: 500;
+}
+
+.span-puntaje {
+    font-size: 16px;
+}
+
+.span-ronda {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.span-puntaje-valor, .span-ronda-valor, .span-ronda-texto {
+    font-weight: bold;
+}
+
+.span-puntaje-texto, .span-ronda-texto {
+    margin-right: 5px;
+}
+
+.span-ronda-valor {
+    font-size: 20px;
+}
+
+
+/* CONTENEDOR DEL JUEGO */
+/****** MAIN Y CONTENEDORES *****/
+main {
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Contenedores principales */
+.div-fichas {
+    flex-grow: 1;
+    max-width: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.div-jugador {
+    flex-grow: 8;
+    max-width: 80vh;
+    max-height: 80vw;
+}
+
+.div-rivales {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+/* Estilos comunes de contenedores */
+.div-fichas, .div-jugador, .div-rivales {
+    border-radius: 4px;
+    padding: 3px;
+    margin: 0;
+    box-shadow: 0 2px 4px rgba(152, 97, 97, 0.1);
+}
+
+/* ============================================
+   SELECTOR DE FICHAS
+   ============================================ */
+.selector-fichas {
+    background: linear-gradient(145deg, #e8f4f8 0%, #d1ecf1 50%, #b8e0ea 100%);
+    border: 3px solid #4a90e2;
+    border-radius: 25px;
+    padding: 15px 8px;
+    box-shadow: 
+        0 8px 16px rgba(74, 144, 226, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.6),
+        inset 0 -2px 4px rgba(74, 144, 226, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    width: 10vw;
+    height: 60vh;
+    min-height: 40px;
+    justify-content: center;
+}
+
+.selector-fichas::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #4a90e2, #357abd, #2968a3);
+    border-radius: 27px;
+    z-index: -1;
+    opacity: 0.8;
+}
+
+/* Fichas de dinosaurios */
+.ficha-dinosaurio {
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Sin fondo ni bordes - solo la imagen del dinosaurio */
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    /* Sombra sutil debajo del dinosaurio */
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+}
+
+.ficha-dinosaurio:hover {
+    transform: translateY(-2px) scale(1.05);
+    /* Sombra más intensa al hacer hover */
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4)) 
+            drop-shadow(0 0 8px rgba(74, 144, 226, 0.3));
+}
+
+.ficha-dinosaurio.seleccionada {
+    transform: translateY(-4px) scale(1.1);
+    /* Sombra azul brillante y efecto de resplandor para selección */
+    filter: drop-shadow(0 8px 16px rgba(74, 226, 104, 0.6)) 
+            drop-shadow(0 0 12px rgba(74, 226, 94, 0.8))
+            drop-shadow(0 0 20px rgba(74, 226, 104, 0.4));
+    animation: tembleque 0.6s ease-in-out;
+}
+
+/* Imágenes específicas de dinosaurios */
+.ficha-dinosaurio1 { background-image: url('../assets/fichas/lisoVerde.PNG'); }
+.ficha-dinosaurio2 { background-image: url('../assets/fichas/lisoRojo.PNG'); }
+.ficha-dinosaurio3 { background-image: url('../assets/fichas/lisoAmarillo.PNG'); }
+.ficha-dinosaurio4 { background-image: url('../assets/fichas/lisoCeleste.PNG'); }
+.ficha-dinosaurio5 { background-image: url('../assets/fichas/lisoRosa.PNG'); }
+.ficha-dinosaurio6 { background-image: url('../assets/fichas/lisoNaranja.PNG'); }
+
+/* Animación de tembleque */
+@keyframes tembleque {
+    0%, 100% { transform: translateY(-4px) scale(1.1) rotate(0deg); }
+    10% { transform: translateY(-4px) scale(1.1) rotate(-1deg); }
+    20% { transform: translateY(-4px) scale(1.1) rotate(1deg); }
+    30% { transform: translateY(-4px) scale(1.1) rotate(-1deg); }
+    40% { transform: translateY(-4px) scale(1.1) rotate(1deg); }
+    50% { transform: translateY(-4px) scale(1.1) rotate(-0.5deg); }
+    60% { transform: translateY(-4px) scale(1.1) rotate(0.5deg); }
+    70% { transform: translateY(-4px) scale(1.1) rotate(-0.5deg); }
+    80% { transform: translateY(-4px) scale(1.1) rotate(0.5deg); }
+    90% { transform: translateY(-4px) scale(1.1) rotate(0deg); }
+}
+
+/* ============================================
+   TABLEROS
+   ============================================ */
+.div-tablero, .div-tablero-rivales {
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    border: 1px solid #8B4513;
+    position: relative;
+}
+/* Ajustes para el tablero interactivo */
+.div-tablero .tableroJugador {
+    width: 100%;
+    height: 100%;
+    border: none;
+    box-shadow: none;
+    background-image: url(../assets/tablero.JPG);
+}
+
+.div-tablero-rivales {
+    height: calc(100% - 30%);
+    aspect-ratio: 1/1;
+    max-width: min(100%, calc(95vh - 200px));
+    max-height: min(100%, calc(95vh - 200px));
+    margin: 0 auto;
+    flex-shrink: 1;
+    object-fit: contain;
+}
+
+/* Contenedor de rivales */
+.div-rivales {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+/* Imágenes de fondo */
+.div-tablero { background-image: url(../assets/tablero.JPG); }
+.div-tablero-rivales { background-image: url(../assets/tablero1.JPG); }
+
+/* ============================================
+   PERFILES DE RIVALES
+   ============================================ */
+.div-perfiles-rivales {
+    background-color: #333;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-evenly;
+    gap: 1%;
+    width: 100%;
+    height: clamp(120px, 20vh, 180px);
+    flex: 0 0 auto;
+    overflow: visible;
+    padding: clamp(8px, 1.5vh, 12px);
+    box-sizing: border-box;
+}
+
+.perfil-rival {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(4px, 1vh, 8px);
+    position: relative;
+    width: 23%;
+    height: 100%;
+    max-width: 80px;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+/* Botón personaje */
+.boton-rival {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    aspect-ratio: 1/1;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.boton-rival:hover {
+    transform: scale(1.05);
+}
+
+.boton-rival.seleccionado {
+    transform: scale(1.1);
+}
+
+.boton-rival.seleccionado .fondo-rival {
+    border: 3px solid #00ff00;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Partes del jugador rival */
+.fondo-rival {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    position: relative;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cabeza-rival, .cuerpo-rival {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid #333;
+    border-radius: 50%;
+}
+
+.cabeza-rival {
+    top: 24%;
+    width: 35%;
+    height: 35%;
+    background-color: #f7bcbc;
+}
+
+.cuerpo-rival {
+    bottom: 15%;
+    width: 50%;
+    height: 25%;
+    background-color: #4a90e2;
+    border-radius: 50% 50% 0 0;
+}
+
+/* Texto y elementos de los rivales */
+.nombre-rival {
+    color: white;
+    font-size: clamp(10px, 1.5vh, 16px);
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.puntaje-rival {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid white;
+    border-radius: 3px;
+    padding: clamp(2px, 0.8vh, 6px) clamp(4px, 1vh, 8px);
+    font-size: clamp(8px, 1.2vh, 14px);
+    white-space: nowrap;
+    width: fit-content;
+    max-width: 100%;
+    flex-shrink: 0;
+}
+
+.puntaje-rival-texto, .puntaje-rival-valor {
+    color: white;
+    font-size: inherit;
+}
+
+.puntaje-rival-texto {
+    font-weight: 500;
+}
+
+.puntaje-rival-valor {
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+.estado-rival {
+    width: clamp(18px, 2.5vh, 28px);
+    height: clamp(18px, 2.5vh, 28px);
+    background-color: #00ff00;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(10px, 1.5vh, 16px);
+    color: white;
+    font-weight: bold;
+    border: 2px solid rgb(255, 255, 255);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+}
+
+/* ============================================
+   MODAL DE AYUDA
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.visible {
+    display: flex;
+}
+
+.modal-content {
+    background-color: #f4e8d0;
+    border: 3px solid #8B4513;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 70vh;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    font-family: 'Arial', sans-serif;
+}
+
+.modal-header {
+    background: linear-gradient(to bottom, #d4af8c, #b8956f);
+    border-bottom: 2px solid #8B4513;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.modal-icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.modal-title {
+    color: #5D4E37;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.btn-cerrar {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #5D4E37;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-cerrar:hover {
+    background-color: rgba(139, 69, 19, 0.2);
+}
+
+.modal-body {
+    padding: 20px;
+    color: #5D4E37;
+    line-height: 1.6;
+    max-height: calc(70vh - 100px);
+    overflow-y: auto;
+}
+
+.modal-body p {
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+/* ==============================
+   DRAG & DROP FICHAS DINOSAURIOS
+   ============================== */
+.ficha-oculta { visibility: hidden !important; }
+.drop-target { position: relative; }
+.drop-highlight { outline: 2px dashed #ffbf47; outline-offset: 2px; }
+.ficha-drag-ghost { pointer-events: none; position: fixed; top:0; left:0; width:50px; height:50px; transform: translate(-50%, -50%); z-index:10000; }
+.ficha-drag-ghost span, .ficha-drag-ghost img { width:100%; height:100%; display:block; }
+.drop-target:not([data-occupied="true"]):hover { box-shadow: 0 0 6px #ffc107 inset; }
+
+
+/* ============================================
+   NUEVO: MENSAJE DE ROTACIÓN DE PANTALLA
+   ============================================ */
+#rotate-message-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #222; /* Mismo fondo que el header */
+    color: white;
+    display: none; /* Oculto por defecto en escritorio */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 18px;
+    z-index: 2000; /* Más alto que el modal de ayuda (1000) */
+    padding: 20px;
+    box-sizing: border-box; /* Asegura que el padding no desborde */
+}
+
+#rotate-message-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#rotate-message-content p {
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+#rotate-message-content div {
+    font-size: 50px; /* Tamaño del icono */
+    animation: spin 2s linear infinite; /* Animación de rotación */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    
+    #rotate-message-overlay {
+        display: flex; /* Muestra el mensaje de rotación */
+    }
+    
+    header, main {
+        display: none; /* Oculta el contenido principal del juego */
+    }
+}

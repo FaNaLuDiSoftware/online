@@ -1,0 +1,206 @@
+body {
+    font-family: Arial, sans-serif;
+    background: url('../assets/background-menu.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Selector de idioma */
+.language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.language-selector select {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.language-selector select:hover {
+    background-color: #4CAF50;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.language-selector select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 6px 32px rgba(76, 175, 80, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+    margin: auto;
+    box-sizing: border-box;
+    max-height: 650px;
+    position: relative;
+    z-index: 1;
+}
+
+.login-container:hover {
+    box-shadow: 0 12px 40px rgba(76, 175, 80, 0.18);
+    transform: translateY(-2px) scale(1.01);
+}
+
+input {
+    width: 100%;
+    padding: 0.85rem;
+    margin: 0.6rem auto;
+    display: block;
+    border: 1.5px solid #b2dfdb;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background: #f8fafb;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(67, 160, 71, 0.5);
+}
+
+button {
+    width: 100%;
+    padding: 0.85rem;
+    margin-top: 0.5rem;
+    background: linear-gradient(90deg, #4CAF50 60%, #43a047 100%);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1.08rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out, transform 0.15s ease-in-out;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.08);
+}
+
+button:hover {
+    background: linear-gradient(90deg, #388e3c 60%, #2e7d32 100%);
+    transform: translateY(-1px) scale(1.01);
+}
+
+button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.logo {
+    max-width: 300px;
+    width: 90%;
+    height: auto;
+    margin-bottom: 1.2rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    color: #333;
+}
+
+a {
+    color: #44b7c2;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #ffffff;
+}
+
+.message {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 20px;
+}
+.message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: #00b7ff;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+}
+.link-button:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+
+.main-footer {
+    width: 100%;
+    max-width: 56rem;
+    text-align: center;
+    color: #fff;
+    margin-top: 2rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8),
+                 -1px -1px 2px rgba(0, 0, 0, 0.8);
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.2rem 1rem;
+        max-width: 95vw;
+        margin: 10px;
+    }
+    .logo {
+        max-width: 250px;
+        width: 80%;
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
+    .main-footer {
+        font-size: 0.8rem;
+        padding: 0.75rem 1rem;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+    }
+}
