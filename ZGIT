@@ -1,0 +1,4 @@
+git add .
+git commit -m "descripción de cambios"
+git push localhost Nahuel
+git push online Nahuel
