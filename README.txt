@@ -57,6 +57,13 @@ CREATE TABLE register_user (
     money INT NOT NULL
 );
 
+-- creamos la tabla de ranking del seguimiento
+CREATE TABLE ranking_tracking (
+    id_user_rt INT AUTO_INCREMENT PRIMARY KEY,
+    user_name_rt VARCHAR(20) NOT NULL UNIQUE,
+    score_rt INT NOT NULL
+);
+
 -- creamos el usuario ADMIN con la contraseña hasheada
 
 INSERT INTO register_user (user_name, password, score, money)
