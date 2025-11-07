@@ -8,51 +8,8 @@ error_reporting(E_ALL);
 
 
 
-// --- Lógica para acciones POST ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $action = $input['action'] ?? '';
-    $id_user = intval($input['id_user'] ?? 0);
-    $response = [];
-    if ($id_user > 0) {
-        if ($action === 'delete') {
-            $stmt = $conn->prepare('DELETE FROM register_user WHERE id_user = ?');
-            $stmt->bind_param('i', $id_user);
-            if ($stmt->execute()) {
-                $response['message'] = 'Usuario eliminado correctamente';
-            } else {
-                $response['error'] = 'No se pudo eliminar el usuario';
-            }
-            $stmt->close();
-        } elseif ($action === 'reset_score') {
-            $stmt = $conn->prepare('UPDATE register_user SET score = 0 WHERE id_user = ?');
-            $stmt->bind_param('i', $id_user);
-            if ($stmt->execute()) {
-                $response['message'] = 'Puntaje vaciado correctamente';
-            } else {
-                $response['error'] = 'No se pudo vaciar el puntaje';
-            }
-            $stmt->close();
-        } elseif ($action === 'reset_money') {
-            $stmt = $conn->prepare('UPDATE register_user SET money = 0 WHERE id_user = ?');
-            $stmt->bind_param('i', $id_user);
-            if ($stmt->execute()) {
-                $response['message'] = 'Monedas vaciadas correctamente';
-            } else {
-                $response['error'] = 'No se pudo vaciar las monedas';
-            }
-            $stmt->close();
-        } else {
-            $response['error'] = 'Acción no válida';
-        }
-    } else {
-        $response['error'] = 'ID de usuario no válido';
-    }
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    $conn->close();
-    exit;
-}
+// Página de ranking solo de lectura: las acciones de administración (delete/reset)
+// se gestionan en php/user_information.php y se invocan desde scripts/ranking.js.
 
 $result = $conn->query("SELECT user_name, score FROM register_user ORDER BY score DESC");
 

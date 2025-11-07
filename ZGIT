@@ -1,4 +1,4 @@
 git add .
-git commit -m "descripción de cambios"
+git commit -m "se eliminaron algunas funcionalidades en el ranking.php que eran inecesarias"
 git push localhost Nahuel
 git push online Nahuel
