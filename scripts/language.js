@@ -271,7 +271,7 @@ const LanguageSystem = {
             en: 'Spinosaurus'
         },
 
-        // ===== SEGUIMIENTO.HTML - Tracking Page =====
+        // ===== TRACKING.HTML - Tracking Page =====
         'tracking-page-title': {
             es: 'Seguimiento',
             en: 'Tracking'
@@ -411,7 +411,7 @@ const LanguageSystem = {
             en: 'T-Rex Count'
         },
 
-        // ===== TEXTOS DINÁMICOS DE SEGUIMIENTO.JS =====
+        // ===== TEXTOS DINÁMICOS DE TRACKING.JS =====
         'scoring-of': {
             es: 'Puntuación de',
             en: 'Scoring for'
@@ -524,7 +524,7 @@ const LanguageSystem = {
         this.updatePageTexts();
         
         // Si estamos en la página de seguimiento y hay resultados mostrados, recalcularlos
-        if (window.location.pathname.includes('seguimiento.html')) {
+        if (window.location.pathname.includes('tracking.html')) {
             const resultadoContainer = document.getElementById('resultado-ganador');
             if (resultadoContainer && resultadoContainer.innerHTML.trim() !== '' && window.recalcularResultados) {
                 // Recalcular para actualizar los textos en el idioma correcto
