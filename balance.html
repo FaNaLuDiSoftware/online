@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="balance-page-title">Balanza Dinológica</title>
+    <link rel="stylesheet" href="css/balance.css">
+    <link rel="icon" type="image/png" href="assets/logoDraftosaurus.png">
+</head>
+<body>
+    <div class="container">
+        <div class="top-left-button">
+            <a href="menu.html" class="back-button" id="balance-back-button">ATRAS</a>
+        </div>
+        <h1 id="balance-title">BALANZA DINOLÓGICA</h1>
+        <div class="balance-container">
+            <div class="balance-pan" id="left-pan">
+                <p id="left-pan-text">Arrastra aquí</p>
+            </div>
+            <div class="balance-bar">
+                <div class="fulcrum"></div>
+            </div>
+            <div class="balance-pan" id="right-pan">
+                <p id="right-pan-text">Arrastra aquí</p>
+            </div>
+        </div>
+        <div id="result-message"></div>
+        <button id="reset-button">REINICIAR BALANZA</button>
+        <div class="dinosaur-list">
+            <h2 id="available-dinosaurs-title">DINOSAURIOS DISPONIBLES</h2>
+            <div class="dinosaur-images">
+                <div class="dinosaur" data-name="t-rex" data-weight="9000" draggable="true">
+                    <img src="assets\fichas\lisoRojo.PNG" alt="T-Rex">
+                    <p id="trex-name">T-Rex</p>
+                </div>
+                <div class="dinosaur" data-name="stegosaurus" data-weight="5000" draggable="true">
+                    <img src="assets\fichas\lisoCeleste.PNG" alt="Stegosaurus">
+                    <p id="stegosaurus-name">Stegosaurus</p>
+                </div>
+                <div class="dinosaur" data-name="brontosaurus" data-weight="15000" draggable="true">
+                    <img src="assets\fichas\lisoRosa.PNG" alt="Brontosaurio">
+                    <p id="brontosaurus-name">Brontosaurio</p>
+                </div>
+                <div class="dinosaur" data-name="triceratops" data-weight="6000" draggable="true">
+                    <img src="assets\fichas\lisoAmarillo.PNG" alt="Triceratops">
+                    <p id="triceratops-name">Triceratops</p>
+                </div>
+                <div class="dinosaur" data-name="parasaurus" data-weight="3000" draggable="true">
+                    <img src="assets\fichas\lisoVerde.PNG" alt="Parasaurolophus">
+                    <p id="parasaurus-name">Parasaurio</p>
+                </div>
+                <div class="dinosaur" data-name="spinosaurus" data-weight="11000" draggable="true">
+                    <img src="assets\fichas\lisoNaranja.PNG" alt="Spinosaurus">
+                    <p id="spinosaurus-name">Espinosaurio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="scripts/language.js"></script>
+    <script src="scripts/balance.js"></script>
+</body>
+</html>
