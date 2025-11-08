@@ -1,4 +1,4 @@
 git add .
-git commit -m "optimizacion de ranking"
+git commit -m "agregando nuevo ranking del seguimiento"
 git push localhost Nahuel
 git push online Nahuel
