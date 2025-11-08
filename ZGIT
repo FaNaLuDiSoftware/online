@@ -1,4 +1,0 @@
-git add .
-git commit -m "agregando nuevas traducciones a los php"
-git push localhost Nahuel
-git push online Nahuel
