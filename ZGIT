@@ -1,4 +1,4 @@
 git add .
-git commit -m "agregando nuevas traducciones a los php"
+git commit -m "nombres de archivos cambiados a ingles de los css, js, y html de los siguientes: balanza y tablero"
 git push localhost Nahuel
 git push online Nahuel

@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Habilitar D&D nativo
         ficha.draggable = true;
 
-        // --- Lógica D&D Escritorio (de balanza.js) ---
+        // --- Lógica D&D Escritorio (de balance.js) ---
         ficha.addEventListener('dragstart', (e) => {
             // Encontrar la clase específica (ficha-dinosaurio1...6)
             const claseEspecifica = Array.from(ficha.classList).find(c => /^ficha-dinosaurio[1-6]$/.test(c));
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ficha.classList.remove('dragging');
         });
         
-        // --- Lógica Táctil (de balanza.js) ---
+        // --- Lógica Táctil (de balance.js) ---
         ficha.addEventListener('touchstart', (e) => {
             e.preventDefault(); // Evitar scroll
             const touch = e.changedTouches[0];
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Asegurar posicionamiento (de la lógica original de game.js)
         if (getComputedStyle(slot).position === 'static') slot.style.position = 'relative';
 
-        // --- Lógica D&D Escritorio (de balanza.js) ---
+        // --- Lógica D&D Escritorio (de balance.js) ---
         slot.addEventListener('dragover', (e) => {
             e.preventDefault(); // Necesario para permitir el drop
             e.dataTransfer.dropEffect = 'move';

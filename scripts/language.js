@@ -217,7 +217,7 @@ const LanguageSystem = {
             en: 'A T-Rex can be played this turn, as long as the enclosure where it will be placed does not previously contain another T-Rex.'
         },
 
-        // ===== BALANZA.HTML - Balance Page =====
+        // ===== balance.html - Balance Page =====
         'balance-page-title': {
             es: 'Balanza Dinológica',
             en: 'Dinosaur Balance'
