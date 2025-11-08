@@ -29,7 +29,7 @@ const LanguageSystem = {
             en: 'Login'
         },
         'no-account-text': {
-            es: '¿No tenes cuenta?',
+            es: '¿No tienes cuenta?',
             en: "Don't have an account?"
         },
         'register-link': {
@@ -95,8 +95,8 @@ const LanguageSystem = {
             en: 'Tracking'
         },
         'admin-button': {
-            es: 'Modo Admin',
-            en: 'Admin Mode'
+            es: 'Modo Administrador',
+            en: 'Administrator Mode'
         },
         'about-button': {
             es: 'Sobre nosotros',

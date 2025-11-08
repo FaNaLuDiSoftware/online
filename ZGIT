@@ -1,4 +1,4 @@
 git add .
-git commit -m "..."
+git commit -m "Corrigiendo algunas traducciones"
 git push localhost Nahuel
 git push online Nahuel
