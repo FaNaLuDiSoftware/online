@@ -1,4 +1,4 @@
 git add .
-git commit -m "reduciendo lineas de codigo de js, cambiando nombres de archivos a ingles"
+git commit -m "agrego nueva funcionalidad: cargar datos del seguimiento, ranking del seguimiento"
 git push localhost Nahuel
 git push online Nahuel

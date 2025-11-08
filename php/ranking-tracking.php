@@ -7,7 +7,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-$result = $conn->query("SELECT user_name_rt, score_rt FROM ranking_tracking ORDER BY score_rt DESC");
+$result = $conn->query("SELECT user_name_rt, score_rt FROM ranking_tracking ORDER BY score_rt DESC, id_user_rt ASC");
 
 $puesto = 1;
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Ranking del Seguimiento</title>';

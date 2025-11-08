@@ -449,6 +449,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modal) modal.style.display = 'flex';
                 mostrarResultadosEnDOM(resultados, ganadores);
                 actualizarPuntajesRivales();
+
+                // --- Enviar resultados al servidor para ranking_tracking ---
+                try {
+                    const payload = {
+                        players: resultados.map(r => ({ name: r.nombre, score: r.puntaje }))
+                    };
+                    fetch('php/tracking-save.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    }).then(res => res.json()).then(data => {
+                        console.log('✅ tracking-save respuesta:', data);
+                    }).catch(err => console.error('❌ Error enviando tracking-save:', err));
+                } catch (e) {
+                    console.error('❌ Excepción preparando envío tracking-save:', e);
+                }
         });
     }
     // Reiniciar datos: limpiar localStorage y volver a valores por defecto
@@ -494,3 +510,9 @@ window.recalcularResultados = function() {
         botonCalcular.click();
     }
 };
+
+
+
+
+// CARGAR DATOS DEL SEGUIMIENTO A LA BASE DE DATOS
+
