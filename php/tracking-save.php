@@ -36,7 +36,7 @@ $updated = 0;
 $stmt = $conn->prepare(
     "INSERT INTO ranking_tracking (user_name_rt, score_rt)
      VALUES (?, ?)
-     ON DUPLICATE KEY UPDATE score_rt = GREATEST(score_rt, VALUES(score_rt))"
+     ON DUPLICATE KEY UPDATE score_rt = score_rt + VALUES(score_rt)"
 );
 
 if (!$stmt) {

@@ -1,4 +1,4 @@
 git add .
-git commit -m "agrego nueva funcionalidad: cargar datos del seguimiento, ranking del seguimiento"
+git commit -m "agrego nueva funcionalidad: cargar datos del seguimiento al ranking del mismo y sumar sus puntos"
 git push localhost Nahuel
 git push online Nahuel
