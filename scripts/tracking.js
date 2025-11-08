@@ -31,7 +31,7 @@ function calcularPuntaje(datos) {
     total += (datos.trio ? 7 : 0); // Trío: 7 pts
     total += (parseInt(datos.parejas) || 0) * 5; // Parejas: 5 por pareja
     total += (datos.unico ? 7 : 0); // Único: 7 pts
-    total += (datos.rey ? 1 : 0); // Rey: 1
+    total += (datos.rey ? 7 : 0); // Rey: 7pts
     return total;
 }
 
@@ -413,7 +413,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inicializar botón calcular y modal
     const botonCalcular = document.getElementById('boton-calcular-ganador');
-    const botonReiniciar = document.getElementById('boton-reiniciar-datos');
     const contResultado = document.getElementById('resultado-ganador');
     const modal = document.getElementById('modal-ganador');
     const modalNombre = document.getElementById('modal-ganador-nombre');
@@ -467,33 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
         });
     }
-    // Reiniciar datos: limpiar localStorage y volver a valores por defecto
-    function reiniciarDatos() {
-        // restablecer objeto en memoria
-        datosJugadores = {
-            rival1: { nombre: 'Jugador 1', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival2: { nombre: 'Jugador 2', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival3: { nombre: 'Jugador 3', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 },
-            rival4: { nombre: 'Jugador 4', iguales:0, trio:false, parejas:0, unico:false, rio:0, diferentes:0, rey:false, trex:0 }
-        };
-        try { localStorage.removeItem('datosJugadores'); } catch(e){}
-        // actualizar UI
-        actualizarCalculadora('rival1');
-        actualizarPuntajesRivales();
-        const selActual = document.querySelector('.boton-rival.seleccionado');
-        if (selActual) selActual.classList.remove('seleccionado');
-        const primer = document.getElementById('rival1-boton');
-        if (primer) primer.classList.add('seleccionado');
-        // limpiar resultados
-        if (contResultado) contResultado.innerHTML = '';
-    }
-    if (botonReiniciar) {
-        botonReiniciar.addEventListener('click', () => {
-            const confirmMessage = window.LanguageSystem ? window.LanguageSystem.getText('confirm-reset-message') : '¿Seguro que deseas reiniciar los datos de la partida? Se perderán los puntajes guardados.';
-            if (!confirm(confirmMessage)) return;
-            reiniciarDatos();
-        });
-    }
     if (modalClose && modal) {
         modalClose.addEventListener('click', () => modal.style.display = 'none');
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
@@ -510,9 +482,3 @@ window.recalcularResultados = function() {
         botonCalcular.click();
     }
 };
-
-
-
-
-// CARGAR DATOS DEL SEGUIMIENTO A LA BASE DE DATOS
-

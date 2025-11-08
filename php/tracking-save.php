@@ -53,7 +53,7 @@ foreach ($input['players'] as $pl) {
         // ignorar entradas inválidas
         continue;
     }
-    // Limitar longitud de nombre a 20 caracteres como pediste
+    // Limitar longitud de nombre a 20 caracteres
     if (mb_strlen($name) > 20) {
         $name = mb_substr($name, 0, 20);
     }

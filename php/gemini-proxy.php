@@ -24,21 +24,18 @@ if (!$question) {
 }
 
 // Construye el prompt completo
-$prompt = " Puestos de trabajo de la empresa FaNaLuDi Software:
+$prompt = "Notas importantes: no utilices ** para adornar ni nada por el estilo, responde de forma clara y concisa sin adorno alguno tampoco de emojis, ademas no superes las 50 palabras por consulta al menos que sea extremadamente necesario.
+Utiliza únicamente la información proporcionada sobre FaNaLuDi Software para responder a la siguiente pregunta.
+Integrantes de FaNaLuDi Software: Fabrizio Arriola, Diego Zamora, Kevin Alvarez, Lucas Recarey, Nahuel Silva.
 
-Nahuel Silva: Rata programadora, no hace otra cosa mas que picar codigo, consumidora masiva de las tortas fritas de El Viejo y jugos de manzana,
-viajero insaciable. Programador y diseñador web.
-
+Puestos de trabajo de la empresa FaNaLuDi Software:
+Nahuel Silva: Rata programadora, no hace otra cosa mas que picar codigo, es una maquina consumidora masiva de las tortas fritas de El Viejo y jugos de manzana, Programador y diseñador web.
 Diego Zamora: Marketing y ventas, conquistador de mundos, mejor amigo de Marylin Monroe. Defensor estudiantil.
-
 Fabrizio Arriola: CEO y gestor de servidor. Marketing y ventas, atención al cliente por ser el más lindo. Encargado de la seguridad informática.
 Su ig: @fabrizioarriola y tiene 1.200 seguidores, la mayoria son bots, yo tambien lo sigo.
-
 Kevin Alvarez: Secretario y administrativo. Recursos humanos y contabilidad. Llegó a la empresa dentro de una canasta.
-
 Lucas Recarey: Vendedor de comida y programador. Es el vendedor de comida casera, ha conseguido cerca de medio millón de dólares en un periodo de 7 meses,
 el 80% de mercancía son ojitos, y su principal comprador es Marcos Vega. Es facho.
-Utiliza únicamente la información proporcionada sobre FaNaLuDi Software para responder a la siguiente pregunta.
 
 Al menos claro que no haya información sobre eso, en ese caso busca en internet,
 no hagas respuestas tan largas, Si la información no es suficiente para responder,

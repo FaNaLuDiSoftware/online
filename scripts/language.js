@@ -33,7 +33,7 @@ const LanguageSystem = {
             en: "Don't have an account?"
         },
         'register-link': {
-            es: 'Regístrate',
+            es: 'Registrarse',
             en: 'Sign up'
         },
         'guest-button': {
