@@ -20,7 +20,7 @@ btns[0].addEventListener('click', function() {
 	const id_user = getSelectedUserId();
 	if (!id_user) { alert('Selecciona un usuario primero'); return; }
 	if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
-	fetch('user_information.php', {
+	fetch('admin-mode.php', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ action: 'delete', id_user })
@@ -34,7 +34,7 @@ btns[0].addEventListener('click', function() {
 btns[1].addEventListener('click', function() {
 	const id_user = getSelectedUserId();
 	if (!id_user) { alert('Selecciona un usuario primero'); return; }
-	fetch('user_information.php', {
+	fetch('admin-mode.php', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ action: 'reset_score', id_user })
@@ -48,7 +48,7 @@ btns[1].addEventListener('click', function() {
 btns[2].addEventListener('click', function() {
 	const id_user = getSelectedUserId();
 	if (!id_user) { alert('Selecciona un usuario primero'); return; }
-	fetch('user_information.php', {
+	fetch('admin-mode.php', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ action: 'reset_money', id_user })

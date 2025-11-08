@@ -7,10 +7,6 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-
-// Página de ranking solo de lectura: las acciones de administración (delete/reset)
-// se gestionan en php/user_information.php y se invocan desde scripts/ranking.js.
-
 $result = $conn->query("SELECT user_name, score FROM register_user ORDER BY score DESC");
 
 $puesto = 1;

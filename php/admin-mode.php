@@ -91,7 +91,7 @@ echo '</tbody></table>';
 echo '</div>';
 echo '</div>';
 echo '</div>';
-echo '<script src="../scripts/user_information.js"></script>';
+echo '<script src="../scripts/admin-mode.js"></script>';
 echo '</body></html>';
 $conn->close();
 

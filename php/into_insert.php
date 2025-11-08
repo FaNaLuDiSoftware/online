@@ -35,7 +35,7 @@ echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
 echo '</head><body>';
 echo '<div class="container mt-5">';
-echo '<span><a href="../php/user_information.php" class="btn btn-secondary mb-3">Atrás</a></span>';
+echo '<span><a href="../php/admin-mode.php" class="btn btn-secondary mb-3">Atrás</a></span>';
 echo '<h2 class="mb-4">Insertar Usuario</h2>';
 if ($mensaje) {
 	echo '<div class="alert alert-info">' . htmlspecialchars($mensaje) . '</div>';
