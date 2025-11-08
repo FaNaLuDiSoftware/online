@@ -29,11 +29,11 @@ const LanguageSystem = {
             en: 'Login'
         },
         'no-account-text': {
-            es: '¿No tenes cuenta?',
+            es: '¿No tienes cuenta?',
             en: "Don't have an account?"
         },
         'register-link': {
-            es: 'Regístrate',
+            es: 'Registrarse',
             en: 'Sign up'
         },
         'guest-button': {
@@ -95,8 +95,8 @@ const LanguageSystem = {
             en: 'Tracking'
         },
         'admin-button': {
-            es: 'Modo Admin',
-            en: 'Admin Mode'
+            es: 'Modo Administrador',
+            en: 'Administrator Mode'
         },
         'about-button': {
             es: 'Sobre nosotros',
@@ -217,7 +217,7 @@ const LanguageSystem = {
             en: 'A T-Rex can be played this turn, as long as the enclosure where it will be placed does not previously contain another T-Rex.'
         },
 
-        // ===== BALANZA.HTML - Balance Page =====
+        // ===== balance.html - Balance Page =====
         'balance-page-title': {
             es: 'Balanza Dinológica',
             en: 'Dinosaur Balance'
@@ -271,7 +271,7 @@ const LanguageSystem = {
             en: 'Spinosaurus'
         },
 
-        // ===== SEGUIMIENTO.HTML - Tracking Page =====
+        // ===== TRACKING.HTML - Tracking Page =====
         'tracking-page-title': {
             es: 'Seguimiento',
             en: 'Tracking'
@@ -411,7 +411,7 @@ const LanguageSystem = {
             en: 'T-Rex Count'
         },
 
-        // ===== TEXTOS DINÁMICOS DE SEGUIMIENTO.JS =====
+        // ===== TEXTOS DINÁMICOS DE TRACKING.JS =====
         'scoring-of': {
             es: 'Puntuación de',
             en: 'Scoring for'
@@ -505,8 +505,159 @@ const LanguageSystem = {
         'register-unknown-error': {
             es: 'Error desconocido al registrarse',
             en: 'Unknown registration error'
+        },
+        // ===== TRADUCCIONES DE LOS PHP =====
+
+        // ===== TRADUCCIONES DE admin-mode.php =====
+        'admin-title-tag': {
+            es: 'Modificar como Administrador',
+            en: 'Modify as administrator'
+        },
+        'admin-back-button': {
+            es: 'Atrás',
+            en: 'Back'
+        },
+        'admin-insert-user-link': {
+            es: 'Insertar usuario',
+            en: 'Add user'
+        },
+        'admin-page-title': {
+            es: 'Modificar como Administrador',
+            en: 'Modify as administrator'
+        },
+        'admin-ban-user-button': {
+            es: 'Banear usuario',
+            en: 'Ban user'
+        },
+        'admin-reset-score-button': {
+            es: 'Vaciar puntajes',
+            en: 'Clear scores'
+        },
+        'admin-reset-money-button': {
+            es: 'Vaciar monedas',
+            en: 'Clear coins'
+        },
+        'th-id-user': {
+            es: 'Id_Usuario',
+            en: 'Id_User'
+        },
+        'th-username': {
+            es: 'Usuario',
+            en: 'User'
+        },
+        'th-password': {
+            es: 'Contraseña',
+            en: 'Password'
+        },
+        'th-score': {
+            es: 'Puntaje',
+            en: 'Score'
+        },
+        'th-money': {
+            es: 'Monedas',
+            en: 'Coins'
+        },
+
+        // ===== TRADUCCIONES DE ranking-tracking.php =====
+        'tracking-ranking-title-tag': {
+            es: 'Ranking del Seguimiento',
+            en: 'Tracking ranking'
+        },
+        'tracking-ranking-back-button': {
+            es: 'Atrás',
+            en: 'Back'
+        },
+        'tracking-ranking-page-title': {
+            es: 'Ranking del Seguimiento',
+            en: 'Tracking ranking'
+        },
+        'th-tracking-rank': {
+            es: '# Puesto',
+            en: '# Position'
+        },
+        'th-tracking-user': {
+            es: 'Usuario',
+            en: 'User'
+        },
+        'th-tracking-score': {
+            es: 'Puntaje',
+            en: 'Score'
+        },
+                // ===== TRADUCCIONES DE ranking.php =====
+        'ranking-title-tag': {
+            es: 'Ranking de Jugadores',
+            en: 'Ranking'
+        },
+        'ranking-back-button': {
+            es: 'Atrás',
+            en: 'Back'
+        },
+        'ranking-page-title': {
+            es: 'Ranking de Jugadores',
+            en: 'Ranking'
+        },
+        'th-rank': {
+            es: '# Puesto',
+            en: '# Position'
+        },
+        'th-user': {
+            es: 'Usuario',
+            en: 'User'
+        },
+        'th-score': {
+            es: 'Puntaje',
+            en: 'Score'
+        },
+
+        // ===== TRADUCCIONES DE into_insert.php =====
+        'insert-user-title-tag': {
+            es: 'Insertar Usuario',
+            en: 'Insert User'
+        },
+        'insert-user-back-button': {
+            es: 'Atrás',
+            en: 'Back'
+        },
+        'insert-user-heading': {
+            es: 'Insertar Usuario',
+            en: 'Insert User'
+        },
+        'insert-user-label-username': {
+            es: 'Usuario',
+            en: 'Username'
+        },
+        'insert-user-label-password': {
+            es: 'Contraseña',
+            en: 'Password'
+        },
+        'insert-user-label-score': {
+            es: 'Puntaje',
+            en: 'Score'
+        },
+        'insert-user-label-money': {
+            es: 'Monedas',
+            en: 'Coins'
+        },
+        'insert-user-submit-button': {
+            es: 'Insertar usuario',
+            en: 'Add user'
+        },
+        // Mensajes dinámicos
+        'insert-user-required': {
+            es: 'Usuario y contraseña requeridos',
+            en: 'Username and password are required'
+        },
+        'insert-user-success': {
+            es: 'Usuario insertado correctamente',
+            en: 'User inserted successfully'
+        },
+        'insert-user-fail': {
+            es: 'No se pudo insertar el usuario',
+            en: 'Could not insert the user'
         }
     },
+
+
 
     // Función para cambiar idioma
     setLanguage: function(languageCode) {
@@ -524,7 +675,7 @@ const LanguageSystem = {
         this.updatePageTexts();
         
         // Si estamos en la página de seguimiento y hay resultados mostrados, recalcularlos
-        if (window.location.pathname.includes('seguimiento.html')) {
+        if (window.location.pathname.includes('tracking.html')) {
             const resultadoContainer = document.getElementById('resultado-ganador');
             if (resultadoContainer && resultadoContainer.innerHTML.trim() !== '' && window.recalcularResultados) {
                 // Recalcular para actualizar los textos en el idioma correcto
@@ -593,6 +744,15 @@ const LanguageSystem = {
         
         // Actualizar placeholders dinámicamente
         this.updatePlaceholders();
+
+        // Actualizar elementos con data-lang-key (mensajes dinámicos)
+        const dataKeyElements = document.querySelectorAll('[data-lang-key]');
+        dataKeyElements.forEach(el => {
+            const key = el.getAttribute('data-lang-key');
+            if (key && this.translations[key] && this.translations[key][this.currentLanguage]) {
+                el.textContent = this.translations[key][this.currentLanguage];
+            }
+        });
     },
 
     // Función para actualizar placeholders de inputs
