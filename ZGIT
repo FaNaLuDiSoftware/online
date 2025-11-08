@@ -1,4 +1,4 @@
 git add .
-git commit -m "nombres de archivos cambiados a ingles de los css, js, y html de los siguientes: balanza y tablero"
+git commit -m "into_insert.php ahora ya no se puede crear un usuario existente"
 git push localhost Nahuel
 git push online Nahuel

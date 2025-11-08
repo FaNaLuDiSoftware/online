@@ -11,8 +11,8 @@ error_reporting(E_ALL);
 $mensaje = "";
 $mensaje_key = ""; // clave para traducción dinámica del mensaje
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$username = $_POST['user_name'] ?? "";
-	$password = $_POST['password'] ?? "";
+	$username = trim($_POST['user_name'] ?? "");
+	$password = trim($_POST['password'] ?? "");
 	$score = $_POST['score'] ?? 0;
 	$money = $_POST['money'] ?? 0;
 
@@ -20,6 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$mensaje = "Usuario y contraseña requeridos";
 		$mensaje_key = "insert-user-required";
 	} else {
+		// Verificar si el usuario ya existe (misma lógica que register.php)
+		$check = $conn->prepare("SELECT id_user FROM register_user WHERE user_name = ?");
+		$check->bind_param("s", $username);
+		$check->execute();
+		$check->store_result();
+		if ($check->num_rows > 0) {
+			$mensaje = "El usuario ya existe";
+			$mensaje_key = "insert-user-exists";
+			$check->close();
+		} else {
+			$check->close();
 		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 		$stmt = $conn->prepare("INSERT INTO register_user (user_name, password, score, money) VALUES (?, ?, ?, ?)");
 		$stmt->bind_param("ssii", $username, $hashed_password, $score, $money);
@@ -31,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$mensaje_key = "insert-user-fail";
 		}
 		$stmt->close();
+		}
 	}
 }
 

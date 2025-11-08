@@ -7,7 +7,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-$result = $conn->query("SELECT user_name, score FROM register_user ORDER BY score DESC");
+$result = $conn->query("SELECT user_name, score FROM register_user WHERE LOWER(user_name) <> 'admin' ORDER BY score DESC");
 
 $puesto = 1;
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title id="ranking-title-tag">Ranking de Jugadores</title>';
