@@ -20,6 +20,16 @@ body {
     max-width: 800px;
 }
 
+/* Responsividad para Móviles (Hasta 600px) */
+@media only screen and (max-width: 600px) {
+    .modal-content {
+        width: 95%; 
+        margin: 20px auto;
+        padding: 15px;
+    }
+}
+
+/* Media Query para landscape móvil */
 @media only screen and (max-width: 900px) and (orientation: landscape) {
     body {
         align-items: flex-start;
@@ -78,10 +88,21 @@ body {
         height: 8px;
     }
 
-    #reset-button {
+    /* Estilos de botones y modal en landscape */
+    .button-group {
+        gap: 0.8em;
+        margin-bottom: 1em;
+    }
+    
+    #reset-button, #calculate-button {
         padding: 0.6em 1em;
         font-size: 0.9em;
-        margin-bottom: 1em;
+    }
+    
+    .modal-content {
+        width: 90%; 
+        max-width: 400px; 
+        margin: 10px auto;
     }
 
     .top-left-button {
@@ -99,19 +120,19 @@ body {
 
 .back-button {
     display: inline-block;
-    padding: 15px 25px; /* Aumentar el padding para hacerlo más grande */
+    padding: 15px 25px; 
     background-color: #4CAF50;
     color: white;
     text-decoration: none;
-    border-radius: 8px; /* Borde más redondeado */
-    font-size: 1.2em; /* Aumentar el tamaño de la fuente */
+    border-radius: 8px; 
+    font-size: 1.2em; 
     font-weight: bold;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .back-button:hover {
     background-color: #3e8e41;
-    transform: scale(1.05); /* Efecto de crecimiento al pasar el cursor */
+    transform: scale(1.05); 
 }
 
 /* Resto de estilos de balance.css */
@@ -222,7 +243,18 @@ h1 {
     z-index: 2;
 }
 
-#reset-button {
+/* --- ESTILOS DE BOTONES Y MODAL --- */
+
+/* Nuevo grupo para los botones de Reiniciar y Cálculo */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1em; /* Espacio entre los botones */
+    margin-bottom: 2em;
+}
+
+/* Estilo base para ambos botones principales (Reiniciar y Cálculo) */
+#reset-button, #calculate-button {
     background-color: #2e6e2e;
     color: #a0c2a0;
     border: 2px solid #a0c2a0;
@@ -231,13 +263,73 @@ h1 {
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
-    margin-bottom: 2em;
 }
 
-#reset-button:hover {
+#reset-button:hover, #calculate-button:hover {
     background-color: #4c8c4c;
     color: #ffffff;
 }
+
+/* Estilos del Modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; 
+    z-index: 10; /* Z-index alto para estar sobre todo */
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; /* Habilitar scroll si es necesario */
+    background-color: rgba(0,0,0,0.8); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(5px); /* Efecto de desenfoque, si es compatible */
+    padding-top: 50px;
+}
+
+.modal-content {
+    background-color: #1e281e;
+    margin: 5% auto; /* 5% desde arriba y centrado */
+    padding: 20px;
+    border: 1px solid #f59b42;
+    border-radius: 10px;
+    width: 80%; /* Ancho base */
+    max-width: 500px; /* Ancho máximo para escritorio */
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    color: #a0c2a0;
+}
+
+.close-button {
+    color: #a0c2a0;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #f59b42;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modal-title {
+    color: #f59b42;
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+
+.modal-image {
+    max-width: 100%; /* Imagen responsiva */
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    box-shadow: 0 0 10px rgba(245, 155, 66, 0.5);
+}
+
+/* --- FIN ESTILOS DE BOTONES Y MODAL --- */
 
 .dinosaur-list {
     background-color: #1a221a;
