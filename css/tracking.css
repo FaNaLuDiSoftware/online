@@ -20,8 +20,6 @@ main {
     gap: 10px;
     padding: 8px 6px 14px;
     border-radius: 10px;
-    background-color: rgba(76,175,80,0.85); /* integrar con estilo verde */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .resultado-container #resultado-ganador { width:100%; }
