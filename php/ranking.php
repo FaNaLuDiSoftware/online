@@ -7,13 +7,13 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-$result = $conn->query("SELECT user_name, score FROM register_user ORDER BY score DESC");
+$result = $conn->query("SELECT user_name, score FROM register_user WHERE LOWER(user_name) <> 'admin' ORDER BY score DESC");
 
 $puesto = 1;
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title id="ranking-title-tag">Ranking de Jugadores</title>';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
-echo '<link rel="icon" type="image/png" href="assets/logoDraftosaurus.png">';
+echo '<link rel="icon" type="image/png" href="../assets/fichas/derechoNaranja.PNG">';
 echo '<style>.table-primary{background-color:#cce5ff!important;}</style>';
 echo '</head><body>';
 echo '<div class="container-fluid p-3">';

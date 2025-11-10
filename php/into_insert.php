@@ -11,8 +11,8 @@ error_reporting(E_ALL);
 $mensaje = "";
 $mensaje_key = ""; // clave para traducción dinámica del mensaje
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	$username = $_POST['user_name'] ?? "";
-	$password = $_POST['password'] ?? "";
+	$username = trim($_POST['user_name'] ?? "");
+	$password = trim($_POST['password'] ?? "");
 	$score = $_POST['score'] ?? 0;
 	$money = $_POST['money'] ?? 0;
 
@@ -20,6 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$mensaje = "Usuario y contraseña requeridos";
 		$mensaje_key = "insert-user-required";
 	} else {
+		// Verificar si el usuario ya existe (misma lógica que register.php)
+		$check = $conn->prepare("SELECT id_user FROM register_user WHERE user_name = ?");
+		$check->bind_param("s", $username);
+		$check->execute();
+		$check->store_result();
+		if ($check->num_rows > 0) {
+			$mensaje = "El usuario ya existe";
+			$mensaje_key = "insert-user-exists";
+			$check->close();
+		} else {
+			$check->close();
 		$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 		$stmt = $conn->prepare("INSERT INTO register_user (user_name, password, score, money) VALUES (?, ?, ?, ?)");
 		$stmt->bind_param("ssii", $username, $hashed_password, $score, $money);
@@ -31,13 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$mensaje_key = "insert-user-fail";
 		}
 		$stmt->close();
+		}
 	}
 }
 
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title id="insert-user-title-tag">Insertar Usuario</title>';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
-echo '<link rel="icon" type="image/png" href="assets/logoDraftosaurus.png">';
+echo '<link rel="icon" type="image/png" href="../assets/fichas/derechoNaranja.PNG">';
 echo '</head><body>';
 echo '<div class="container mt-5">';
 echo '<span><a href="../php/admin-mode.php" class="btn btn-secondary mb-3" id="insert-user-back-button">Atrás</a></span>';
