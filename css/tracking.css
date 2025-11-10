@@ -1,6 +1,31 @@
 /* ============================
     RESET DEL game.css
 ================================== */
+/* Layout específico de tracking: apilar secciones en columna */
+main {
+    display: flex;
+    flex-direction: column; /* colocar resultado debajo */
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+
+
+.resultado-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px 6px 14px;
+    border-radius: 10px;
+    background-color: rgba(76,175,80,0.85); /* integrar con estilo verde */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.resultado-container #resultado-ganador { width:100%; }
+
 .div-perfiles-rivales{
     display: flex;
     flex-direction: row;
@@ -98,9 +123,6 @@ h2 {
     background-color: rgba(46, 125, 50, 1);
 }
 
-.parcela-item.especial {
-    background-color: rgba(46, 125, 50, 0.6);
-}
 
 .icono-parcela {
     font-size: 20px;
@@ -284,86 +306,73 @@ h2 {
 .resultado-header { text-align:center; font-weight:700; margin-bottom:8px; color:#fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
 
 /* Ajustes responsive para móviles: evitar que el 5º jugador pase a otra fila y se solape */
-@media (max-width: 600px) {
+@media (max-width: 425px) {
     .div-perfiles-rivales {
         flex-wrap: nowrap; /* mantener una fila y permitir scroll horizontal */
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         gap: 10px;
-        padding: 8px 6px 12px;
-        justify-content: flex-start; /* alinear a la izquierda para scroll natural */
+        padding: 5px 5px 0px;
     }
 
     .div-perfiles-rivales::-webkit-scrollbar { height: 8px; }
 
     .perfil-rival, .boton-rival {
-        width: 56px;
-        height: 56px;
-        max-width: 56px;
-        max-height: 56px;
+        width: 70px;
+        height: 70px;
+        max-width: 70px;
+        max-height: 70px;
+    }
+
+    /* dar espacio extra arriba de la calculadora para evitar solapamientos */
+    .div-calculadora { margin-top: 12px; }
+}
+@media (max-width: 375px) {
+    .div-perfiles-rivales {
+        flex-wrap: nowrap; /* mantener una fila y permitir scroll horizontal */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px;
+        padding: 2px 2px 0px;
+    }
+
+    .div-perfiles-rivales::-webkit-scrollbar { height: 8px; }
+
+    .perfil-rival, .boton-rival {
+        width: 20px;
+        height: 20px;
+        max-width: 20px;
+        max-height: 20px;
     }
 
     /* dar espacio extra arriba de la calculadora para evitar solapamientos */
     .div-calculadora { margin-top: 12px; }
 }
 
-/* Ajustes por número de jugadores: mayor número -> avatares más pequeños */
-.div-perfiles-rivales.players-2 .perfil-rival, .div-perfiles-rivales.players-2 .boton-rival { width: 96px; height: 96px; }
-.div-perfiles-rivales.players-2 { gap: 28px; justify-content: center; }
-
-.div-perfiles-rivales.players-3 .perfil-rival, .div-perfiles-rivales.players-3 .boton-rival { width: 80px; height: 80px; }
-.div-perfiles-rivales.players-3 { gap: 20px; justify-content: center; }
-
-.div-perfiles-rivales.players-4 .perfil-rival, .div-perfiles-rivales.players-4 .boton-rival { width: 72px; height: 72px; }
-.div-perfiles-rivales.players-4 { gap: 14px; justify-content: center; }
-
-/* Ajustes por número de jugadores: mayor número -> avatares más pequeños */
-.div-perfiles-rivales.players-2 .perfil-rival,
-.div-perfiles-rivales.players-2 .boton-rival {
-    width: 96px;
-    height: 96px;
-}
-.div-perfiles-rivales.players-2 {
-    gap: 28px;
-    justify-content: center;
-}
-
-.div-perfiles-rivales.players-3 .perfil-rival,
-.div-perfiles-rivales.players-3 .boton-rival {
-    width: 80px;
-    height: 80px;
-}
-.div-perfiles-rivales.players-3 {
-    gap: 20px;
-    justify-content: center;
-}
-
-.div-perfiles-rivales.players-4 .perfil-rival,
-.div-perfiles-rivales.players-4 .boton-rival {
-    width: 72px;
-    height: 72px;
-}
-.div-perfiles-rivales.players-4 {
-    gap: 14px;
-    justify-content: center;
-}
-
-.div-perfiles-rivales.players-5 .perfil-rival,
-.div-perfiles-rivales.players-5 .boton-rival {
-    width: 60px;
-    height: 60px;
-}
-.div-perfiles-rivales.players-5 {
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    overflow-x: visible;
-
-}
-@media (max-width: 600px) {
-    .div-perfiles-rivales.players-5 {
-        justify-content: flex-start;
+@media (max-width: 320px) {
+    .div-perfiles-rivales {
+        flex-wrap: nowrap; /* mantener una fila y permitir scroll horizontal */
         overflow-x: auto;
-        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        padding: 4px 3px 0px;
     }
+
+    .div-perfiles-rivales::-webkit-scrollbar { height: 8px; }
+
+    .perfil-rival, .boton-rival {
+        width: 26px;
+        height: 26px;
+        max-width: 26px;
+        max-height: 26px;
+    }
+
+    /* dar espacio extra arriba de la calculadora para evitar solapamientos */
+    .div-calculadora { margin-top: 12px; }
+}
+.div-rivales{
+    background-color: red;
+}
+.resultado-container{
+    background-color: aqua;
 }
