@@ -557,6 +557,56 @@ const LanguageSystem = {
             es: 'Monedas',
             en: 'Coins'
         },
+        // Mensajes y alertas de admin-mode
+        'admin-select-user-first': {
+            es: 'Selecciona un usuario primero',
+            en: 'Select a user first'
+        },
+        'admin-confirm-delete': {
+            es: '¿Seguro que quieres banear este usuario?',
+            en: 'Are you sure you want to ban this user?'
+        },
+        // Códigos devueltos por backend (prefijo admin-)
+        'admin-delete-success': {
+            es: 'Usuario baneado correctamente',
+            en: 'User banned successfully'
+        },
+        'admin-delete-fail': {
+            es: 'No se pudo banear el usuario',
+            en: 'Could not banned the user'
+        },
+        'admin-reset-score-success': {
+            es: 'Puntaje vaciado correctamente',
+            en: 'Score cleared successfully'
+        },
+        'admin-reset-score-fail': {
+            es: 'No se pudo vaciar el puntaje',
+            en: 'Could not clear the score'
+        },
+        'admin-reset-money-success': {
+            es: 'Monedas vaciadas correctamente',
+            en: 'Coins cleared successfully'
+        },
+        'admin-reset-money-fail': {
+            es: 'No se pudo vaciar las monedas',
+            en: 'Could not clear the coins'
+        },
+        'admin-invalid-action': {
+            es: 'Acción no válida',
+            en: 'Invalid action'
+        },
+        'admin-invalid-user-id': {
+            es: 'ID de usuario no válido',
+            en: 'Invalid user ID'
+        },
+        'admin-protected-user': {
+            es: 'No puedes modificar al usuario administrador',
+            en: 'You cannot modify the administrator user'
+        },
+        'generic-error': {
+            es: 'Ocurrió un error. Inténtalo nuevamente.',
+            en: 'An error occurred. Please try again.'
+        },
 
         // ===== TRADUCCIONES DE ranking-tracking.php =====
         'tracking-ranking-title-tag': {
@@ -654,6 +704,10 @@ const LanguageSystem = {
         'insert-user-fail': {
             es: 'No se pudo insertar el usuario',
             en: 'Could not insert the user'
+        },
+        'insert-user-exists': {
+            es: 'El usuario ya existe',
+            en: 'User already exists'
         }
     },
 

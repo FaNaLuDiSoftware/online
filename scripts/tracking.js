@@ -145,9 +145,18 @@ function mostrarResultadosEnDOM(resultados, ganadores) {
     tabla.className = 'tabla-resultados';
 
     const thead = document.createElement('thead');
+    const positionHeaderText = window.LanguageSystem ? window.LanguageSystem.getText('player-header') : '#';
     const playerHeaderText = window.LanguageSystem ? window.LanguageSystem.getText('player-header') : 'Jugador';
     const pointsHeaderText = window.LanguageSystem ? window.LanguageSystem.getText('points-header') : 'Puntos';
-    thead.innerHTML = `<tr><th id="th-jugador" class="th-jugador">${playerHeaderText}</th><th id="th-puntos" class="th-puntos">${pointsHeaderText}</th></tr>`;
+    thead.innerHTML =
+    `<tr>
+    <th id="th-position" class="th-position">
+    ${positionHeaderText}</th>
+    <th id="th-jugador" class="th-jugador">
+    ${playerHeaderText}</th>
+    <th id="th-puntos" class="th-puntos">
+    ${pointsHeaderText}</th>
+    </tr>`;
     tabla.appendChild(thead);
 
     const tbody = document.createElement('tbody');
@@ -155,6 +164,10 @@ function mostrarResultadosEnDOM(resultados, ganadores) {
         const tr = document.createElement('tr');
         const isWinner = ganadores.some(g => g.jugador === r.jugador);
         if (isWinner) tr.className = 'fila-ganador'; else tr.className = 'fila-resultado';
+
+        const tdPosition = document.createElement('td');
+        tdPosition.className = 'td-position';
+        tdPosition.textContent = r.position;
 
         const tdName = document.createElement('td');
         tdName.className = 'td-nombre';
@@ -164,6 +177,7 @@ function mostrarResultadosEnDOM(resultados, ganadores) {
         tdScore.className = 'td-puntos';
         tdScore.textContent = r.puntaje;
 
+        tr.appendChild(tdPosition);
         tr.appendChild(tdName);
         tr.appendChild(tdScore);
         tbody.appendChild(tr);
@@ -228,6 +242,20 @@ function calcularGanador() {
         }
     }
     resultados.sort((a,b)=> b.puntaje - a.puntaje);
+    
+    // Asignar posiciones con medallas y ordinales
+    resultados.forEach((r, idx) => {
+        const pos = idx + 1;
+        switch (pos) {
+            case 1: r.position = '🥇'; break;
+            case 2: r.position = '🥈'; break;
+            case 3: r.position = '🥉'; break;
+            case 4: r.position = '4°'; break;
+            case 5: r.position = '5°'; break;
+            default: r.position = pos + '°';
+        }
+    });
+    
     const max = resultados[0] ? resultados[0].puntaje : 0;
     const ganadores = resultados.filter(r => r.puntaje === max);
     return { resultados, ganadores };
