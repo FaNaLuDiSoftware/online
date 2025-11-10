@@ -59,6 +59,7 @@ $result = $conn->query("SELECT id_user, user_name, password, score, money FROM r
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title id="admin-title-tag">Modificar como Administrador</title>';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
+echo '<link rel="icon" type="image/png" href="assets/logoDraftosaurus.png">'
 echo '<style>.table-primary{background-color:#cce5ff!important;}</style>';
 echo '</head><body>';
 echo '<div class="container-fluid p-3">';

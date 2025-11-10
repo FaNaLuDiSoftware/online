@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title id="insert-user-title-tag">Insertar Usuario</title>';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
+echo '<link rel="icon" type="image/png" href="assets/logoDraftosaurus.png">';
 echo '</head><body>';
 echo '<div class="container mt-5">';
 echo '<span><a href="../php/admin-mode.php" class="btn btn-secondary mb-3" id="insert-user-back-button">Atrás</a></span>';
