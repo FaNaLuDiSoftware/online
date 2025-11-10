@@ -304,7 +304,7 @@ h2 {
 .resultado-header { text-align:center; font-weight:700; margin-bottom:8px; color:#fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.4); }
 
 /* Ajustes responsive para móviles: evitar que el 5º jugador pase a otra fila y se solape */
-@media (max-width: 425px) {
+@media (max-width: 460px) {
     .div-perfiles-rivales {
         flex-wrap: nowrap; /* mantener una fila y permitir scroll horizontal */
         overflow-x: auto;
@@ -316,10 +316,10 @@ h2 {
     .div-perfiles-rivales::-webkit-scrollbar { height: 8px; }
 
     .perfil-rival, .boton-rival {
-        width: 70px;
-        height: 70px;
-        max-width: 70px;
-        max-height: 70px;
+        width: 50px;
+        height: 50px;
+        max-width: 50px;
+        max-height: 50px;
     }
 
     /* dar espacio extra arriba de la calculadora para evitar solapamientos */
@@ -337,10 +337,10 @@ h2 {
     .div-perfiles-rivales::-webkit-scrollbar { height: 8px; }
 
     .perfil-rival, .boton-rival {
-        width: 20px;
-        height: 20px;
-        max-width: 20px;
-        max-height: 20px;
+        width: 30px;
+        height: 30px;
+        max-width: 30px;
+        max-height: 30px;
     }
 
     /* dar espacio extra arriba de la calculadora para evitar solapamientos */
@@ -364,7 +364,11 @@ h2 {
         max-width: 26px;
         max-height: 26px;
     }
-
+    .tabla-wrapper, .tabla-resultados, .resultado-container #resultado-ganador {
+        max-width: 100%;
+        margin: 8px 4px 0;
+        padding: 8px;
+    }
     /* dar espacio extra arriba de la calculadora para evitar solapamientos */
     .div-calculadora { margin-top: 12px; }
 }
