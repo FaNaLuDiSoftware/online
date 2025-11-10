@@ -25,7 +25,12 @@
             </div>
         </div>
         <div id="result-message"></div>
-        <button id="reset-button">REINICIAR BALANZA</button>
+        
+        <div class="button-group">
+            <button id="reset-button">REINICIAR BALANZA</button>
+            <button id="calculate-button">CÁLCULO</button>
+        </div>
+
         <div class="dinosaur-list">
             <h2 id="available-dinosaurs-title">DINOSAURIOS DISPONIBLES</h2>
             <div class="dinosaur-images">
@@ -54,6 +59,16 @@
                     <p id="spinosaurus-name">Espinosaurio</p>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <div id="calculation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modal-title">Cálculo de Pesos</h2>
+            <img id="calculation-image" src="assets/calculo.png" alt="Imagen de Cálculo" class="modal-image">
+            <p>El peso del lado izquierdo es: <span id="left-weight-display">0</span></p>
+            <p>El peso del lado derecho es: <span id="right-weight-display">0</span></p>
         </div>
     </div>
     <script src="scripts/language.js"></script>
