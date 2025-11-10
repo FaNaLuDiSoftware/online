@@ -370,9 +370,3 @@ h2 {
     /* dar espacio extra arriba de la calculadora para evitar solapamientos */
     .div-calculadora { margin-top: 12px; }
 }
-.div-rivales{
-    background-color: red;
-}
-.resultado-container{
-    background-color: aqua;
-}
