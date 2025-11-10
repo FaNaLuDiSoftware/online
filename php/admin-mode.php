@@ -15,13 +15,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_user = intval($input['id_user'] ?? 0);
     $response = [];
     if ($id_user > 0) {
+        // Proteger usuario administrador: si el id pertenece a 'admin', bloquear cualquier acción
+        $stmtCheck = $conn->prepare('SELECT user_name FROM register_user WHERE id_user = ? LIMIT 1');
+        $stmtCheck->bind_param('i', $id_user);
+        $stmtCheck->execute();
+        $stmtCheck->bind_result($user_name_checked);
+        $stmtCheck->fetch();
+        $stmtCheck->close();
+
+        if (isset($user_name_checked) && strtolower($user_name_checked) === 'admin') {
+            $response['error'] = 'No puedes modificar al usuario administrador';
+            $response['code'] = 'protected-user';
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            $conn->close();
+            exit;
+        }
+
         if ($action === 'delete') {
             $stmt = $conn->prepare('DELETE FROM register_user WHERE id_user = ?');
             $stmt->bind_param('i', $id_user);
             if ($stmt->execute()) {
                 $response['message'] = 'Usuario eliminado correctamente';
+                $response['code'] = 'delete-success';
             } else {
                 $response['error'] = 'No se pudo eliminar el usuario';
+                $response['code'] = 'delete-fail';
             }
             $stmt->close();
         } elseif ($action === 'reset_score') {
@@ -29,8 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('i', $id_user);
             if ($stmt->execute()) {
                 $response['message'] = 'Puntaje vaciado correctamente';
+                $response['code'] = 'reset-score-success';
             } else {
                 $response['error'] = 'No se pudo vaciar el puntaje';
+                $response['code'] = 'reset-score-fail';
             }
             $stmt->close();
         } elseif ($action === 'reset_money') {
@@ -38,15 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('i', $id_user);
             if ($stmt->execute()) {
                 $response['message'] = 'Monedas vaciadas correctamente';
+                $response['code'] = 'reset-money-success';
             } else {
                 $response['error'] = 'No se pudo vaciar las monedas';
+                $response['code'] = 'reset-money-fail';
             }
             $stmt->close();
         } else {
             $response['error'] = 'Acción no válida';
+            $response['code'] = 'invalid-action';
         }
     } else {
         $response['error'] = 'ID de usuario no válido';
+        $response['code'] = 'invalid-user-id';
     }
     header('Content-Type: application/json');
     echo json_encode($response);
@@ -54,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$result = $conn->query("SELECT id_user, user_name, password, score, money FROM register_user ORDER BY id_user ASC");
+$result = $conn->query("SELECT id_user, user_name, password, score, money FROM register_user WHERE LOWER(user_name) != 'admin' ORDER BY id_user ASC");
 
 echo '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title id="admin-title-tag">Modificar como Administrador</title>';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
@@ -99,4 +124,3 @@ echo '</body></html>';
 $conn->close();
 
 ?>
-
