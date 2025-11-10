@@ -4,12 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const rightPan = document.getElementById('right-pan');
     const resetButton = document.getElementById('reset-button');
     const resultMessage = document.getElementById('result-message');
-    const balanceBar = document.querySelector('.balance-bar'); // Selecciona la barra de la balanza
+    const balanceBar = document.querySelector('.balance-bar'); 
+    
+    // Elementos del Modal
+    const calculateButton = document.getElementById('calculate-button'); // Nuevo botón
+    const modal = document.getElementById('calculation-modal');
+    const closeModalButton = document.querySelector('.close-button');
+    const leftWeightDisplay = document.getElementById('left-weight-display');
+    const rightWeightDisplay = document.getElementById('right-weight-display');
 
     let leftWeight = 0;
     let rightWeight = 0;
 
     dinosaurs.forEach(dinosaur => {
+        // ... [Lógica dragstart y dragend existente] ...
         dinosaur.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('dinosaurWeight', dinosaur.dataset.weight);
             e.dataTransfer.setData('dinosaurName', dinosaur.dataset.name);
@@ -21,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.closest('.dinosaur').classList.remove('dragging');
         });
         
-        // --- Soporte táctil para móviles ---
+        // ... [Lógica touchstart, touchmove y touchend existente] ...
         dinosaur.addEventListener('touchstart', (e) => {
             // evitar que el navegador haga scroll al iniciar el arrastre
             e.preventDefault();
@@ -134,15 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (leftWeight > rightWeight) {
             leftPan.classList.add('heavy');
             rightPan.classList.add('light');
-            balanceBar.classList.add('tilt-left'); // Inclinar la barra a la izquierda
+            balanceBar.classList.add('tilt-left'); 
         } else if (rightWeight > leftWeight) {
             rightPan.classList.add('heavy');
             leftPan.classList.add('light');
-            balanceBar.classList.add('tilt-right'); // Inclinar la barra a la derecha
+            balanceBar.classList.add('tilt-right'); 
         } else {
             leftPan.classList.add('balanced');
             rightPan.classList.add('balanced');
-            balanceBar.classList.add('no-tilt'); // No inclinar la barra (o volver al centro)
+            balanceBar.classList.add('no-tilt'); 
         }
 
         if (leftPan.dataset.dinosaur && rightPan.dataset.dinosaur) {
@@ -170,7 +178,27 @@ document.addEventListener('DOMContentLoaded', () => {
         balanceBar.classList.remove('tilt-left', 'tilt-right');
         balanceBar.classList.add('no-tilt'); 
 
-        updateBalance(); // Llamar para limpiar clases de los platos
+        updateBalance(); 
+    });
+    
+    // Lógica para el Modal de Cálculo
+    calculateButton.addEventListener('click', () => {
+        // Actualiza el contenido del modal con los pesos actuales
+        leftWeightDisplay.textContent = leftWeight.toLocaleString('es-ES');
+        rightWeightDisplay.textContent = rightWeight.toLocaleString('es-ES');
+        
+        modal.style.display = 'block';
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Cierra el modal si el usuario hace clic fuera de él
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
     });
 
 });
