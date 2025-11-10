@@ -424,12 +424,11 @@ body {
 }
 
 /* =================================== */
-/* NUEVOS ESTILOS PARA USER-INFO       */
+/* ESTILOS PARA USER-INFO (MEJORADO Y RESPONSIVO) */
 /* =================================== */
 
 .user-info {
     position: absolute;
-    /* Alineado verticalmente con el logout-icon */
     top: clamp(10px, 2vw, 20px); 
     right: clamp(60px, 8vw, 85px); 
     
@@ -441,7 +440,8 @@ body {
     padding: 8px 12px;
     border-radius: 20px;
     color: #f0f0f0;
-    font-size: 14px;
+    /* MEJORA: Font size responsivo con clamp() para escalado fluido */
+    font-size: clamp(12px, 1.4vw, 16px); 
     font-weight: 500;
     text-shadow: none; 
     transition: all 0.3s ease;
@@ -457,8 +457,16 @@ body {
 }
 
 .user-info .fa-user-circle {
-    font-size: 18px;
+    /* MEJORA: Icon size responsivo con clamp() */
+    font-size: clamp(16px, 2vw, 22px);
     color: #4CAF50;
+}
+
+/* NUEVO: Regla para truncar nombres de usuario largos y ser responsivo */
+.user-info #logged-username {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #admin-badge {
@@ -470,4 +478,45 @@ body {
     font-weight: bold;
     margin-left: 4px;
     text-shadow: none;
+}
+
+@media (max-width: 768px) {
+    
+    /* Hacemos el user-info más compacto en pantallas pequeñas */
+    .user-info {
+        /* Ajuste de posición para pantallas móviles. Lo colocamos más pegado al borde y dejamos espacio para el icono de logout */
+        right: 50px; 
+        top: 10px; 
+        padding: 5px 8px; /* Reducción de padding */
+        font-size: 12px; /* Reducción del tamaño de fuente a fijo */
+        gap: 4px;
+    }
+    
+    /* Ocultar el texto "Logueado como: " para ahorrar espacio en móvil */
+    .user-info #logged-as-text {
+        display: none;
+    }
+    
+    /* Ajustar el tamaño del icono de usuario */
+    .user-info .fa-user-circle {
+        font-size: 14px;
+    }
+    
+    /* Limitar el ancho del username a un tamaño más compacto para móvil */
+    .user-info #logged-username {
+        max-width: 60px; 
+    }
+    
+    /* Ajustar el tamaño del badge de admin */
+    .user-info #admin-badge {
+        font-size: 9px;
+        padding: 1px 3px;
+    }
+    
+    /* Aseguramos que el logout icon se mantenga visible y no superpuesto */
+    .logout-icon {
+        top: 10px; 
+        right: 10px;
+        font-size: 20px; 
+    }
 }
